@@ -3,7 +3,7 @@ cd /d "%~dp0"
 echo === First-time setup (no GitHub CLI needed) ===
 echo.
 echo 1) In your browser, open https://github.com/new
-echo 2) Repository name: retribution-against-god  (Private is OK)
+echo 2) Repository name: retribution-against-god  (choose PUBLIC - needed for the free public URL)
 echo 3) Do NOT add README/.gitignore. Click "Create repository"
 echo 4) Copy the repository URL (like https://github.com/YOURNAME/retribution-against-god.git)
 echo.

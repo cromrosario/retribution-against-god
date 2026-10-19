@@ -1,5 +1,16 @@
-name: smoke-test
-on: [push, pull_request]
+name: test-and-deploy
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -9,3 +20,17 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install playwright && playwright install --with-deps chromium
       - run: python tests/smoke.py
+  deploy:
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.dep.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: game }
+      - id: dep
+        uses: actions/deploy-pages@v4
