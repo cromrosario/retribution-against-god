@@ -10,3 +10,5 @@ update スクリプトは、push成功 [OK]/失敗、続けてテスト 成功/�
 pushしてテストが通ると、GitHub Pagesに自動公開される。
 初回のみ GitHub の Settings → Pages → Source を「GitHub Actions」にする。
 URL: https://<GitHubユーザー名>.github.io/retribution-against-god/
+## Cloudflareへ公開(既存プロジェクトを更新)
+deploy-cloudflare.bat をダブルクリック。game/index.html を既存の retribution-deploy/public/ に上書きして wrangler deploy する。
