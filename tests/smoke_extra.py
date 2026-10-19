@@ -110,6 +110,7 @@ def dom_checks(path):
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 420, "height": 860})
+        page.set_default_timeout(8000)
         page.on("pageerror", lambda e: errors.append("pageerror: %s" % e))
         # 外部リソース(フォント等)の読み込み失敗はネットワーク環境次第なので無視する
         page.on("console", lambda m: errors.append("console.error: %s" % m.text)
@@ -151,11 +152,23 @@ def dom_checks(path):
                 if page.locator("body.fighting").count():
                     reached = True
                     break
+                # 確認ポップアップ(.cf-ov)が出ているとボタンが押せないので、先に閉じる
+                if page.locator(".cf-ov").count():
+                    ok = page.locator(".cf-ov .cf-ok:not([disabled])")
+                    try:
+                        (ok if ok.count() else page.locator(".cf-ov .cf-no")).first.click(timeout=3000)
+                    except Exception:
+                        page.evaluate("document.querySelectorAll('.cf-ov').forEach(e => e.remove())")
+                    page.wait_for_timeout(150)
+                    continue
                 btns = page.locator("#choices button:not([disabled])")
                 if btns.count() == 0:
                     page.wait_for_timeout(300)
                     continue
-                btns.first.click()
+                try:
+                    btns.first.click(timeout=3000)
+                except Exception:
+                    page.evaluate("document.querySelectorAll('.cf-ov').forEach(e => e.remove())")
                 page.wait_for_timeout(250)
             if reached:
                 check(not page.locator("#statsLine").is_visible(), "戦闘中に statsLine が非表示")
@@ -178,6 +191,7 @@ def hook_checks(path):
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 420, "height": 860})
+        page.set_default_timeout(8000)
         page.on("pageerror", lambda e: errors.append("pageerror: %s" % e))
         page.goto(path.resolve().as_uri() + "?test=1")
         page.wait_for_timeout(800)
