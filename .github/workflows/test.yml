@@ -20,6 +20,7 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install playwright && playwright install --with-deps chromium
       - run: python tests/smoke.py
+      - run: python tests/smoke_extra.py
   deploy:
     needs: test
     if: github.event_name != 'pull_request'

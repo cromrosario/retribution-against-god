@@ -216,6 +216,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 .me > .pc { width: 44px; height: auto; align-self: center; background: radial-gradient(#121d78, #04062a); border: 2px solid #aab4ff; border-radius: 4px; box-shadow: 0 0 0 1px #04051c; padding: 2px; }
 .me-body { display: grid; gap: 5px; min-width: 0; }
 .bars2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bars2.one { grid-template-columns: 1fr; }
+.bars2.vital { grid-template-columns: 1fr; gap: 5px; }
+.vital .bar-row { grid-template-columns: 30px 1fr auto; font-size: 14px; font-weight: 700; color: #fff; }
+.vital .bar { height: 15px; }
+.vital .num { min-width: 92px; text-align: right; font-size: 14px; color: #fff; }
+body.fighting .stats, body.fighting .gear { display: none !important; }
 .bar-row { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-soft); text-shadow: 1px 1px 0 #04051c; }
 .bar-row.e { grid-template-columns: 1fr auto; }
 .num { text-align: right; font-variant-numeric: tabular-nums; color: #fff; font-size: 12px; min-width: 44px; text-shadow: 1px 1px 0 #04051c; }
@@ -458,14 +464,13 @@ body:not(.title):not(.fighting) .stage { display: none; }
   <section class="me" id="hud" hidden>
     <img class="pc" id="pcImg" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAkCAYAAACTz/ouAAAJSUlEQVR42o2XaWxc1RWAv/dm83hWj8eeGa/jcRLsxJAYxwlZcBbAEAKBgNhaaAUtFFIkUFVVQtCKSlX7o0VtkaBCbUEtUAoUCBBIQQHCFpIGQhInxk4cO2N7Vo/HM5593nL7I5JRGijcf/dI93xn1TlX4lsem61NVCvVMxepitPZwOzsqPRN74xfJWxsXCmEmsbrDzEzEyY7F+Gqiy/kuqsHqWgq+/cdIpqa4c33Y6KqzP9fiPTVgDWixaOxcmkb/rZm/H4/NiOUS1U8bgcziVmGx6ZQNIW9Q2Vm4gcplPJUKhnpW3mQTH4iWaTzhNFQw9WXXEyhWMTlqGV0ZJyRkQlk2cDizla6ujpR1X9D9wB7Dp4kPH3wmz3oCG0VNuMMAyuXsHHdhZQKRWosNThcDqanYqRms7S2NuFvakRXVZRKmSf+9i8+OHqKbHbyHH3y/wpctVm2rF/ONZeuwWW3kkql8QW8qKqOpkNHqJVAwEtnsJnsXBqjJLjxqk2EAi66ureL/wsIBleInlADA2v7sNodjE9E6O9dSmvAR7VSxl3npDPYTCwaJxKe5LzOVg4eOk5zs59N/aspZIf5WoDD2S5CTfVcv+1KGv0+JqfirF3Xj7vOQyIa4+jBzzh+6CiZTI6eC5bx1jv7MBoMhIIt7Nz1EalMjmVLurFY6sVXJjk3H5aOnTKJ53e+wcplXTjrXGTmC+SzWXKRCS7tsKKYXUyNj9Ho81LntGOymDh4ZASD2czhQyOMTcepVGalrw1RnauTm6+5mnhylnQ6w0wiyfipMK1yiQtXL8fR1kwkEeXv/9xFUZMYGRnnp/fdQU9nE6HWJlp8HkxGm/jaKvLWLRYNdRYiiRjXD26iLdDIzvcO8NzPbyC4qIMH/vgML+wdotnfgtNUQ6lUxWgx0r9kEU+99ioYa5lLT5yl02h3dgtNSVMqJaTU3EmpXO0Q1YqJ2Mw8wWAHBt86anxBJGQIbeeChh3sWK/z9ONPcdugk1sf2c3U9BzlqpnS/JfK3XWLhMnsRBZ6mXt/cCOXbNwmAPKFCamzewOJ1BzJaJQfXx6gzqxiFGW2rXByV18ROXaCdDbDsx+PUqnqxFJJVEVdsLqzvVfccdMVSAiMQqi47TZW952H03WfmIxMgqigKYIDnx8i6FXJna5gDwa4yJVjaHqCP73xKcPhcdpUL53tTbQGmhgaGaOsmsXy89fQv8KHs8aBLJswWK2+hz0OK9u2bGbzQBdaKcXRI58hZAPj0Qi7Pj6MWRGMp/IcGBrj1XeHeGn/CJKscsu1WwlPTfPdm68lGY+zeaCXu26/DrvJzJ53DxBNFTBKEgyPjfHRx/9h4/pVOG0uDEYDqXQSf0ML+cIpXjgcwXM6QzSeJl80YTSaqK+zY7PbkWUDzV4XFpORKzdtxGw289JrexgLTyLL5jNVVGPxiCWdPfjq65nLzlIszmMxQVWTiMQTXL9lCxcs6+ClXXuZmJpmPp/CVlvL2t6VZArzeJ1uimWFUqVCKp1FUVVORyPk81FpIev1nkXCZTfS2OBlSUczzhojL7y2h8GBizkxlUDVVapKjnu+cwOv79nP8PAXoBZ49LHf8ftHnyQ5M0smVyAxm8Dt6SCdOi6d1QeDl90mWjwyiVSc01MxJsaihHxuHnrwTrpWrqM50MjokSH++vROdu/9lNrMLL+VS9yOxP13/5ByIc9EZJaX396NphWlcxrNZg8Jq1xiwGTHUIU3VZU13Z0cmwzzm4fuYeL0FE/941XW9K8gV1R476OjOOQyty1p47p7t3PHg48Rny9S0ASaljkXEGhaL4z6LIOBRlx2G3/YN4LTJrPtstUcHzlFqN3PVZv6efL5NxidmkXTJNLpKTY0tnOkPMM1jQHeCseok83Ea92kZs+ESAYwmdyiPWDlezcNYgx6eePkKLqWo1jKE4mlWbuql6aAj+df30synSOXz5PLZ9CFiZS9lsGNm1i94/u0eOz4lQqlXGKh6QxnANaHa2scFEtFYqks4UQCRS3gdnmIJZLUW21MR5PsP3IMSRZ0NPvRNY1cIQuSAafTSbGoE52O41NUTqgqql785YIHuq5jNcnEYknGJyMomopskNk6uJ5itYBr/BT65DSXblpP/8rlLFrUTlUrc8OmHirVApFojPHJaWKZAi6bA3d9A3ZXt1gASJLK5r5Oejr8tLlNtFjBYbPSszREU4MTWnws7e/hwuVdzGWyfLj/MKl0iltXhWj1N3D9lRtQy3lK5RxetYTT5qSYC385D2QZ+pd4CDUY6Gu00tvopMnno5jLY62xojU2YGlq5LPDhzHLBkLti6lzBvjL7uN4PfUM9J2Po9aK0Aqso4jQxUL9nAFIteROj9FrVYikSrz4RZ5cQaPWamUsnMTX0MDnR49TyuW586arKRdLtDW3sPtYkpmZPI8+8SJvf7AHq6RxkUvFKluQZPPZZWq3B0WlmMEsS5jRKcnQ3tyObLCgqxrZ3Dx2m5lFbUFOTU8SiU/jqWsmEpugRpZY5zQzVaxwsNPFdtsq3j/yIaqSlhZGpru+HY+rgT6Pg26DxtLuIK+88mcqZYXITJZkOkckmSFTLPPYr3/GvvdeprPJj9mgsdZp43yLhBEZvVIFWVqwfGHoF+YT2A0SS80yVZPOrnCER371OC1+P7PZHAKdcqVMNDbFM8/uoqhUODQ8jC5kZBS6azTeFAJRVnDVmtG08tlDXwgFRSmiqYIa2cB8QeadTw7gctTQ7PPgsMkgipQqJUYmIxw9EaarsxtfY5BjJchVdAq6TkGVKFcUQJwNyGROSSVN5Z3sPLurZjzuem7ZfgXXXTNAndOKzWohIMsUiiXstVYu39DH3T+6AY+rnoJq47l5QVY2cmNJYb6QxSAbzl1bsvm41LP1ftoGbqNSyTM0eoLpWIyA141BlnEZajBIEn5vHaF2P+/u3UsiNU1F1jhpbCen5KR9uaL08dBHuD2Lv3r57Vo0KJp8BjZcdAG6UuGtvftwOx2MTcaZi86jWGDFsvOQ5Qo/2XE7Xq+bB37xCEdPTjOXDX/z8qvrc6zt7yUUauPE+BSKKjEykcRkMFMw2SmWVcYn43jrGhgdO43F7iLU0oEuCt/uAyIb3AKhIIQOGJDlWoSQgArN7RcRDX+CLqpIkhlZNiNQEboCkoSu5c7R91/VVC1qdbeNHwAAAABJRU5ErkJggg==">
     <div class="me-body">
-    <div class="bars2">
+    <div class="bars2 vital">
       <div class="bar-row"><span>HP</span><div class="bar hp"><i id="hpBar"></i></div><span class="num" id="hpNum"></span></div>
       <div class="bar-row"><span>MP</span><div class="bar sp"><i id="spBar"></i></div><span class="num" id="spNum"></span></div>
     </div>
     <div class="bar-row" id="atbRow" hidden><span>ATB</span><div class="bar atb" id="atbWrap"><i id="atbBar"></i></div><span class="num" id="atbNum"></span></div>
-    <div class="bars2">
+    <div class="bars2 one">
       <div class="bar-row"><span>LB</span><div class="bar lb" id="lbWrap"><i id="lbBar"></i></div><span class="num" id="lbNum"></span></div>
-      <div class="bar-row"><span id="lvLabel">Lv 1</span><div class="bar xp"><i id="xpBar"></i></div><span class="num" id="xpNum"></span></div>
     </div>
     <div class="bar-row" id="jgRow"><span id="jgLabel"></span><div class="bar jg" id="jgWrap"><i id="jgBar"></i></div><span class="num" id="jgNum"></span></div>
     <div class="buffs" id="buffLine"></div>
@@ -500,12 +505,12 @@ body:not(.title):not(.fighting) .stage { display: none; }
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
   const shuffle = (arr) => arr.map((v) => [Math.random(), v]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
   const sgn = (n) => (n >= 0 ? "+" + n : "" + n);
-  const STAT = { str: "筋力", dex: "敏捷", wis: "知恵" };
+  const STAT = { str: "筋力", dex: "敏捷", wis: "知識", skl: "器用さ" };
   /* HP・MP・ダメージ・回復量は旧バージョンの100倍(2桁増)。内部では「基準値×U」で持つ */
   const U = 100;
   const sc = (n) => Math.round(n * U);
   const NF = (n) => Math.round(n).toLocaleString("en-US");
-  /* 技の説明文中のサイコロ表記(例 3d8+2)を、100倍した範囲の表記に直す */
+  /* スキルの説明文中のサイコロ表記(例 3d8+2)を、100倍した範囲の表記に直す */
   const sd = (t) => String(t == null ? "" : t)
     .replace(/(\d*)d(\d+)(?:\+(\d+))?/g, (m, n, f, k) => { n = +n || 1; k = +k || 0; return NF(sc(n + k)) + "〜" + NF(sc(n * f + k)); })
     .replace(/MP\+(\d+)/g, (m, n) => "MP+" + NF(sc(+n)))
@@ -536,8 +541,8 @@ body:not(.title):not(.fighting) .stage { display: none; }
     { n: "古びた長剣", t: 0, atk: 1, dmg: 1, die: 6, stat: "str" },
     { n: "漆黒の大剣", t: 0, atk: 0, dmg: 2, die: 8, stat: "str" },
     { n: "鉄の手甲", t: 0, atk: 1, dmg: 1, die: 6, stat: "dex" },
-    { n: "双刃の苦無", t: 0, atk: 1, dmg: 0, die: 6, stat: "dex" },
-    { n: "樫の短弓", t: 0, atk: 1, dmg: 0, die: 6, stat: "dex" },
+    { n: "双刃の苦無", t: 0, atk: 1, dmg: 0, die: 6, stat: "skl" },
+    { n: "樫の短弓", t: 0, atk: 1, dmg: 0, die: 6, stat: "skl" },
     { n: "見習いの魔導書", t: 0, atk: 1, dmg: 0, die: 6, stat: "wis" },
     { n: "細身の魔法剣", t: 0, atk: 1, dmg: 1, die: 6, stat: "wis" },
     { n: "無骨な戦斧", t: 0, atk: 0, dmg: 2, die: 8, stat: "str" },
@@ -546,7 +551,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     { n: "長柄の竜槍", t: 0, atk: 1, dmg: 1, die: 6, stat: "str" },
     { n: "死神の大鎌", t: 0, atk: 0, dmg: 2, die: 8, stat: "str" },
     { n: "蛇腹の双剣", t: 0, atk: 1, dmg: 1, die: 6, stat: "dex" },
-    { n: "改造された銃", t: 0, atk: 1, dmg: 1, die: 6, stat: "dex" },
+    { n: "改造された銃", t: 0, atk: 1, dmg: 1, die: 6, stat: "skl" },
     { n: "円月の輪", t: 0, atk: 1, dmg: 0, die: 6, stat: "dex" },
     { n: "魔法の絵筆", t: 0, atk: 1, dmg: 0, die: 6, stat: "wis" },
     { n: "契約の宝珠", t: 0, atk: 1, dmg: 0, die: 6, stat: "wis" },
@@ -592,19 +597,33 @@ body:not(.title):not(.fighting) .stage { display: none; }
     { n: "革のブーツ", t: 0, def: 1, b: {} },
     { n: "風切りの靴", t: 1, def: 1, b: { dex: 1 } },
     { n: "影渡りの足袋", t: 2, def: 1, b: { dex: 1, first: 1 } },
-    { n: "神鉄の具足", t: 3, def: 3, b: { hp: 8, guard: 1 } }
+    { n: "神鉄の具足", t: 3, def: 3, b: { hp: 8 } }
   ].map(mkI("feet"));
+  const HANDS = [
+    { n: "擦り切れた手袋", t: 0, def: 0, b: {} },
+    { n: "革の手袋", t: 0, def: 1, b: {} },
+    { n: "狩人の手甲", t: 1, def: 1, b: { atk: 1 } },
+    { n: "影縫いの指貫", t: 2, def: 1, b: { skl: 1, crit: 1 } },
+    { n: "竜爪の籠手", t: 3, def: 2, b: { dmg: 2, skl: 1 } }
+  ].map(mkI("hands"));
+  const LEGS = [
+    { n: "擦り切れた脚衣", t: 0, def: 0, b: {} },
+    { n: "革のすね当て", t: 0, def: 1, b: {} },
+    { n: "風走りの脚衣", t: 1, def: 1, b: { dex: 1 } },
+    { n: "黒鉄の脛当て", t: 2, def: 2, b: { hp: 6 } },
+    { n: "神鉄の脚甲", t: 3, def: 3, b: { hp: 10 } }
+  ].map(mkI("legs"));
   const RINGS = [];
   const byName = (list, n) => list.find((i) => i.n === n);
-  const SLOTN = { weapon: "武器", head: "頭", body: "胴", feet: "足", ring: "指輪" };
+  const SLOTN = { weapon: "武器", head: "頭", body: "胴", feet: "足", hands: "手", legs: "脚", ring: "指輪" };
   /* ---- 武器の生成: 種類 × 素材/銘 ---- */
   const WTYPES = [
     ["剣", "str", 1, 1, 6], ["大剣", "str", 0, 2, 8], ["戦斧", "str", 0, 2, 8], ["戦槌", "str", 0, 2, 6], ["長槍", "str", 1, 1, 6], ["鎚矛", "str", 0, 1, 8], ["薙刀", "str", 1, 1, 8], ["騎士剣", "str", 1, 1, 6],
-    ["短剣", "dex", 1, 0, 4], ["短弓", "dex", 1, 0, 6], ["刀", "dex", 1, 1, 6], ["手甲", "dex", 1, 1, 6], ["苦無", "dex", 1, 0, 6], ["双剣", "dex", 1, 1, 6], ["短銃", "dex", 1, 1, 6], ["鎖鞭", "dex", 1, 0, 6],
+    ["短剣", "dex", 1, 0, 4], ["短弓", "skl", 1, 0, 6], ["刀", "dex", 1, 1, 6], ["手甲", "dex", 1, 1, 6], ["苦無", "skl", 1, 0, 6], ["双剣", "dex", 1, 1, 6], ["短銃", "skl", 1, 1, 6], ["鎖鞭", "dex", 1, 0, 6],
     ["杖", "wis", 0, 1, 6], ["魔導書", "wis", 1, 0, 6], ["宝珠", "wis", 1, 0, 6], ["絵筆", "wis", 1, 0, 6], ["聖杖", "wis", 0, 1, 6], ["錫杖", "wis", 1, 1, 6], ["竪琴", "wis", 1, 0, 6], ["星図", "wis", 1, 0, 6]
   ];
   WTYPES.push(["聖剣", "str", 1, 2, 6], ["大鎌", "str", 0, 2, 8], ["竜槍", "str", 1, 1, 6], ["銃剣", "str", 1, 1, 6], ["暗黒剣", "str", 0, 2, 8], ["拳套", "dex", 1, 1, 6],
-    ["手裏剣", "dex", 1, 0, 6], ["円月輪", "dex", 1, 0, 6], ["銃", "dex", 1, 1, 6], ["魔法剣", "wis", 1, 1, 6], ["学術書", "wis", 1, 0, 6], ["戦鎌", "str", 0, 2, 6]);
+    ["手裏剣", "skl", 1, 0, 6], ["円月輪", "dex", 1, 0, 6], ["銃", "skl", 1, 1, 6], ["魔法剣", "wis", 1, 1, 6], ["学術書", "wis", 1, 0, 6], ["戦鎌", "str", 0, 2, 6]);
   const WAFF = [
     [["粗末な", {}], ["軽い", { dex: 1 }], ["丈夫な", { def: 1 }], ["素朴な", { hp: 4 }]],
     [["鋼の", { atk: 1 }], ["銀の", { dmg: 1 }], ["星砂の", { sp: 3 }], ["聖別された", { healpow: 1 }], ["疾風の", { first: 1 }]],
@@ -613,7 +632,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     [["天雷の", { skilldmg: 2, crit: 1 }], ["月蝕の", { first: 1, dmg: 2, dex: 1 }], ["竜王の", { hp: 14, dmg: 2, def: 1 }], ["血盟の", { kill: 2, dmg: 2 }],
      ["星読みの", { wis: 2, sp: 6, skilldmg: 1 }], ["不滅の", { regen: 2, hp: 12 }], ["覇王の", { atk: 2, dmg: 3, str: 1 }], ["虚空の", { double: 2, crit: 1 }]],
     [["創世の", { atk: 2, dmg: 4, crit: 2 }], ["終末を告げる", { dmg: 5, lowhp: 2, double: 1 }], ["星海の", { wis: 3, skilldmg: 3, sp: 10 }], ["神殺しの", { dmg: 6, crit: 2, kill: 2 }],
-     ["永劫の", { hp: 24, regen: 3, guard: 2 }], ["無限の", { skillcost: 2, skilldmg: 2, sprec: 2, sp: 8 }], ["夜明けの", { atk: 3, dmg: 4, first: 1, str: 1, dex: 1 }]]
+     ["永劫の", { hp: 24, regen: 3 }], ["無限の", { skillcost: 2, skilldmg: 2, sprec: 2, sp: 8 }], ["夜明けの", { atk: 3, dmg: 4, first: 1, str: 1, dex: 1 }]]
   ];
   const T_ATK = [0, 1, 2, 3, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], T_DMG = [0, 1, 3, 5, 8, 12, 17, 22, 28, 34, 41, 48, 56, 64, 73], T_DIE = [0, 0, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
   /* ---- 深層(Tier6〜14)の素材・銘 ---- */
@@ -624,7 +643,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
   ];
   const DEEP_WTPL = [
     (x) => ({ atk: 1 + Math.floor(x / 2), dmg: 3 + 2 * x, crit: Math.min(3, 1 + Math.floor(x / 3)) }),
-    (x) => ({ hp: 14 + 6 * x, dmg: 2 + x, guard: 1 + Math.floor(x / 3) }),
+    (x) => ({ hp: 14 + 6 * x, dmg: 2 + x }),
     (x) => ({ skilldmg: 2 + x, sp: 6 + 2 * x, wis: 1 + Math.floor(x / 3) }),
     (x) => ({ kill: 1 + Math.floor(x / 2), dmg: 3 + 2 * x, lowhp: 1 }),
     (x) => ({ first: 1, dex: 1 + Math.floor(x / 2), double: Math.min(3, 1 + Math.floor(x / 4)), atk: 1 + Math.floor(x / 2) })
@@ -639,20 +658,24 @@ body:not(.title):not(.fighting) .stage { display: none; }
   const ATYPES = {
     head: { heavy: ["兜", "鉄兜", "鉢金", "重兜"], light: ["頭巾", "帽子", "仮面", "鉢巻", "覆面"], cloth: ["冠", "ずきん", "角帽", "宝冠"] },
     body: { heavy: ["鎧", "重鎧", "胸甲", "鎖鎧"], light: ["胸当て", "軽鎧", "道着", "外套", "忍装束"], cloth: ["法衣", "ローブ", "長衣", "祭服"] },
-    feet: { heavy: ["足鎧", "具足", "鉄靴"], light: ["ブーツ", "草鞋", "脚絆", "革靴"], cloth: ["サンダル", "足袋", "布靴"] }
+    feet: { heavy: ["足鎧", "具足", "鉄靴"], light: ["ブーツ", "草鞋", "脚絆", "革靴"], cloth: ["サンダル", "足袋", "布靴"] },
+    hands: { heavy: ["籠手", "鉄甲", "ガントレット"], light: ["手甲", "革手袋", "指貫"], cloth: ["手袋", "絹手袋", "祈りの手袋"] },
+    legs: { heavy: ["脚甲", "鉄脛当て", "草摺"], light: ["脛当て", "革脚衣", "忍び袴"], cloth: ["長袴", "布脚衣", "法衣の裾"] }
   };
   const ABASE = {
     head: { heavy: { def: [1, 1, 2, 2, 3, 4], hp: [0, 2, 4, 6, 10, 14] }, light: { def: [0, 1, 1, 1, 2, 2], dex: [0, 0, 1, 1, 2, 3] }, cloth: { def: [0, 0, 1, 1, 1, 2], sp: [1, 2, 3, 4, 6, 8], wis: [0, 0, 1, 1, 2, 3] } },
     body: { heavy: { def: [2, 3, 4, 5, 7, 9], hp: [0, 4, 8, 12, 18, 26] }, light: { def: [1, 2, 2, 3, 4, 5], dex: [0, 0, 1, 1, 2, 3] }, cloth: { def: [0, 1, 1, 2, 3, 4], sp: [2, 4, 6, 8, 12, 16], wis: [0, 0, 1, 1, 2, 3] } },
-    feet: { heavy: { def: [1, 1, 2, 2, 3, 4], hp: [0, 2, 3, 4, 7, 10] }, light: { def: [0, 0, 1, 1, 2, 2], dex: [0, 1, 1, 2, 3, 4] }, cloth: { def: [0, 0, 0, 1, 1, 2], sp: [1, 2, 3, 4, 6, 8], wis: [0, 0, 0, 1, 2, 3] } }
+    feet: { heavy: { def: [1, 1, 2, 2, 3, 4], hp: [0, 2, 3, 4, 7, 10] }, light: { def: [0, 0, 1, 1, 2, 2], dex: [0, 1, 1, 2, 3, 4] }, cloth: { def: [0, 0, 0, 1, 1, 2], sp: [1, 2, 3, 4, 6, 8], wis: [0, 0, 0, 1, 2, 3] } },
+    hands: { heavy: { def: [1, 1, 1, 2, 2, 3], dmg: [0, 0, 1, 1, 2, 3] }, light: { def: [0, 0, 1, 1, 1, 2], atk: [0, 0, 1, 1, 1, 2], skl: [0, 0, 0, 1, 2, 3] }, cloth: { def: [0, 0, 0, 1, 1, 1], sp: [1, 2, 3, 4, 6, 8], wis: [0, 0, 1, 1, 2, 3] } },
+    legs: { heavy: { def: [1, 2, 2, 3, 4, 5], hp: [0, 3, 5, 7, 11, 16] }, light: { def: [0, 1, 1, 2, 2, 3], dex: [0, 0, 1, 1, 2, 3] }, cloth: { def: [0, 0, 1, 1, 1, 2], sp: [1, 2, 3, 5, 7, 10], wis: [0, 0, 1, 1, 2, 3] } }
   };
   const AAFF = [
     [["粗末な", {}], ["古びた", {}], ["丈夫な", { hp: 2 }]],
     [["鋼の", { def: 1 }], ["銀糸の", { sp: 2 }], ["獣皮の", { hp: 4 }], ["隠密の", { flee: 1 }]],
     [["黒鉄の", { def: 1, hp: 4 }], ["影の", { first: 1 }], ["星布の", { sp: 3, wis: 1 }], ["竜鱗の", { def: 1, poisonres: 1 }], ["血の", { regen: 1 }]],
-    [["神殻の", { def: 2, hp: 6 }], ["深淵の", { sp: 4, drainres: 1 }], ["忘れられた", { barrier: 1 }], ["終焉の", { lowhp: 1, def: 1 }], ["不屈の", { guard: 1, hp: 8 }]],
-    [["伝承の", { def: 1, hp: 8 }], ["天雷の", { first: 1, crit: 1 }], ["竜王の", { def: 2, hp: 10, poisonres: 1 }], ["星海の", { sp: 6, wis: 1, healpow: 1 }], ["不滅の", { regen: 2, guard: 1 }], ["虚空の", { barrier: 1, drainres: 2 }]],
-    [["創世の", { def: 2, hp: 16, regen: 1 }], ["神話の", { hp: 20, guard: 2, barrier: 1 }], ["永劫の", { regen: 3, sp: 8, lowhp: 1 }], ["神殺しの", { def: 2, counter: 2, kill: 1 }], ["無窮の", { sp: 10, skillcost: 1, wis: 2 }], ["夜明けの", { first: 1, dex: 2, flee: 3, def: 1 }]]
+    [["神殻の", { def: 2, hp: 6 }], ["深淵の", { sp: 4, drainres: 1 }], ["忘れられた", { barrier: 1 }], ["終焉の", { lowhp: 1, def: 1 }], ["不屈の", { hp: 8 }]],
+    [["伝承の", { def: 1, hp: 8 }], ["天雷の", { first: 1, crit: 1 }], ["竜王の", { def: 2, hp: 10, poisonres: 1 }], ["星海の", { sp: 6, wis: 1, healpow: 1 }], ["不滅の", { regen: 2 }], ["虚空の", { barrier: 1, drainres: 2 }]],
+    [["創世の", { def: 2, hp: 16, regen: 1 }], ["神話の", { hp: 20, barrier: 1 }], ["永劫の", { regen: 3, sp: 8, lowhp: 1 }], ["神殺しの", { def: 2, counter: 2, kill: 1 }], ["無窮の", { sp: 10, skillcost: 1, wis: 2 }], ["夜明けの", { first: 1, dex: 2, flee: 3, def: 1 }]]
   ];
   Object.keys(ABASE).forEach((slot) => Object.keys(ABASE[slot]).forEach((arch) => Object.keys(ABASE[slot][arch]).forEach((k) => {
     const a = ABASE[slot][arch][k], v5 = a[5];
@@ -663,11 +686,11 @@ body:not(.title):not(.fighting) .stage { display: none; }
     (x) => ({ def: 1 + Math.floor(x / 2), hp: 12 + 8 * x, regen: 1 + Math.floor(x / 3) }),
     (x) => ({ sp: 8 + 3 * x, wis: 1 + Math.floor(x / 2), healpow: 1 + Math.floor(x / 2) }),
     (x) => ({ first: 1, dex: 1 + Math.floor(x / 2), flee: 2 + x }),
-    (x) => ({ barrier: 1, guard: 1 + Math.floor(x / 2), drainres: 1 + Math.floor(x / 3) }),
+    (x) => ({ barrier: 1, drainres: 1 + Math.floor(x / 3) }),
     (x) => ({ kill: 1 + Math.floor(x / 3), counter: 1 + Math.floor(x / 2), hp: 10 + 5 * x })
   ];
   DEEP_PFX.forEach((names, i) => AAFF.push(names.map((nm, k) => [nm, DEEP_ATPL[k](i + 1)])));
-  const ASLOT = { head: HEADS, body: ARMORS, feet: FEET };
+  const ASLOT = { head: HEADS, body: ARMORS, feet: FEET, hands: HANDS, legs: LEGS };
   Object.keys(ATYPES).forEach((slot) => {
     AAFF.forEach((list, t) => list.forEach((af) => Object.keys(ATYPES[slot]).forEach((arch) => ATYPES[slot][arch].forEach((tn) => {
       const n = af[0] + tn;
@@ -683,11 +706,11 @@ body:not(.title):not(.fighting) .stage { display: none; }
     ["鉄", "def", [1, 1, 1, 2]], ["精密", "atk", [1, 1, 2, 2]], ["剛力", "dmg", [1, 1, 2, 3]], ["会心", "crit", [1, 1, 1, 2]], ["再生", "regen", [1, 1, 1, 2]],
     ["瞑想", "sprec", [1, 1, 1, 2]], ["薬師", "herb", [1, 1, 2, 2]], ["守銭奴", "gold", [1, 2, 2, 3]], ["吸血", "kill", [1, 1, 2, 2]], ["耐魔", "drainres", [1, 1, 1, 2]],
     ["俊足", "flee", [1, 2, 2, 3]], ["先手", "first", [1, 1, 1, 1]], ["解毒", "poisonres", [1, 1, 1, 2]], ["節約", "skillcost", [1, 1, 1, 1]], ["術式", "skilldmg", [1, 1, 2, 2]],
-    ["癒し", "healpow", [1, 1, 2, 3]], ["報復", "counter", [1, 1, 2, 3]], ["守護", "guard", [1, 1, 2, 2]], ["背水", "lowhp", [1, 1, 1, 2]], ["加護", "barrier", [1, 1, 1, 1]],
+    ["癒し", "healpow", [1, 1, 2, 3]], ["報復", "counter", [1, 1, 2, 3]], ["背水", "lowhp", [1, 1, 1, 2]], ["加護", "barrier", [1, 1, 1, 1]],
     ["学び", "xp", [1, 2, 2, 3]], ["連撃", "double", [1, 1, 2, 2]], ["静寂", "nosp", [1, 1, 1, 1]], ["慧眼", "wischeck", [1, 1, 2, 2]]
   ];
   RTPL.forEach((r) => { const a = r[2], v = a[3]; if (["first", "barrier", "nosp"].indexOf(r[1]) >= 0) a.push(v, v); else a.push(Math.max(v + 1, Math.round(v * 1.5)), Math.max(v + 2, Math.round(v * 2))); });
-  const RCAP = { skillcost: 2, crit: 3, double: 3, first: 1, barrier: 1, nosp: 1, flee: 9, wischeck: 5, poisonres: 3, drainres: 3, guard: 6, counter: 6, lowhp: 4, sprec: 4, regen: 8 };
+  const RCAP = { skillcost: 2, crit: 3, double: 3, first: 1, barrier: 1, nosp: 1, flee: 9, wischeck: 5, poisonres: 3, drainres: 3, counter: 6, lowhp: 4, sprec: 4, regen: 8 };
   RTPL.forEach((r) => { const a = r[2], k = r[1], step = Math.max(0.5, (a[5] - a[3]) / 2.2); for (let t = 6; t <= 14; t++) a.push(Math.min(RCAP[k] || 999, Math.max(a[5], Math.round(a[5] + (t - 5) * step)))); });
   const RSUF = ["指輪", "銀指輪", "黒金指輪", "神鉄指輪", "星核の指輪", "創世の指輪", "星界の指輪", "次元の指輪", "天界の指輪", "神域の指輪", "超越の指輪", "久遠の指輪", "因果の指輪", "原初の指輪", "無限の指輪"];
   RTPL.forEach((r) => RSUF.forEach((sf, t) => { const b = {}; b[r[1]] = r[2][t]; RINGS.push({ kind: "ring", n: r[0] + "の" + sf, t: t, b: b }); }));
@@ -695,14 +718,14 @@ body:not(.title):not(.fighting) .stage { display: none; }
     ["欠けた聖印", 0, { nosp: 1 }], ["錆びた鈴", 0, { flee: 2 }], ["祈りの数珠", 0, { herb: 1 }], ["賢者の眼球", 1, { wischeck: 1 }], ["血の盃", 1, { kill: 1 }],
     ["星屑の羅針盤", 1, { gold: 2 }], ["黒い蝋燭", 2, { first: 1 }], ["沈黙の指輪", 2, { drainres: 1 }],
     ["蛇の指輪", 2, { poisonres: 1, dex: 1 }], ["竜血の指輪", 2, { hp: 10, dmg: 1 }], ["月影の指輪", 2, { first: 1, flee: 2 }], ["賢者の指輪", 2, { wis: 1, sp: 4 }],
-    ["獅子心の指輪", 2, { hp: 8, guard: 1 }], ["血誓の指輪", 2, { kill: 1, regen: 1 }], ["灰色の指輪", 2, { drainres: 1, skillcost: 1 }], ["隻眼の指輪", 2, { crit: 1, atk: 1 }],
+    ["獅子心の指輪", 2, { hp: 8 }], ["血誓の指輪", 2, { kill: 1, regen: 1 }], ["灰色の指輪", 2, { drainres: 1, skillcost: 1 }], ["隻眼の指輪", 2, { crit: 1, atk: 1 }],
     ["戦鬼の指輪", 3, { str: 1, dmg: 1, crit: 1 }], ["夜叉の指輪", 3, { dex: 2, double: 1 }], ["星読みの指輪", 3, { wis: 2, skilldmg: 1 }], ["不死者の指輪", 3, { hp: 14, regen: 1 }],
     ["王の指輪", 3, { def: 1, gold: 2, xp: 1 }], ["終末の指輪", 3, { dmg: 2, lowhp: 1 }], ["聖女の指輪", 3, { healpow: 2, sp: 6 }], ["虚無の指輪", 3, { drainres: 2, barrier: 1 }]
   ].forEach((r) => RINGS.push({ kind: "ring", n: r[0], t: r[1], b: r[2] }));
   [
     ["木彫りの御守", 0, { hp: 5 }], ["旅人の指輪", 0, { flee: 2, gold: 1 }], ["狩人の指輪", 1, { atk: 1, first: 1 }], ["聖水の指輪", 1, { poisonres: 1, healpow: 1 }], ["鉄血の指輪", 1, { hp: 8, dmg: 1 }],
     ["魔女の指輪", 2, { skilldmg: 1, sp: 4 }], ["百戦の指輪", 2, { atk: 1, dmg: 1, xp: 1 }], ["冥王の指輪", 3, { dmg: 3, drainres: 1, hp: 10 }], ["天鳴の指輪", 3, { atk: 2, crit: 2, first: 1 }],
-    ["天秤の指輪", 4, { atk: 2, dmg: 2, def: 1 }], ["竜王の指輪", 4, { hp: 20, def: 2, guard: 1 }], ["月蝕の指輪", 4, { first: 1, crit: 2, dex: 2 }], ["血盟の指輪", 4, { kill: 2, regen: 2, hp: 10 }],
+    ["天秤の指輪", 4, { atk: 2, dmg: 2, def: 1 }], ["竜王の指輪", 4, { hp: 20, def: 2 }], ["月蝕の指輪", 4, { first: 1, crit: 2, dex: 2 }], ["血盟の指輪", 4, { kill: 2, regen: 2, hp: 10 }],
     ["星海の指輪", 4, { wis: 2, sp: 10, skilldmg: 2 }], ["蒐集家の指輪", 4, { gold: 3, xp: 2, herb: 1 }], ["静謐の指輪", 4, { drainres: 2, poisonres: 2, barrier: 1 }], ["覇者の指輪", 4, { str: 2, dmg: 3, double: 1 }],
     ["創世の環", 5, { atk: 3, dmg: 3, crit: 2, hp: 15 }], ["終末の王冠環", 5, { dmg: 5, lowhp: 2, regen: 2 }], ["星海を渡る環", 5, { wis: 3, skilldmg: 3, skillcost: 1, sp: 12 }], ["不滅の環", 5, { hp: 30, regen: 3, barrier: 1 }],
     ["神喰らいの環", 5, { kill: 3, double: 2, dmg: 3 }], ["黄金時代の環", 5, { gold: 4, xp: 3, herb: 2, sprec: 2 }], ["夜明けの環", 5, { first: 1, dex: 3, flee: 4, crit: 2 }], ["虚無の王の環", 5, { drainres: 3, barrier: 1, counter: 3, def: 2 }]
@@ -714,11 +737,11 @@ body:not(.title):not(.fighting) .stage { display: none; }
     ["天穿つ竜槍", 4, "str", 6, 8, 10, "竜槍", { crit: 1, dmg: 1 }], ["無数の蛇腹剣", 4, "dex", 6, 7, 10, "双剣", { double: 2 }],
     ["創世の聖剣", 5, "str", 8, 14, 14, "聖剣", { crit: 3, hp: 20, regen: 2 }], ["神殺しの刀「終夜」", 5, "dex", 9, 12, 12, "刀", { first: 1, crit: 3, double: 1 }], ["終末の暗黒剣", 5, "str", 7, 17, 14, "暗黒剣", { lowhp: 3, kill: 3 }],
     ["星々を紡ぐ杖", 5, "wis", 8, 12, 12, "杖", { sp: 16, skilldmg: 4, skillcost: 2 }], ["彼方の魔導書", 5, "wis", 8, 11, 12, "魔導書", { skilldmg: 4, sprec: 2, sp: 12 }], ["神喰らいの絵筆", 5, "wis", 9, 11, 12, "絵筆", { skilldmg: 3, crit: 2 }],
-    ["夜明けの拳套", 5, "dex", 9, 12, 12, "拳套", { double: 3, first: 1 }], ["永劫の戦斧", 5, "str", 7, 16, 14, "戦斧", { hp: 25, guard: 2 }]
+    ["夜明けの拳套", 5, "dex", 9, 12, 12, "拳套", { double: 3, first: 1 }], ["永劫の戦斧", 5, "str", 7, 16, 14, "戦斧", { hp: 25 }]
   ].forEach((w) => WEAPONS.push({ kind: "weapon", n: w[0], t: w[1], stat: w[2], atk: w[3], dmg: w[4], die: w[5], wt: w[6], b: w[7] }));
-  [[ARMORS, "body", [["黎明の鎧", 4, 8, { hp: 20, guard: 1 }], ["星海の法衣", 4, 4, { sp: 12, wis: 2, healpow: 1 }], ["月影の忍装束", 4, 5, { dex: 2, first: 1, flee: 3 }], ["創世の神鎧", 5, 12, { hp: 36, regen: 2, barrier: 1 }], ["永劫のローブ", 5, 6, { sp: 20, skilldmg: 2, skillcost: 1 }], ["夜明けの外套", 5, 8, { dex: 3, first: 1, crit: 1 }]]],
+  [[ARMORS, "body", [["黎明の鎧", 4, 8, { hp: 20 }], ["星海の法衣", 4, 4, { sp: 12, wis: 2, healpow: 1 }], ["月影の忍装束", 4, 5, { dex: 2, first: 1, flee: 3 }], ["創世の神鎧", 5, 12, { hp: 36, regen: 2, barrier: 1 }], ["永劫のローブ", 5, 6, { sp: 20, skilldmg: 2, skillcost: 1 }], ["夜明けの外套", 5, 8, { dex: 3, first: 1, crit: 1 }]]],
     [HEADS, "head", [["黎明の兜", 4, 5, { hp: 12, def: 0 }], ["星海の宝冠", 4, 3, { sp: 8, healpow: 2 }], ["創世の王冠", 5, 7, { hp: 20, crit: 1, regen: 1 }], ["終末の仮面", 5, 4, { dmg: 3, lowhp: 1 }]]],
-    [FEET, "feet", [["黎明の具足", 4, 5, { hp: 10, guard: 1 }], ["月影の足袋", 4, 3, { dex: 2, first: 1 }], ["創世の具足", 5, 7, { hp: 18, flee: 3 }], ["夜明けの靴", 5, 4, { dex: 3, flee: 4, first: 1 }]]]
+    [FEET, "feet", [["黎明の具足", 4, 5, { hp: 10 }], ["月影の足袋", 4, 3, { dex: 2, first: 1 }], ["創世の具足", 5, 7, { hp: 18, flee: 3 }], ["夜明けの靴", 5, 4, { dex: 3, flee: 4, first: 1 }]]]
   ].forEach((g) => g[2].forEach((a) => g[0].push({ kind: g[1], n: a[0], t: a[1], def: a[2], b: a[3] })));
   /* ---- ジョブ専用の銘入り武器: Tier6/8/10/12/14 ---- */
   const SIG = {
@@ -745,7 +768,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     sage: ["錫杖", "role:heal", ["叡智の錫杖", "蛇胆の聖錫杖", "生命の知の錫杖", "悟りの大錫杖", "不朽の神錫杖"]]
   };
   const SIG_TPL = {
-    tank: (x) => ({ hp: 20 + 8 * x, guard: 1 + Math.floor(x / 3), dmg: 2 + x, barrier: 1 }),
+    tank: (x) => ({ hp: 20 + 8 * x, dmg: 2 + x, barrier: 1 }),
     melee: (x) => ({ crit: Math.min(3, 1 + Math.floor(x / 3)), double: Math.min(3, 1 + Math.floor(x / 4)), dmg: 3 + 2 * x, first: 1 }),
     phys: (x) => ({ crit: Math.min(3, 1 + Math.floor(x / 4)), skilldmg: 2 + x, dmg: 2 + x, atk: 1 + Math.floor(x / 3) }),
     magic: (x) => ({ skilldmg: 3 + 2 * x, sp: 10 + 4 * x, skillcost: 1, sprec: 1 }),
@@ -760,7 +783,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     });
     SIG_BY_JOB[jid].forEach((w) => WEAPONS.push(w));
   });
-  const ITEMS = { weapon: WEAPONS, head: HEADS, body: ARMORS, feet: FEET, ring: RINGS };
+  const ITEMS = { weapon: WEAPONS, head: HEADS, body: ARMORS, feet: FEET, hands: HANDS, legs: LEGS, ring: RINGS };
   /* ---- ジョブ専用武器種: 専用武器だと命中・ダメージが上がる ---- */
   const JOB_WT = { paladin: ["剣", "騎士剣", "聖剣"], warrior: ["戦斧", "戦槌", "鎚矛"], darkknight: ["大剣", "暗黒剣"], gunbreaker: ["銃剣"], monk: ["手甲", "拳套"], samurai: ["刀", "薙刀"], dragoon: ["長槍", "竜槍"],
     reaper: ["大鎌", "戦鎌"], ninja: ["苦無", "手裏剣"], viper: ["双剣", "鎖鞭"], bard: ["短弓", "竪琴"], machinist: ["短銃", "銃"], dancer: ["円月輪", "鎖鞭"], redmage: ["魔法剣"], pictomancer: ["絵筆"],
@@ -768,9 +791,9 @@ body:not(.title):not(.fighting) .stage { display: none; }
   const isJobWpn = (w, job) => !!(w && job && w.wt && (JOB_WT[job.id] || []).indexOf(w.wt) >= 0);
   const jobWpnB = (w, job) => { if (!isJobWpn(w, job)) return {}; const t = w.t || 0, h = Math.floor(t / 2), b = { atk: 1 + h, dmg: 1 + h }; if (t >= 3) b.crit = 1; return b; };
 
-  /* 汎用技は撤去。入手すると、その周回の間ずっと続く「永続効果」になる */
+  /* 汎用スキルは撤去。入手すると、その周回の間ずっと続く「永続効果」になる */
   const SKILLS = {}; /* 旧「永続効果」は廃止。成長はパッシブツリーに置き換えた */
-  /* 職業技: dmg/heal = [個数, 面数, 固定値, 能力値] */
+  /* 職業スキル: dmg/heal = [個数, 面数, 固定値, 能力値] */
   /* 時間制のバフ(自分)とデバフ(敵)。sec は戦闘中の実時間(秒) */
   const B = {
     dmg: (v, s) => ({ n: "攻撃↑" + Math.round(v * 100) + "%", sec: s, dmgUp: v }),
@@ -798,7 +821,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
   const KITS = {
     paladin: {
       combo: [C("斬り払い", "通常攻撃", { strikes: 1 }), C("斬り上げ", "ダメージ1.4倍", { strikes: 1, mult: 1.4 }), C("王剣の裁き", "ダメージ1.8倍。18秒間、出血", { strikes: 1, mult: 1.8, debuffs: [D.dot(3, 18, "出血")] })],
-      gcd: [[1, { n: "聖光の剣", cost: 4, desc: "必中 2d8+知恵修正", dmg: [2, 8, 0, "wis"] }], [6, { n: "癒しの誓い", cost: 4, desc: "HPを d8+6+知恵修正 回復", heal: [1, 8, 6, "wis"] }]],
+      gcd: [[1, { n: "聖光の剣", cost: 4, desc: "必中 2d8+知識修正", dmg: [2, 8, 0, "wis"] }], [6, { n: "癒しの誓い", cost: 4, desc: "HPを d8+6+知識修正 回復", heal: [1, 8, 6, "wis"] }]],
       abil: [[1, A("誓剣の構え", 40, "15秒間、与ダメージ+25%", { buffs: [B.dmg(0.25, 15)] })], [4, A("聖なる盾壁", 45, "15秒間、被ダメージ-30%", { buffs: [B.mit(0.3, 15)] })], [8, A("聖域の加護", 120, "10秒間、HPが1未満にならない", { buffs: [B.inv(10)] })]],
       lb: { n: "不落の聖域", desc: "10秒間HPが1未満にならず、15秒間被ダメージ-50%。HPを大きく回復", buffs: [B.inv(10), B.mit(0.5, 15)], heal: [2, 10, 10] } },
     warrior: {
@@ -854,7 +877,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     machinist: {
       combo: [C("速射", "通常攻撃", { strikes: 1 }), C("狙撃", "ダメージ1.4倍", { strikes: 1, mult: 1.4 }), C("精密射撃", "ダメージ1.8倍。MP+2(ヒート)", { strikes: 1, mult: 1.8, spGain: 2 })],
       gcd: [[1, { n: "榴弾", cost: 3, desc: "必中 d10+2+敏捷修正。敵の防御-1", dmg: [1, 10, 2, "dex"], defdown: 1 }], [6, { n: "過熱放射", cost: 6, desc: "必中 4d7+敏捷修正", dmg: [4, 7, 0, "dex"] }]],
-      abil: [[1, A("照準補正", 40, "次の攻撃・技が必ず会心", { buffs: [B.sure()] })], [4, A("自動砲台", 60, "必中 2d6+敏捷修正。15秒間、敵にスロウ", { dmg: [2, 6, 0, "dex"], debuffs: [D.slow(0.3, 15)] })], [8, A("戦術の展開", 90, "15秒間、被ダメージ-15%", { buffs: [B.mit(0.15, 15)] })]],
+      abil: [[1, A("照準補正", 40, "次の攻撃・スキルが必ず会心", { buffs: [B.sure()] })], [4, A("自動砲台", 60, "必中 2d6+敏捷修正。15秒間、敵にスロウ", { dmg: [2, 6, 0, "dex"], debuffs: [D.slow(0.3, 15)] })], [8, A("戦術の展開", 90, "15秒間、被ダメージ-15%", { buffs: [B.mit(0.15, 15)] })]],
       lb: { n: "大口径砲撃", desc: "必中の8d10+敏捷修正", dmg: [8, 10, 0, "dex"] } },
     dancer: {
       combo: [C("円舞斬", "通常攻撃", { strikes: 1 }), C("双輪舞", "ダメージ1.4倍", { strikes: 1, mult: 1.4 }), C("噴水の舞", "ダメージ1.6倍。次のATBが30%から始まる", { strikes: 1, mult: 1.6, haste: 30 })],
@@ -863,61 +886,61 @@ body:not(.title):not(.fighting) .stage { display: none; }
       lb: { n: "幕引きの大輪舞", desc: "20秒間、与ダメージ+20%・ヘイスト(+20%)。必中の5d10+5+敏捷修正", buffs: [B.dmg(0.2, 20), B.haste(0.2, 20)], dmg: [5, 10, 5, "dex"] } },
     redmage: {
       combo: [C("魔剣の突き", "通常攻撃", { strikes: 1 }), C("魔剣の斬り上げ", "ダメージ1.4倍", { strikes: 1, mult: 1.4 }), C("紅蓮の連撃", "ダメージ1.8倍。HPを d4+2 回復", { strikes: 1, mult: 1.8, heal: [1, 4, 2] })],
-      gcd: [[1, { n: "双魔の詠唱", cost: 3, desc: "必中 2d6+2+知恵修正", dmg: [2, 6, 2, "wis"] }], [6, { n: "共鳴", cost: 6, desc: "必中 3d6+知恵修正。半分を回復", dmg: [3, 6, 0, "wis"], leech: 0.5 }]],
-      abil: [[1, A("紅の鼓舞", 60, "20秒間、与ダメージ+20%", { buffs: [B.dmg(0.2, 20)] })], [4, A("魔法障壁", 60, "HPを d8+2+知恵修正 回復。15秒間、被ダメージ-15%", { heal: [1, 8, 2, "wis"], buffs: [B.mit(0.15, 15)] })], [8, A("魔力加速", 45, "ATBを40%溜め、MP+4", { atb: 40, spGain: 4 })]],
-      lb: { n: "紅蓮の剣閃", desc: "必中の5d12+5+知恵修正。HPを 2d8+5 回復", dmg: [5, 12, 5, "wis"], heal: [2, 8, 5] } },
+      gcd: [[1, { n: "双魔の詠唱", cost: 3, desc: "必中 2d6+2+知識修正", dmg: [2, 6, 2, "wis"] }], [6, { n: "共鳴", cost: 6, desc: "必中 3d6+知識修正。半分を回復", dmg: [3, 6, 0, "wis"], leech: 0.5 }]],
+      abil: [[1, A("紅の鼓舞", 60, "20秒間、与ダメージ+20%", { buffs: [B.dmg(0.2, 20)] })], [4, A("魔法障壁", 60, "HPを d8+2+知識修正 回復。15秒間、被ダメージ-15%", { heal: [1, 8, 2, "wis"], buffs: [B.mit(0.15, 15)] })], [8, A("魔力加速", 45, "ATBを40%溜め、MP+4", { atb: 40, spGain: 4 })]],
+      lb: { n: "紅蓮の剣閃", desc: "必中の5d12+5+知識修正。HPを 2d8+5 回復", dmg: [5, 12, 5, "wis"], heal: [2, 8, 5] } },
     pictomancer: {
-      combo: [C("彩色・赤", "必中 d6+1+知恵修正", { dmg: [1, 6, 1, "wis"] }), C("彩色・緑", "必中 d8+1+知恵修正", { dmg: [1, 8, 1, "wis"] }), C("彩色・青", "必中 2d6+2+知恵修正。MP+2", { dmg: [2, 6, 2, "wis"], spGain: 2 })],
-      gcd: [[1, { n: "白き聖画", cost: 3, desc: "必中 d10+2+知恵修正", dmg: [1, 10, 2, "wis"] }], [6, { n: "幻影の大画", cost: 7, desc: "必中 4d8+知恵修正。敵の防御-2", dmg: [4, 8, 0, "wis"], defdown: 2 }]],
-      abil: [[1, A("星空の絵画", 60, "20秒間、与ダメージ+20%", { buffs: [B.dmg(0.2, 20)] })], [4, A("塗り重ねの外套", 30, "10秒間バリア", { buffs: [B.shield(14, 10)] })], [8, A("獣の絵画", 30, "必中 2d8+知恵修正", { dmg: [2, 8, 0, "wis"] })]],
-      lb: { n: "天地を描く大画", desc: "必中の6d10+5+知恵修正。15秒間バリア", dmg: [6, 10, 5, "wis"], buffs: [B.shield(20, 15)] } },
+      combo: [C("彩色・赤", "必中 d6+1+知識修正", { dmg: [1, 6, 1, "wis"] }), C("彩色・緑", "必中 d8+1+知識修正", { dmg: [1, 8, 1, "wis"] }), C("彩色・青", "必中 2d6+2+知識修正。MP+2", { dmg: [2, 6, 2, "wis"], spGain: 2 })],
+      gcd: [[1, { n: "白き聖画", cost: 3, desc: "必中 d10+2+知識修正", dmg: [1, 10, 2, "wis"] }], [6, { n: "幻影の大画", cost: 7, desc: "必中 4d8+知識修正。敵の防御-2", dmg: [4, 8, 0, "wis"], defdown: 2 }]],
+      abil: [[1, A("星空の絵画", 60, "20秒間、与ダメージ+20%", { buffs: [B.dmg(0.2, 20)] })], [4, A("塗り重ねの外套", 30, "10秒間バリア", { buffs: [B.shield(14, 10)] })], [8, A("獣の絵画", 30, "必中 2d8+知識修正", { dmg: [2, 8, 0, "wis"] })]],
+      lb: { n: "天地を描く大画", desc: "必中の6d10+5+知識修正。15秒間バリア", dmg: [6, 10, 5, "wis"], buffs: [B.shield(20, 15)] } },
     blackmage: {
-      combo: [C("氷結", "必中 d6+知恵修正。MP+3", { dmg: [1, 6, 0, "wis"], spGain: 3 }), C("火炎", "必中 d10+3+知恵修正", { dmg: [1, 10, 3, "wis"] }), C("劫火", "必中 2d10+2+知恵修正", { dmg: [2, 10, 2, "wis"] })],
-      gcd: [[1, { n: "雷鳴", cost: 3, desc: "必中 d6+知恵修正。24秒間、感電", dmg: [1, 6, 0, "wis"], debuffs: [D.dot(4, 24, "感電")] }], [6, { n: "星墜", cost: 7, desc: "必中 4d8+知恵修正", dmg: [4, 8, 0, "wis"] }]],
+      combo: [C("氷結", "必中 d6+知識修正。MP+3", { dmg: [1, 6, 0, "wis"], spGain: 3 }), C("火炎", "必中 d10+3+知識修正", { dmg: [1, 10, 3, "wis"] }), C("劫火", "必中 2d10+2+知識修正", { dmg: [2, 10, 2, "wis"] })],
+      gcd: [[1, { n: "雷鳴", cost: 3, desc: "必中 d6+知識修正。24秒間、感電", dmg: [1, 6, 0, "wis"], debuffs: [D.dot(4, 24, "感電")] }], [6, { n: "星墜", cost: 7, desc: "必中 4d8+知識修正", dmg: [4, 8, 0, "wis"] }]],
       abil: [[1, A("魔力の盾", 60, "12秒間バリア", { buffs: [B.shield(14, 12)] })], [4, A("力場の展開", 90, "20秒間ヘイスト(+30%)とMP回復", { buffs: [B.haste(0.3, 20), B.mpregen(2, 20)] })], [8, A("三連詠唱", 60, "ATBを60%溜める", { atb: 60 })]],
-      lb: { n: "隕星の詠唱", desc: "必中の8d12+知恵修正", dmg: [8, 12, 0, "wis"] } },
+      lb: { n: "隕星の詠唱", desc: "必中の8d12+知識修正", dmg: [8, 12, 0, "wis"] } },
     summoner: {
-      combo: [C("魔弾", "必中 d6+1+知恵修正", { dmg: [1, 6, 1, "wis"] }), C("魔弾・連", "必中 d8+1+知恵修正", { dmg: [1, 8, 1, "wis"] }), C("魔弾・爆", "必中 2d6+2+知恵修正。12秒間、使い魔", { dmg: [2, 6, 2, "wis"], debuffs: [D.dot(3, 12, "使い魔")] })],
-      gcd: [[1, { n: "炎の召喚", cost: 4, desc: "必中 2d8+知恵修正。敵の防御-1", dmg: [2, 8, 0, "wis"], defdown: 1 }], [6, { n: "神獣降臨", cost: 7, desc: "必中 4d8+2+知恵修正。15秒間リジェネ", dmg: [4, 8, 2, "wis"], buffs: [B.regen(3, 15)] }]],
-      abil: [[1, A("灼熱の光輝", 60, "20秒間、与ダメージ+20%", { buffs: [B.dmg(0.2, 20)] })], [4, A("守護の輝盾", 60, "15秒間バリア", { buffs: [B.shield(12, 15)] })], [8, A("使い魔の牙", 20, "必中 2d6+知恵修正", { dmg: [2, 6, 0, "wis"] })]],
-      lb: { n: "神竜の咆哮", desc: "必中の6d12+5+知恵修正。18秒間、業火", dmg: [6, 12, 5, "wis"], debuffs: [D.dot(6, 18, "業火")] } },
+      combo: [C("魔弾", "必中 d6+1+知識修正", { dmg: [1, 6, 1, "wis"] }), C("魔弾・連", "必中 d8+1+知識修正", { dmg: [1, 8, 1, "wis"] }), C("魔弾・爆", "必中 2d6+2+知識修正。12秒間、使い魔", { dmg: [2, 6, 2, "wis"], debuffs: [D.dot(3, 12, "使い魔")] })],
+      gcd: [[1, { n: "炎の召喚", cost: 4, desc: "必中 2d8+知識修正。敵の防御-1", dmg: [2, 8, 0, "wis"], defdown: 1 }], [6, { n: "神獣降臨", cost: 7, desc: "必中 4d8+2+知識修正。15秒間リジェネ", dmg: [4, 8, 2, "wis"], buffs: [B.regen(3, 15)] }]],
+      abil: [[1, A("灼熱の光輝", 60, "20秒間、与ダメージ+20%", { buffs: [B.dmg(0.2, 20)] })], [4, A("守護の輝盾", 60, "15秒間バリア", { buffs: [B.shield(12, 15)] })], [8, A("使い魔の牙", 20, "必中 2d6+知識修正", { dmg: [2, 6, 0, "wis"] })]],
+      lb: { n: "神竜の咆哮", desc: "必中の6d12+5+知識修正。18秒間、業火", dmg: [6, 12, 5, "wis"], debuffs: [D.dot(6, 18, "業火")] } },
     scholar: {
-      combo: [C("呪弾", "必中 d6+1+知恵修正", { dmg: [1, 6, 1, "wis"] }), C("呪弾・連", "必中 d8+1+知恵修正", { dmg: [1, 8, 1, "wis"] }), C("蝕みの呪弾", "必中 d8+2+知恵修正。18秒間、蝕み", { dmg: [1, 8, 2, "wis"], debuffs: [D.dot(3, 18, "蝕み")] })],
-      gcd: [[1, { n: "鼓舞の策", cost: 3, desc: "HPを d6+3+知恵修正 回復し、15秒間バリア", heal: [1, 6, 3, "wis"], buffs: [B.shield(10, 15)] }], [6, { n: "生命の天秤", cost: 6, desc: "HPを 2d8+6+知恵修正 回復し、毒を消し、MP+2", heal: [2, 8, 6, "wis"], cure: 1, spGain: 2 }]],
-      abil: [[1, A("弱点の看破", 60, "15秒間、敵の被ダメージ+15%。次の攻撃が必ず会心", { debuffs: [D.vuln(0.15, 15)], buffs: [B.sure()] })], [4, A("野戦治療の陣", 60, "18秒間、被ダメージ-15%とリジェネ", { buffs: [B.mit(0.15, 18), B.regen(3, 18)] })], [8, A("妖精の癒し", 30, "HPを d8+4+知恵修正 回復", { heal: [1, 8, 4, "wis"] })]],
+      combo: [C("呪弾", "必中 d6+1+知識修正", { dmg: [1, 6, 1, "wis"] }), C("呪弾・連", "必中 d8+1+知識修正", { dmg: [1, 8, 1, "wis"] }), C("蝕みの呪弾", "必中 d8+2+知識修正。18秒間、蝕み", { dmg: [1, 8, 2, "wis"], debuffs: [D.dot(3, 18, "蝕み")] })],
+      gcd: [[1, { n: "鼓舞の策", cost: 3, desc: "HPを d6+3+知識修正 回復し、15秒間バリア", heal: [1, 6, 3, "wis"], buffs: [B.shield(10, 15)] }], [6, { n: "生命の天秤", cost: 6, desc: "HPを 2d8+6+知識修正 回復し、毒を消し、MP+2", heal: [2, 8, 6, "wis"], cure: 1, spGain: 2 }]],
+      abil: [[1, A("弱点の看破", 60, "15秒間、敵の被ダメージ+15%。次の攻撃が必ず会心", { debuffs: [D.vuln(0.15, 15)], buffs: [B.sure()] })], [4, A("野戦治療の陣", 60, "18秒間、被ダメージ-15%とリジェネ", { buffs: [B.mit(0.15, 18), B.regen(3, 18)] })], [8, A("妖精の癒し", 30, "HPを d8+4+知識修正 回復", { heal: [1, 8, 4, "wis"] })]],
       lb: { n: "生命の律動", desc: "HPを全回復し、毒を消す。18秒間、被ダメージ-30%", fullHeal: 1, cure: 1, buffs: [B.mit(0.3, 18)] } },
     whitemage: {
-      combo: [C("聖石", "必中 d6+1+知恵修正", { dmg: [1, 6, 1, "wis"] }), C("聖石・連", "必中 d8+1+知恵修正", { dmg: [1, 8, 1, "wis"] }), C("聖光", "必中 d8+2+知恵修正。18秒間、聖痕", { dmg: [1, 8, 2, "wis"], debuffs: [D.dot(3, 18, "聖痕")] })],
-      gcd: [[1, { n: "癒しの手", cost: 3, desc: "HPを d8+4+知恵修正 回復", heal: [1, 8, 4, "wis"] }], [6, { n: "再生の祈り", cost: 3, desc: "毒を消し、18秒間リジェネ", cure: 1, buffs: [B.regen(4, 18)] }]],
+      combo: [C("聖石", "必中 d6+1+知識修正", { dmg: [1, 6, 1, "wis"] }), C("聖石・連", "必中 d8+1+知識修正", { dmg: [1, 8, 1, "wis"] }), C("聖光", "必中 d8+2+知識修正。18秒間、聖痕", { dmg: [1, 8, 2, "wis"], debuffs: [D.dot(3, 18, "聖痕")] })],
+      gcd: [[1, { n: "癒しの手", cost: 3, desc: "HPを d8+4+知識修正 回復", heal: [1, 8, 4, "wis"] }], [6, { n: "再生の祈り", cost: 3, desc: "毒を消し、18秒間リジェネ", cure: 1, buffs: [B.regen(4, 18)] }]],
       abil: [[1, A("神の加護", 30, "15秒間バリア", { buffs: [B.shield(10, 15)] })], [4, A("祈りの集中", 90, "15秒間ヘイスト(+30%)", { buffs: [B.haste(0.3, 15)] })], [8, A("神の祝福", 120, "HPを全回復", { fullHeal: 1 })]],
       lb: { n: "天上の聖歌", desc: "HPを全回復し、毒を消す。24秒間リジェネ", fullHeal: 1, cure: 1, buffs: [B.regen(5, 24)] } },
     astrologian: {
-      combo: [C("星弾", "必中 d6+1+知恵修正", { dmg: [1, 6, 1, "wis"] }), C("星弾・連", "必中 d8+1+知恵修正", { dmg: [1, 8, 1, "wis"] }), C("凶星", "必中 d8+2+知恵修正。18秒間、凶星", { dmg: [1, 8, 2, "wis"], debuffs: [D.dot(3, 18, "凶星")] })],
-      gcd: [[1, { n: "星の加護", cost: 3, desc: "HPを d6+2+知恵修正 回復し、15秒間リジェネ", heal: [1, 6, 2, "wis"], buffs: [B.regen(3, 15)] }], [6, { n: "天球の巡り", cost: 5, desc: "HPを d8+6+知恵修正 回復し、MP+3", heal: [1, 8, 6, "wis"], spGain: 3 }]],
+      combo: [C("星弾", "必中 d6+1+知識修正", { dmg: [1, 6, 1, "wis"] }), C("星弾・連", "必中 d8+1+知識修正", { dmg: [1, 8, 1, "wis"] }), C("凶星", "必中 d8+2+知識修正。18秒間、凶星", { dmg: [1, 8, 2, "wis"], debuffs: [D.dot(3, 18, "凶星")] })],
+      gcd: [[1, { n: "星の加護", cost: 3, desc: "HPを d6+2+知識修正 回復し、15秒間リジェネ", heal: [1, 6, 2, "wis"], buffs: [B.regen(3, 15)] }], [6, { n: "天球の巡り", cost: 5, desc: "HPを d8+6+知識修正 回復し、MP+3", heal: [1, 8, 6, "wis"], spGain: 3 }]],
       abil: [[1, A("運命のカード", 30, "15秒間、与ダメージ+15%", { buffs: [B.dmg(0.15, 15)] })], [4, A("光速の詠唱", 90, "15秒間ヘイスト(+30%)", { buffs: [B.haste(0.3, 15)] })], [8, A("運命の星図", 90, "15秒間、与ダメージ+25%・会心↑", { buffs: [B.dmg(0.25, 15), B.crit(2, 15)] })]],
       lb: { n: "星々の慈悲", desc: "HPを全回復する。20秒間、与ダメージ+25%", fullHeal: 1, buffs: [B.dmg(0.25, 20)] } },
     sage: {
-      combo: [C("叡智の矢", "必中 d6+1+知恵修正", { dmg: [1, 6, 1, "wis"] }), C("叡智の矢・連", "必中 d8+1+知恵修正", { dmg: [1, 8, 1, "wis"] }), C("毒の叡智", "必中 d8+2+知恵修正。18秒間、蝕毒", { dmg: [1, 8, 2, "wis"], debuffs: [D.dot(3, 18, "蝕毒")] })],
-      gcd: [[1, { n: "叡智の障壁", cost: 3, desc: "HPを d4+2 回復し、15秒間バリア", heal: [1, 4, 2], buffs: [B.shield(12, 15)] }], [6, { n: "叡智の刺突", cost: 4, desc: "必中 2d8+知恵修正", dmg: [2, 8, 0, "wis"] }]],
-      abil: [[1, A("心核の絆", 60, "30秒間、与ダメージの3割を吸収", { buffs: [B.steal(0.3, 30)] })], [4, A("生命の盾", 60, "15秒間バリアとリジェネ", { buffs: [B.shield(15, 15), B.regen(3, 15)] })], [8, A("叡智の解放", 45, "必中 2d6+2+知恵修正。HPを d6+2+知恵修正 回復", { dmg: [2, 6, 2, "wis"], heal: [1, 6, 2, "wis"] })]],
+      combo: [C("叡智の矢", "必中 d6+1+知識修正", { dmg: [1, 6, 1, "wis"] }), C("叡智の矢・連", "必中 d8+1+知識修正", { dmg: [1, 8, 1, "wis"] }), C("毒の叡智", "必中 d8+2+知識修正。18秒間、蝕毒", { dmg: [1, 8, 2, "wis"], debuffs: [D.dot(3, 18, "蝕毒")] })],
+      gcd: [[1, { n: "叡智の障壁", cost: 3, desc: "HPを d4+2 回復し、15秒間バリア", heal: [1, 4, 2], buffs: [B.shield(12, 15)] }], [6, { n: "叡智の刺突", cost: 4, desc: "必中 2d8+知識修正", dmg: [2, 8, 0, "wis"] }]],
+      abil: [[1, A("心核の絆", 60, "30秒間、与ダメージの3割を吸収", { buffs: [B.steal(0.3, 30)] })], [4, A("生命の盾", 60, "15秒間バリアとリジェネ", { buffs: [B.shield(15, 15), B.regen(3, 15)] })], [8, A("叡智の解放", 45, "必中 2d6+2+知識修正。HPを d6+2+知識修正 回復", { dmg: [2, 6, 2, "wis"], heal: [1, 6, 2, "wis"] })]],
       lb: { n: "叡智の大結界", desc: "HPを全回復し、毒を消す。20秒間、大きなバリア", fullHeal: 1, cure: 1, buffs: [B.shield(30, 20)] } }
   };
   const TRAITS = {
-    hp: "最大HP+600", sp: "最大MP+300", str: "筋力+1", dex: "敏捷+1", wis: "知恵+1",
+    hp: "最大HP+600", sp: "最大MP+300", str: "筋力+1", dex: "敏捷+1", wis: "知識+1",
     atk: "命中+1", dmg: "与ダメージ+100", def: "防御+1", crit: "会心の範囲が1広がる",
     regen: "先へ進むたびHP+100", sprec: "先へ進むたびMP+100", herb: "ポーションの回復+300",
     gold: "獲得ギル+15%", kill: "敵を倒すとHP+200", drainres: "MPを奪う攻撃の効果-100",
     flee: "逃走判定+2", first: "戦闘開始時の最初の攻撃の命中+3", poisonres: "毒の持続-1",
-    skillcost: "技のMP消費-100(最低100)", skilldmg: "技のダメージ+300", healpow: "回復の量+300",
-    counter: "攻撃を受けると25%で反撃(200〜700)", guard: "身を守る時の防御+2",
+    skillcost: "スキルのMP消費-100(最低100)", skilldmg: "スキルのダメージ+300", healpow: "回復の量+300",
+    counter: "攻撃を受けると25%で反撃(200〜700)", guard: "防御+2",
     lowhp: "HPが1/3以下で、ダメージ+300・防御+1", barrier: "戦闘開始時、敵の1回の行動の間、被ダメージ半減",
     xp: "獲得経験値+15%", double: "攻撃時20%で追撃(100〜600)"
   };
-  /* traits: [習得Lv, 名前, 効果キー] / skills: [習得Lv, 技ID] */
+  /* traits: [習得Lv, 名前, 効果キー] / skills: [習得Lv, スキルID] */
   const JOBS = [
     { id: "paladin", n: "ナイト", str: 1, dex: 0, wis: 1, hp: 8, sp: 0, wpn: "古びた長剣", arm: "鎖帷子",
       desc: "高いHPと防御で耐える。反撃と被ダメージ軽減が得意。",
-            traits: [[2, "不屈の誓い", "hp"], [3, "鉄壁の構え", "def"], [4, "騎士の加護", "barrier"], [6, "盾を掲げる者", "guard"], [8, "反撃の構え", "counter"], [10, "殉教者の心", "drainres"], [12, "聖なる意志", "def"]] },
+            traits: [[2, "不屈の誓い", "hp"], [3, "鉄壁の構え", "def"], [4, "騎士の加護", "barrier"], [6, "盾を掲げる者", "def"], [8, "反撃の構え", "counter"], [10, "殉教者の心", "drainres"], [12, "聖なる意志", "def"]] },
     { id: "warrior", n: "戦士", str: 2, dex: 0, wis: 0, hp: 10, sp: 0, cost: 30, wpn: "無骨な戦斧", arm: "革の胸当て",
       desc: "怒りを力に変える重戦士。傷つくほど、一撃も反撃も重くなる。",
             traits: [[2, "不屈の体躯", "hp"], [3, "荒ぶる闘気", "dmg"], [4, "戦場の生還者", "regen"], [6, "傷は勲章", "lowhp"], [8, "猛き反撃", "counter"], [10, "鬼神の気迫", "hp"], [12, "終わらぬ怒り", "crit"]] },
@@ -926,7 +949,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
             traits: [[2, "血の渇き", "dmg"], [3, "闇の力", "lowhp"], [4, "渇きを癒す刃", "kill"], [6, "不死の執念", "hp"], [8, "闇の外殻", "def"], [10, "飢えた魂", "dmg"], [12, "終末の剣", "crit"]] },
     { id: "gunbreaker", n: "ガンブレイカー", str: 1, dex: 1, wis: 0, hp: 6, sp: 0, cost: 50, wpn: "火薬仕掛けの剣", arm: "革の胸当て",
       desc: "火薬を仕込んだ剣で戦う。盾と連続爆裂で、守りと攻めを両立する。",
-            traits: [[2, "装填の手際", "atk"], [3, "硝煙の加護", "def"], [4, "炸薬の備蓄", "sp"], [6, "荒々しい牙", "dmg"], [8, "盾と刃", "guard"], [10, "獣の本能", "hp"], [12, "爆ぜる魂", "crit"]] },
+            traits: [[2, "装填の手際", "atk"], [3, "硝煙の加護", "def"], [4, "炸薬の備蓄", "sp"], [6, "荒々しい牙", "dmg"], [8, "盾と刃", "def"], [10, "獣の本能", "hp"], [12, "爆ぜる魂", "crit"]] },
     { id: "monk", n: "モンク", str: 1, dex: 2, wis: 0, hp: 4, sp: 2, wpn: "鉄の手甲", arm: "革の胸当て",
       desc: "素手の連撃で戦う。会心と追撃で爆発力がある。",
             traits: [[2, "鍛えた拳", "dmg"], [3, "心眼", "atk"], [4, "静かな呼吸", "regen"], [6, "見切り", "def"], [8, "達人の域", "crit"], [10, "不動心", "drainres"], [12, "無我の境地", "double"]] },
@@ -962,13 +985,13 @@ body:not(.title):not(.fighting) .stage { display: none; }
             traits: [[2, "色彩感覚", "skilldmg"], [3, "創作意欲", "sp"], [4, "素早い筆致", "skillcost"], [6, "絵画の記憶", "healpow"], [8, "鮮やかな幻", "skilldmg"], [10, "芸術の極み", "wis"], [12, "傑作", "crit"]] },
     { id: "blackmage", n: "黒魔道士", str: 0, dex: 0, wis: 3, hp: 0, sp: 4, wpn: "見習いの魔導書", arm: "擦り切れた僧衣",
       desc: "必中の攻撃魔法で圧倒する。HPは低く、MPが命。",
-            traits: [[2, "魔力の理解", "skilldmg"], [3, "深い集中", "sp"], [4, "詠唱短縮", "skillcost"], [6, "魔力の奔流", "skilldmg"], [8, "知恵の探求", "wis"], [10, "禁術の理", "skilldmg"], [12, "大魔導の境地", "skillcost"]] },
+            traits: [[2, "魔力の理解", "skilldmg"], [3, "深い集中", "sp"], [4, "詠唱短縮", "skillcost"], [6, "魔力の奔流", "skilldmg"], [8, "知識の探求", "wis"], [10, "禁術の理", "skilldmg"], [12, "大魔導の境地", "skillcost"]] },
     { id: "summoner", n: "召喚士", str: 0, dex: 0, wis: 3, hp: 0, sp: 4, cost: 40, wpn: "契約の宝珠", arm: "擦り切れた僧衣",
       desc: "契約した存在を呼び出す。持続する毒と、強力な一撃を使い分ける。",
             traits: [[2, "契約の理解", "skilldmg"], [3, "魔力の貯蔵", "sp"], [4, "使い魔の加護", "def"], [6, "繋がる魂", "sprec"], [8, "召喚の熟練", "skillcost"], [10, "神獣との絆", "skilldmg"], [12, "契約の頂", "crit"]] },
     { id: "scholar", n: "学者", str: 0, dex: 1, wis: 2, hp: 0, sp: 4, cost: 40, wpn: "学術書", arm: "擦り切れた僧衣",
       desc: "知識で戦う。障壁を張り、毒を盛り、命の天秤で立て直す。",
-            traits: [[2, "学識", "wis"], [3, "応急手当", "herb"], [4, "演算", "sp"], [6, "知恵の泉", "healpow"], [8, "先読み", "first"], [10, "博識", "xp"], [12, "探求の果て", "sprec"]] },
+            traits: [[2, "学識", "wis"], [3, "応急手当", "herb"], [4, "演算", "sp"], [6, "知識の泉", "healpow"], [8, "先読み", "first"], [10, "博識", "xp"], [12, "探求の果て", "sprec"]] },
     { id: "whitemage", n: "白魔道士", str: 0, dex: 0, wis: 2, hp: 0, sp: 4, wpn: "聖別された杖", arm: "擦り切れた僧衣",
       desc: "回復と浄化の専門家。MPが多く、長く潜れる。",
             traits: [[2, "癒しの心得", "healpow"], [3, "祈りの泉", "sp"], [4, "慈悲", "herb"], [6, "聖句の囁き", "sprec"], [8, "清らかな意志", "drainres"], [10, "大いなる癒し", "healpow"], [12, "神の庇護", "regen"]] },
@@ -977,11 +1000,11 @@ body:not(.title):not(.fighting) .stage { display: none; }
             traits: [[2, "星の導き", "atk"], [3, "幸運の星", "gold"], [4, "星見の眼", "wis"], [6, "天球の加護", "sprec"], [8, "運命の糸", "flee"], [10, "吉兆", "xp"], [12, "星々の祝福", "regen"]] },
     { id: "sage", n: "賢者", str: 0, dex: 0, wis: 3, hp: 2, sp: 4, cost: 50, wpn: "叡智の杖", arm: "擦り切れた僧衣",
       desc: "叡智で守り、癒し、かわす。守りを固めながら削る。",
-            traits: [[2, "叡智の探求", "wis"], [3, "静かな心", "drainres"], [4, "生命の知識", "healpow"], [6, "賢者の備え", "barrier"], [8, "瞑想", "sprec"], [10, "不朽の知恵", "hp"], [12, "悟りの境地", "regen"]] }
+            traits: [[2, "叡智の探求", "wis"], [3, "静かな心", "drainres"], [4, "生命の知識", "healpow"], [6, "賢者の備え", "barrier"], [8, "瞑想", "sprec"], [10, "不朽の知識", "hp"], [12, "悟りの境地", "regen"]] }
   ];
 
-  /* ---- 追加スキル: GCD技 Lv16/32/56、アビリティ Lv24/48 ---- */
-  const STN = { str: "筋力", dex: "敏捷", wis: "知恵" };
+  /* ---- 追加スキル: GCDスキル Lv16/32/56、アビリティ Lv24/48 ---- */
+  const STN = { str: "筋力", dex: "敏捷", wis: "知識", skl: "器用さ" };
   function autoDesc(o) {
     const p = [];
     if (o.crits) p.push("必ず会心");
@@ -1050,7 +1073,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
   [ "paladin", "warrior", "darkknight", "gunbreaker", "monk", "samurai", "dragoon", "reaper", "ninja", "viper" ].forEach((id) => { const j = JOBS.find((x) => x.id === id); if (j && j.desc.indexOf("殴り合い") < 0) j.desc += "【殴り合い】ATBが速く、被弾せず殴り続けるほど強くなる。"; });
   /* Lv14〜100: 2レベルごとに、職の性格に合ったパッシブが伸びる(自動生成) */
   const TRAIT_CYCLE = {
-    tank: ["hp", "def", "guard", "dmg", "regen", "atk", "kill", "barrier"],
+    tank: ["hp", "def", "dmg", "regen", "atk", "kill", "barrier"],
     melee: ["dmg", "atk", "hp", "kill", "dmg", "def", "regen", "atk"],
     phys: ["dmg", "atk", "skilldmg", "hp", "kill", "def", "regen", "sp"],
     magic: ["skilldmg", "sp", "healpow", "hp", "sprec", "atk", "regen", "skilldmg"],
@@ -1073,7 +1096,8 @@ body:not(.title):not(.fighting) .stage { display: none; }
   const UPS = [
     { k: "str", n: "筋力", base: 15, eff: (lv) => soft(lv, 10, 5) },
     { k: "dex", n: "敏捷", base: 15, eff: (lv) => soft(lv, 10, 5) },
-    { k: "wis", n: "知恵", base: 15, eff: (lv) => soft(lv, 10, 5) },
+    { k: "wis", n: "知識", base: 15, eff: (lv) => soft(lv, 10, 5) },
+    { k: "skl", n: "器用さ", base: 15, eff: (lv) => soft(lv, 10, 5) },
     { k: "hp", n: "最大HP", base: 12, eff: (lv) => 3 * soft(lv, 10, 4) },
     { k: "sp", n: "最大MP", base: 12, eff: (lv) => 2 * soft(lv, 10, 4) },
     { k: "gold", n: "初期ギル", base: 8, eff: (lv) => (lv <= 10 ? 10 * lv : 100 + 5 * (lv - 10)) },
@@ -1081,7 +1105,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
   ];
   const upv = (u, lv) => ((u.k === "hp" || u.k === "sp") ? NF(sc(u.eff(lv))) : u.eff(lv));
   const upCost = (u, lv) => (lv < 5 ? u.base * (lv + 1) : u.base * 5 + Math.floor(u.base * (lv - 4) * 0.5));
-  const upEff = (k) => UPS.find((u) => u.k === k).eff(rec.up[k]);
+  const upEff = (k) => UPS.find((u) => u.k === k).eff(rec.up[k] || 0);
 
   /* 敵: z=出現層。drain=MPを奪う / poison=毒 / twice=2回攻撃 / regen=自己再生 */
   /* 雑兵: 何番目の拠点か(0〜4)で強さの段階が変わる */
@@ -1394,7 +1418,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
   /* ================= 永続データ ================= */
   const REC_KEY = "lantern-stairs-record-v2";
   function defaultRec() {
-    return { best: 0, runs: 0, ash: 0, atbActive: false, up: { str: 0, dex: 0, wis: 0, hp: 0, sp: 0, gold: 0, herb: 0 }, unlocked: [], sound: true, bgm: true, deep: 0, ghost: null, t: 0 };
+    return { best: 0, runs: 0, ash: 0, atbActive: false, up: { str: 0, dex: 0, wis: 0, skl: 0, hp: 0, sp: 0, gold: 0, herb: 0 }, unlocked: [], sound: true, bgm: true, deep: 0, ghost: null, t: 0 };
   }
   function loadRec() {
     const r = defaultRec();
@@ -1723,7 +1747,9 @@ body:not(.title):not(.fighting) .stage { display: none; }
   /* ================= 状態 ================= */
   let G = null, enemy = null, inBattle = false;
   let preview = null, jobId = "paladin";
-  const rollStats = () => ({ str: d(6) + d(6) + 6, dex: d(6) + d(6) + 6, wis: d(6) + d(6) + 6 });
+  const rollStats = () => ({ str: d(6) + d(6) + 6, dex: d(6) + d(6) + 6, wis: d(6) + d(6) + 6, skl: d(6) + d(6) + 6 });
+  const SKL = () => (G.skl == null ? (G.skl = 10) : G.skl);
+  const JOB_SKL = { ninja: 3, machinist: 3, bard: 2, dancer: 2, viper: 2, samurai: 2, monk: 2, pictomancer: 2, dragoon: 1, gunbreaker: 1, redmage: 1, scholar: 1, reaper: 1, astrologian: 1 };
   const isUnlocked = (j) => !j.cost || rec.unlocked.indexOf(j.id) >= 0;
   const currentJob = () => { const j = JOBS.find((x) => x.id === jobId); return j && isUnlocked(j) ? j : JOBS[0]; };
   const SK = (k) => SKILLS[k] || JSKILLS[k];
@@ -1734,7 +1760,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
   const MAXLV = 100;
   const xpNeed = (l) => 12 + 10 * l + Math.round(0.01 * l * l * l);
   /* 装備 */
-  const gearList = () => (G ? [G.wpn, G.head, G.body, G.feet, G.rings[0], G.rings[1]].filter(Boolean) : []);
+  const gearList = () => (G ? [G.wpn, G.head, G.body, G.feet, G.hands, G.legs, G.rings[0], G.rings[1]].filter(Boolean) : []);
   const E = (k) => {
     let v = 0;
     gearList().forEach((it) => { v += (it.b && it.b[k]) || 0; });
@@ -1744,10 +1770,10 @@ body:not(.title):not(.fighting) .stage { display: none; }
     }
     return v;
   };
-  const armDef = () => (G.head ? G.head.def : 0) + (G.body ? G.body.def : 0) + (G.feet ? G.feet.def : 0);
+  const armDef = () => (G.head ? G.head.def : 0) + (G.body ? G.body.def : 0) + (G.feet ? G.feet.def : 0) + (G.hands ? G.hands.def : 0) + (G.legs ? G.legs.def : 0) + (G.hands ? G.hands.def : 0) * 2 * E("hdef") + (G.legs ? G.legs.def : 0) * 2 * E("ldef");
   const T = (key) => (G ? G.traits.filter((t) => t.key === key).length + E(key) : 0);
-  const SLOTKEY = { weapon: "wpn", head: "head", body: "body", feet: "feet" };
-  function applyGear(it, sg) { if (!it || !it.b) return; ["str", "dex", "wis"].forEach((k) => { if (it.b[k]) G[k] += sg * it.b[k]; }); }
+  const SLOTKEY = { weapon: "wpn", head: "head", body: "body", feet: "feet", hands: "hands", legs: "legs" };
+  function applyGear(it, sg) { if (!it || !it.b) return; SKL(); ["str", "dex", "wis", "skl"].forEach((k) => { if (it.b[k]) G[k] += sg * it.b[k]; }); }
   function getSlot(slot) { return slot === "r0" ? G.rings[0] : slot === "r1" ? G.rings[1] : G[slot]; }
   function equipTo(slot, it) {
     const old = getSlot(slot);
@@ -1766,10 +1792,10 @@ body:not(.title):not(.fighting) .stage { display: none; }
     const j = currentJob(), u = rec.up;
     G = {
       floor: 0, hp: 1, sp: 1, maxHp: 1, maxSp: 1,
-      str: preview.str + upEff("str") + j.str, dex: preview.dex + upEff("dex") + j.dex, wis: preview.wis + upEff("wis") + j.wis,
+      str: preview.str + upEff("str") + j.str, dex: preview.dex + upEff("dex") + j.dex, wis: preview.wis + upEff("wis") + j.wis, skl: (preview.skl == null ? 10 : preview.skl) + upEff("skl") + (j.skl || JOB_SKL[j.id] || 0),
       hpBonus: j.hp, spBonus: j.sp,
       gold: 10 + upEff("gold"), herb: 2 + upEff("herb"), incense: 1,
-      wpn: byName(WEAPONS, j.wpn), head: null, body: byName(ARMORS, j.arm), feet: null, rings: [null, null],
+      wpn: byName(WEAPONS, j.wpn), head: null, body: byName(ARMORS, j.arm), feet: null, hands: null, legs: null, rings: [null, null],
       items: {}, deep: false, cleared: false, god: null,
       job: j, lv: 1, xp: 0, traits: [],
       combo: 0, comboT: 0, rc: {},
@@ -2206,15 +2232,15 @@ body:not(.title):not(.fighting) .stage { display: none; }
     });
   }
   const BT = {
-    hp: (v) => "最大HP+" + NF(sc(v)), sp: (v) => "最大MP+" + NF(sc(v)), str: (v) => "筋力+" + v, dex: (v) => "敏捷+" + v, wis: (v) => "知恵+" + v,
+    hp: (v) => "最大HP+" + NF(sc(v)), sp: (v) => "最大MP+" + NF(sc(v)), str: (v) => "筋力+" + v, dex: (v) => "敏捷+" + v, wis: (v) => "知識+" + v, skl: (v) => "器用さ+" + v,
     def: (v) => "防御+" + v, atk: (v) => "命中+" + v, dmg: (v) => "ダメージ+" + NF(sc(v)), crit: (v) => "会心範囲+" + v,
     regen: (v) => "進むたびHP+" + NF(sc(v)), sprec: (v) => "進むたびMP+" + NF(sc(v)), herb: (v) => "ポーション回復+" + NF(sc(3 * v)), gold: (v) => "獲得ギル+" + 15 * v + "%",
     kill: (v) => "撃破時HP+" + NF(sc(2 * v)), drainres: (v) => "MP奪取-" + NF(sc(v)), flee: (v) => "逃走+" + 2 * v, first: () => "初撃の命中+3", poisonres: (v) => "毒の持続-" + v,
-    skillcost: (v) => "技のMP-" + NF(sc(v)), skilldmg: (v) => "技ダメージ+" + NF(sc(3 * v)), healpow: (v) => "回復量+" + NF(sc(3 * v)), counter: (v) => "反撃率+" + 25 * v + "%",
-    guard: (v) => "身を守る防御+" + 2 * v, lowhp: (v) => "瀕死時 ダメージ+" + NF(sc(3 * v)) + "・防御+" + v, barrier: () => "開戦時 被ダメ半減", xp: (v) => "獲得経験値+" + 15 * v + "%",
-    double: (v) => "追撃率+" + 20 * v + "%", nosp: () => "MPが自然に減らない", wischeck: (v) => "知恵判定+" + 2 * v, edef: (v) => "敵の防御-" + v, eatk: (v) => "敵の命中-" + v
+    skillcost: (v) => "スキルのMP-" + NF(sc(v)), skilldmg: (v) => "スキルダメージ+" + NF(sc(3 * v)), healpow: (v) => "回復量+" + NF(sc(3 * v)), counter: (v) => "反撃率+" + 25 * v + "%",
+    guard: (v) => "防御+" + 2 * v, lowhp: (v) => "瀕死時 ダメージ+" + NF(sc(3 * v)) + "・防御+" + v, barrier: () => "開戦時 被ダメ半減", xp: (v) => "獲得経験値+" + 15 * v + "%",
+    resolute: () => "会心が出なくなる", bulwark: () => "身を守る間の被ダメ-30%・影は完全回避できない", dwd: () => "手の防具なしで行動+25%速", leech: (v) => "HP吸収+" + 2 * v + "%", deflect: (v) => "受け流し率+" + 25 * v + "%(被ダメ半減)", bloodmagic: () => "スキルのMPをHPで支払う", hdef: (v) => "手の防具の防御+" + 2 * v + "倍", ldef: (v) => "脚の防具の防御+" + 2 * v + "倍", double: (v) => "追撃率+" + 20 * v + "%", nosp: () => "MPが自然に減らない", wischeck: (v) => "知識判定+" + 2 * v, edef: (v) => "敵の防御-" + v, eatk: (v) => "敵の命中-" + v
   };
-  const bonText = (b) => Object.keys(b || {}).filter((k) => b[k] && BT[k]).map((k) => BT[k](b[k])).join("・");
+  const bonText = (b) => Object.keys(b || {}).filter((k) => b[k] && BT[k]).map((k) => BT[k](b[k])).join("・").replace(/\+-/g, "-");
   const fmtItem = (it) => {
     const bt = bonText(it.b);
     if (it.kind === "weapon") return it.n + "(" + (it.wt ? it.wt + "・" : "") + STAT[it.stat] + "依存・命中" + sgn(it.atk) + "・ダメージ" + NF(sc(1 + it.dmg)) + "〜" + NF(sc(it.die + it.dmg)) + (bt ? "・" + bt : "") + ")";
@@ -2225,34 +2251,34 @@ body:not(.title):not(.fighting) .stage { display: none; }
   /* ================= パッシブツリー(倒れるとリセット) =================
      レベルアップごとに1Pt、守護者で+1、拠点の主で+2。ポイントを割り振って成長する。
      効果は装備と同じ b キーで表す(HP/MP/ダメージ系は内部で×100)。 */
-  const TBR = [{ n: "剛", hue: 8, cap: "攻撃" }, { n: "守", hue: 210, cap: "防御・生命" }, { n: "魔", hue: 278, cap: "技・魔力" }, { n: "疾", hue: 140, cap: "先手・回避" }, { n: "運", hue: 45, cap: "金・経験・命" }];
-  const KICON = { dmg: "⚔️", atk: "🎯", crit: "✴️", def: "🛡️", hp: "❤️", sp: "💧", regen: "➕", sprec: "🌀", herb: "🧪", gold: "💰", kill: "🩸", flee: "👟", first: "⚡", poisonres: "☠️", skillcost: "🔹", skilldmg: "🔥", healpow: "✨", counter: "↩️", guard: "🧱", lowhp: "💢", barrier: "🔰", xp: "📖", double: "✖️", drainres: "🚫", wischeck: "👁️", edef: "🔻", eatk: "📉", dex: "🏃", str: "💪", wis: "🧠" };
+  const TBR = [{ n: "剛", hue: 8, cap: "攻撃" }, { n: "守", hue: 210, cap: "防御・生命" }, { n: "魔", hue: 278, cap: "スキル・魔力" }, { n: "疾", hue: 140, cap: "先手・回避" }, { n: "運", hue: 45, cap: "金・経験・命" }];
+  const KICON = { hdef: "🧤", ldef: "🦵", dmg: "⚔️", atk: "🎯", crit: "✴️", def: "🛡️", hp: "❤️", sp: "💧", regen: "➕", sprec: "🌀", herb: "🧪", gold: "💰", kill: "🩸", flee: "👟", first: "⚡", poisonres: "☠️", skillcost: "🔹", skilldmg: "🔥", healpow: "✨", counter: "↩️", guard: "🧱", lowhp: "💢", barrier: "🔰", xp: "📖", double: "✖️", drainres: "🚫", wischeck: "👁️", edef: "🔻", eatk: "📉", dex: "🏃", str: "💪", wis: "🧠" };
   const iconOf = (n) => KICON[Object.keys(n.b)[0] || Object.keys(n.stat || {})[0]] || "◆";
   const TREE = [], TREE_BY = {};
   /* 各系統: 起点(row0) → 3つの道(row1〜4) → 極意(row5)。道ごとに 小・小・要所・小 */
   (function () {
     const mk = (br, row, lane, id, n, desc, kind, b, stat) => { const o = { br: br, row: row, lane: lane, id: id, n: n, desc: desc, kind: kind, max: kind === "m" ? 3 : 1, cost: kind === "m" ? 1 : kind === "n" ? 2 : 3, b: b || {}, stat: stat || null }; TREE.push(o); TREE_BY[id] = o; };
     const DEF = [
-      { st: ["鍛錬", "一撃が重くなる", { dmg: 1 }], key: ["武神の心", "戦いの極致", { crit: 2, dmg: 4, atk: 1 }], lanes: [
-        [["照準", "狙いが正確に", { atk: 1 }], ["練達", "命中がさらに上がる", { atk: 1 }], ["会心の見切り", "急所が見える", { crit: 1, atk: 1 }], ["狙撃", "外さない", { atk: 1 }]],
-        [["剛腕", "岩をも砕く腕", { dmg: 1 }], ["強打", "一撃が重い", { dmg: 1 }], ["鬼神の腕", "一撃が岩をも砕く", { dmg: 3, atk: 1 }], ["重撃", "叩き潰す", { dmg: 1 }]],
-        [["血気", "血が滾る", { hp: 4 }], ["闘志", "傷つくほど強く", { hp: 5 }], ["狂戦士の血", "瀕死で力が湧く", { lowhp: 1, dmg: 1 }], ["滾り", "命を燃やす", { hp: 5 }]]] },
-      { st: ["頑健", "生命力が増す", { hp: 6 }], key: ["竜鱗の加護", "竜の鱗が身を守る", { def: 3, hp: 14, poisonres: 1, drainres: 1 }], lanes: [
-        [["鉄壁", "攻撃を受け流す", { def: 1 }], ["受け流し", "守りが堅い", { def: 1 }], ["聖句の守り", "開戦時の被害を和らげる", { barrier: 1, def: 1 }], ["防壁", "崩れない守り", { def: 1 }]],
-        [["不屈", "倒れぬ体", { hp: 8 }], ["活力", "生命が溢れる", { hp: 8 }], ["竜の心臓", "力強い鼓動", { hp: 20 }], ["生命", "尽きぬ命", { hp: 8 }]],
-        [["構え", "身を守る構え", { guard: 1 }], ["返し", "受けた痛みを返す", { counter: 1 }], ["不動の構え", "守りと反撃", { guard: 1, def: 2, counter: 1 }], ["毒除け", "毒と魔力奪取に強い", { poisonres: 1, drainres: 1 }]]] },
-      { st: ["魔力の泉", "魔力が湧く", { sp: 4 }], key: ["魔導の極み", "魔導を極めた境地", { sp: 20, skilldmg: 3, skillcost: 1 }], lanes: [
-        [["技の冴え", "技のダメージ増", { skilldmg: 1 }], ["魔刃", "技が鋭くなる", { skilldmg: 1 }], ["聖火の導き", "技が敵の守りを蝕む", { skilldmg: 2, edef: 1 }], ["魔弾", "魔の弾丸", { skilldmg: 1 }]],
-        [["魔泉", "魔力が増える", { sp: 3 }], ["魔力循環", "歩くだけで魔力が戻る", { sprec: 1 }], ["節約の流儀", "魔力を無駄にしない", { skillcost: 1, sp: 2 }], ["魔脈", "魔力が溢れる", { sp: 4 }]],
-        [["祈り", "回復が増す", { healpow: 1 }], ["瞑想", "心を整える", { sprec: 1 }], ["賢者の記憶", "知恵が深まる", { healpow: 2, wischeck: 1 }], ["祝福", "傷が癒え続ける", { regen: 1 }]]] },
-      { st: ["身のこなし", "敏捷が上がる", {}, { dex: 1 }], key: ["双牙の連撃", "二撃目がよく入る", { double: 3, crit: 1, first: 1 }], lanes: [
-        [["先手", "先に当てる", { atk: 1 }], ["連撃", "追撃しやすい", { double: 1 }], ["疾風迅雷", "風より速く", { first: 1, atk: 2 }], ["追撃", "倒れぬ敵にもう一撃", { double: 1 }]],
-        [["韋駄天", "逃げ足が速い", { flee: 2 }], ["影渡り", "影のように動く", { flee: 2 }], ["影の足運び", "先手と逃走", { first: 1, flee: 2 }], ["俊足", "さらに速く", { flee: 1 }, { dex: 1 }]],
-        [["眼力", "敵の命中を鈍らせる", { eatk: 1 }], ["見破り", "動きを読む", { eatk: 1 }], ["千里眼", "遠くを見通す", { atk: 3, crit: 1 }], ["洞察", "敵の守りを見抜く", { edef: 1 }]]] },
-      { st: ["黄金の嗅覚", "金のにおいを嗅ぎ分ける", { gold: 1 }], key: ["黄金律", "金と経験と命が集まる", { gold: 4, xp: 2, kill: 2, regen: 1 }], lanes: [
-        [["商才", "稼ぎが増える", { gold: 1 }], ["拾い上げ", "薬が見つかる", { herb: 1 }], ["富豪の勘", "金と薬", { gold: 2, herb: 1 }], ["蓄財", "さらに稼ぐ", { gold: 1 }]],
-        [["戦の記憶", "戦いから学ぶ", { xp: 1 }], ["研鑽", "経験が積もる", { xp: 1 }], ["学者の眼", "多くを学ぶ", { xp: 2, wischeck: 1 }], ["知見", "知識が増える", { xp: 1 }]],
-        [["生気", "倒した敵の命を啜る", { kill: 1 }], ["再起", "歩くほど傷が癒える", { regen: 1 }], ["不死の誓い", "傷が見る間に塞がる", { regen: 2, hp: 12 }], ["吸命", "深く啜る", { kill: 1 }]]] }
+      { st: ["鍛錬", "一撃が重くなる", { dmg: 1 }], key: ["レゾリュートテクニック", "受け流しが2倍になるが、会心が出なくなる", { deflect: 2, dmg: 3, resolute: 1 }], lanes: [
+        [["照準", "狙いが正確に", { atk: 1 }], ["練達", "命中がさらに上がる", { atk: 1 }], ["ロックオン", "急所を捉える(会心・命中)", { crit: 1, atk: 1 }], ["技能", "器用さが上がり、外さない", { atk: 1 }, { skl: 2 }]],
+        [["剛力", "筋力が上がり、腕が重くなる", { dmg: 1 }, { str: 2 }], ["強打", "一撃が重い", { dmg: 1 }], ["届く一撃", "近接の一撃が重くなる", { dmg: 3, atk: 1 }], ["重撃", "叩き潰す", { dmg: 1 }]],
+        [["血気", "血が滾る", { hp: 4 }], ["闘志", "傷つくほど強く", { hp: 5 }], ["殺人者の本能", "追い詰められるほど強く", { lowhp: 1, dmg: 1 }], ["巨大な武器", "筋力が上がり、命を燃やす", { hp: 5 }, { str: 1 }]]] },
+      { st: ["頑健", "生命力が増す", { hp: 6 }], key: ["バルワーク", "身を守る間はさらに被ダメ-30%。影でも攻撃を完全には避けられない", { bulwark: 1, def: 4, hp: 14, atk: -2 }], lanes: [
+        [["重装防具", "手と脚の防具が強くなる", { hdef: 1, ldef: 1 }], ["受け流し", "守りが堅い", { def: 1 }], ["耐久性", "開戦時の被害を和らげる", { barrier: 1, def: 1 }], ["鉄のスリッパ", "脚の防具が強くなる", { ldef: 1 }]],
+        [["重いユニット", "筋力が上がり、倒れぬ体になる", { hp: 8 }, { str: 1 }], ["活力", "生命が溢れる", { hp: 8 }], ["不屈", "最大ライフが大きく増える", { hp: 20 }], ["生命", "尽きぬ命", { hp: 8 }]],
+        [["革製のガントレット", "手の防具が強くなる", { hdef: 1 }], ["返し", "受けた痛みを返す", { counter: 1 }], ["反撃の構え", "受け流して打ち返す", { def: 2, counter: 1 }], ["毒除け", "毒と魔力奪取に強い", { poisonres: 1, drainres: 1 }]]] },
+      { st: ["魔力の泉", "魔力が湧く", { sp: 4 }], key: ["ブラッドマジック", "スキルのMPを、代わりにHPで支払う", { bloodmagic: 1, skilldmg: 5, hp: 12 }], lanes: [
+        [["創意工夫", "知識が上がり、スキルが冴える", { skilldmg: 1 }, { wis: 2 }], ["魔刃", "スキルが鋭くなる", { skilldmg: 1 }], ["威力のある呪文", "スキルが敵の守りを蝕む", { skilldmg: 2, edef: 1 }], ["魔弾", "魔の弾丸", { skilldmg: 1 }]],
+        [["魔泉", "魔力が増える", { sp: 3 }], ["魔力循環", "歩くだけで魔力が戻る", { sprec: 1 }], ["控えめな詠唱", "魔力を無駄にしない", { skillcost: 1, sp: 2 }], ["博識", "知識と器用さが上がり、魔力が溢れる", { sp: 4 }, { wis: 1, skl: 1 }]],
+        [["洞察力", "知識が上がり、回復が増す", { healpow: 1 }, { wis: 1 }], ["瞑想", "心を整える", { sprec: 1 }], ["明晰さ", "知識が深まり回復が増す", { healpow: 2, wischeck: 1 }], ["祝福", "傷が癒え続ける", { regen: 1 }]]] },
+      { st: ["身のこなし", "敏捷が上がる", {}, { dex: 1 }], key: ["ダンスウィズデス", "手の防具を外している間、行動が25%速い。守りは捨てる", { dwd: 1, double: 3, first: 1, def: -3 }], lanes: [
+        [["精確な一撃", "器用さが上がり、先に当てる", { atk: 1 }, { skl: 2 }], ["連撃", "追撃しやすい", { double: 1 }], ["迅速な一撃", "風より速く当てる", { first: 1, atk: 2 }], ["追撃", "倒れぬ敵にもう一撃", { double: 1 }]],
+        [["韋駄天", "逃げ足が速い", { flee: 2 }], ["影渡り", "影のように動く", { flee: 2 }], ["逃走戦略", "先手と逃走", { first: 1, flee: 2 }], ["俊足", "さらに速く", { flee: 1 }, { dex: 1 }]],
+        [["眼力", "敵の命中を鈍らせる", { eatk: 1 }], ["強化された反射神経", "器用さが上がり、動きを読む", { eatk: 1 }, { skl: 1 }], ["イーグルアイ", "遠くを見通す", { atk: 3, crit: 1 }], ["洞察", "敵の守りを見抜く", { edef: 1 }]]] },
+      { st: ["黄金の嗅覚", "金のにおいを嗅ぎ分ける", { gold: 1 }], key: ["ヴァール・パクト", "HP吸収が強まるが、薬が効きにくくなる", { leech: 5, kill: 2, hp: 8, herb: -2 }], lanes: [
+        [["商才", "稼ぎが増える", { gold: 1 }], ["拾い上げ", "薬が見つかる", { herb: 1 }], ["効率的な錬金術", "金と薬が見つかる", { gold: 2, herb: 1 }], ["蓄財", "さらに稼ぐ", { gold: 1 }]],
+        [["戦の記憶", "戦いから学ぶ", { xp: 1 }], ["研鑽", "経験が積もる", { xp: 1 }], ["パラゴン", "多くを学ぶ", { xp: 2, wischeck: 1 }], ["知見", "知識が増える", { xp: 1 }]],
+        [["生気", "倒した敵の命を啜る", { kill: 1 }], ["再起", "歩くほど傷が癒える", { regen: 1 }], ["死から流れ出る命", "傷が見る間に塞がる", { regen: 2, hp: 12 }], ["吸命", "深く啜る", { kill: 1, leech: 1 }]]] }
     ];
     DEF.forEach((d, br) => {
       mk(br, 0, 1, "b" + br + "r0", d.st[0], d.st[1], "m", d.st[2], d.st[3]);
@@ -2289,7 +2315,8 @@ body:not(.title):not(.fighting) .stage { display: none; }
     const r = tr[n.id] || 0;
     if (r >= n.max) return "on";
     const cr = crossOf(n);
-    const open = n.row === 0 || parentsOf(n).some((p) => (tr[p.id] || 0) > 0) || (cr && (tr[cr.id] || 0) > 0);
+    /* 接続制限を撤廃: どのノードからでも取得できる(旧: 前のノードか隣の系統の同段を取得済みで開放) */
+    const open = true;
     if (!open) return "lk";
     return r > 0 ? "part" : "open";
   }
@@ -2303,7 +2330,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     if (!G || st === "on" || st === "lk" || (G.tpts || 0) < n.cost) return false;
     G.tpts -= n.cost;
     G.tree[n.id] = (G.tree[n.id] || 0) + 1;
-    if (n.stat) Object.keys(n.stat).forEach((k) => { G[k] += n.stat[k]; });
+    SKL(); if (n.stat) Object.keys(n.stat).forEach((k) => { G[k] += n.stat[k]; });
     const hp0 = G.maxHp, sp0 = G.maxSp;
     recalc();
     G.hp = Math.min(G.maxHp, G.hp + Math.max(0, G.maxHp - hp0));
@@ -2315,7 +2342,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
   }
   const respecCost = () => Math.round(40 + G.floor * 0.8);
   function respecTree() {
-    Object.keys(G.tree).forEach((id) => { const n = TREE_BY[id]; if (n && n.stat) Object.keys(n.stat).forEach((k) => { G[k] -= n.stat[k] * G.tree[id]; }); });
+    SKL(); Object.keys(G.tree).forEach((id) => { const n = TREE_BY[id]; if (n && n.stat) Object.keys(n.stat).forEach((k) => { G[k] -= n.stat[k] * G.tree[id]; }); });
     G.tpts += treeUsed();
     G.tree = {};
     recalc();
@@ -2449,19 +2476,15 @@ body:not(.title):not(.fighting) .stage { display: none; }
     $("#hpNum").textContent = NF(Math.max(0, G.hp)) + " / " + NF(G.maxHp);
     $("#spNum").textContent = NF(G.sp) + " / " + NF(G.maxSp);
     $("#statsLine").innerHTML =
-      "職業 <b>" + G.job.n + "</b>　筋力 <b>" + G.str + "</b>　敏捷 <b>" + G.dex + "</b>　知恵 <b>" + G.wis + "</b>" +
+      "職業 <b>" + G.job.n + " Lv" + G.lv + "</b>　筋力 <b>" + G.str + "</b>　敏捷 <b>" + G.dex + "</b>　知識 <b>" + G.wis + "</b>　器用さ <b>" + SKL() + "</b>" +
       (G.god ? "　誓い <b>" + GODS[G.god].n + "</b>" : "") +
       (G.poison ? "　<b>毒 " + G.poison + "</b>" : "") +
       (G.buff ? "　<b>加護</b>" : "");
     $("#gearLine").innerHTML =
-      "<span>武器 <b>" + G.wpn.n + "</b></span><span>頭 <b>" + (G.head ? G.head.n : "なし") + "</b></span><span>胴 <b>" + (G.body ? G.body.n : "なし") + "</b></span><span>足 <b>" + (G.feet ? G.feet.n : "なし") + "</b></span><span>指輪 <b>" + (G.rings[0] ? G.rings[0].n : "なし") + " / " + (G.rings[1] ? G.rings[1].n : "なし") + "</b></span>" +
-      "<span>技 <b>" + (jobGcds().map((o) => o.s.n).join("、") || "なし") + "</b></span>" +
+      "<span>武器 <b>" + G.wpn.n + "</b></span><span>頭 <b>" + (G.head ? G.head.n : "なし") + "</b></span><span>胴 <b>" + (G.body ? G.body.n : "なし") + "</b></span><span>足 <b>" + (G.feet ? G.feet.n : "なし") + "</b></span><span>手 <b>" + (G.hands ? G.hands.n : "なし") + "</b></span><span>脚 <b>" + (G.legs ? G.legs.n : "なし") + "</b></span><span>指輪 <b>" + (G.rings[0] ? G.rings[0].n : "なし") + " / " + (G.rings[1] ? G.rings[1].n : "なし") + "</b></span>" +
+      "<span>スキル <b>" + (jobGcds().map((o) => o.s.n).join("、") || "なし") + "</b></span>" +
       "<span>アビリティ <b>" + (jobAbils().map((o) => o.s.n).join("、") || "なし") + "</b></span>" +
       "<span>職業パッシブ <b>" + G.traits.length + "個</b></span><span>ツリー <b>" + treeRanks() + "段階 / 残り" + (G.tpts || 0) + "Pt</b></span>";
-    const need = xpNeed(G.lv);
-    $("#lvLabel").textContent = "Lv " + G.lv;
-    $("#xpBar").style.width = (G.lv >= MAXLV ? 100 : Math.min(100, (G.xp / need) * 100)) + "%";
-    $("#xpNum").textContent = G.lv >= MAXLV ? "MAX" : G.xp + " / " + need;
     $("#atbRow").hidden = !inBattle;
     updateStatusLine();
     document.documentElement.style.setProperty("--zh", ZONES[z].hue);
@@ -2622,7 +2645,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
       run: () => {
         enemy.lbDone = true;
         log("亡霊が、あなたの切り札を放った！", "bad");
-        if (G.shadow) { G.shadow = false; log("影が、技をすり抜けた。", "good"); return true; }
+        if (G.shadow) { G.shadow = false; log("影が、スキルをすり抜けた。", "good"); return true; }
         dealToPlayer(heavy(2.2)); return true;
       } }
   };
@@ -2648,33 +2671,33 @@ body:not(.title):not(.fighting) .stage { display: none; }
     }
   }
   /* ================= ジョブゲージ ================= */
-  /* g: 増加量 / sk: 満タンで使えるゲージ技(MPを消費しない) */
+  /* g: 増加量 / sk: 満タンで使えるゲージスキル(MPを消費しない) */
   /* FFXIVのジョブゲージに倣い「ためて、使う」。
      溜まる量は 行動(act) / 命中(hit) / 会心(crit) / コンボ完了(cf) / 被弾(taken) / 撃破(kill) / 時間(tick)。
-     cost以上で技が使え(威力×0.85・繰り返し可)、100%なら全消費の【強化】(威力×1.8・効果時間1.5倍)が選べる。
+     cost以上でスキルが使え(威力×0.85・繰り返し可)、100%なら全消費の【強化】(威力×1.8・効果時間1.5倍)が選べる。
      100%を超える分は溢れて無駄になる。 */
   const JG = {
-    paladin: { n: "誓約", g: { act: 5, taken: 12, cf: 12 }, sk: { n: "誓約の裁き", desc: "必中 3d8+知恵修正。HPを d8+4 回復。8秒間、被ダメージ-20%", dmg: [3, 8, 0, "wis"], heal: [1, 8, 4], buffs: [B.mit(0.2, 8)] } },
+    paladin: { n: "誓約", g: { act: 5, taken: 12, cf: 12 }, sk: { n: "誓約の裁き", desc: "必中 3d8+知識修正。HPを d8+4 回復。8秒間、被ダメージ-20%", dmg: [3, 8, 0, "wis"], heal: [1, 8, 4], buffs: [B.mit(0.2, 8)] } },
     warrior: { n: "闘気", g: { hit: 5, crit: 8, cf: 16, taken: 6 }, sk: { n: "解き放たれた怒り", desc: "ダメージ1.2倍の攻撃を3回。12秒間、与ダメージ+20%", strikes: 3, mult: 1.2, buffs: [B.dmg(0.2, 12)] } },
     darkknight: { n: "闇の血", g: { hit: 4, act: 3, cf: 16 }, sk: { n: "血の奔流", desc: "必中 3d10+筋力修正。6割を回復", dmg: [3, 10, 0, "str"], leech: 0.6 } },
     gunbreaker: { n: "火薬", cost: 34, g: { act: 3, cf: 24 }, sk: { n: "爆裂の連弾", desc: "命中+2、ダメージ1.5倍の攻撃を2回。必中 2d10 を追加", strikes: 2, hit: 2, mult: 1.5, dmg: [2, 10, 0, "str"] } },
     monk: { n: "気脈", cost: 40, g: { hit: 3, crit: 16, cf: 8 }, sk: { n: "気の奔流", desc: "必中 3d8+2+敏捷修正。HPを d8+4 回復", dmg: [3, 8, 2, "dex"], heal: [1, 8, 4] } },
-    samurai: { n: "剣気", g: { hit: 4, crit: 8, cf: 14 }, sk: { n: "奥義・斬鉄", desc: "必ず会心。必中 3d10+3+敏捷修正", dmg: [3, 10, 3, "dex"], crits: 1 } },
+    samurai: { n: "剣気", g: { hit: 4, crit: 8, cf: 14 }, sk: { n: "奥義・斬鉄", desc: "必ず会心。必中 3d10+3+器用さ修正", dmg: [3, 10, 3, "skl"], crits: 1 } },
     dragoon: { n: "竜血", g: { act: 5, hit: 3, cf: 12 }, sk: { n: "竜眼の咆哮", desc: "必中 3d8+2+筋力修正。15秒間、与ダメージ+15%", dmg: [3, 8, 2, "str"], buffs: [B.dmg(0.15, 15)] } },
     reaper: { n: "魂", g: { hit: 4, kill: 50, cf: 14 }, sk: { n: "魂の収穫", desc: "必中 3d8+筋力修正。半分を回復。MP+3", dmg: [3, 8, 0, "str"], leech: 0.5, spGain: 3 } },
-    ninja: { n: "忍気", g: { act: 6, hit: 3, cf: 10 }, sk: { n: "分身の術", desc: "必中 3d6+2+敏捷修正。次の敵の攻撃をかわす", dmg: [3, 6, 2, "dex"], shadow: 1 } },
-    viper: { n: "蛇毒", g: { hit: 4, crit: 6, cf: 14 }, sk: { n: "蛇神の毒牙", desc: "必中 2d8+2+敏捷修正。18秒間、猛毒", dmg: [2, 8, 2, "dex"], debuffs: [D.dot(5, 18, "猛毒")] } },
-    bard: { n: "詩", g: { hit: 3, tick: 6, cf: 10 }, sk: { n: "終奏", desc: "必中 3d8+2+敏捷修正。15秒間ヘイスト(+30%)", dmg: [3, 8, 2, "dex"], buffs: [B.haste(0.3, 15)] } },
-    machinist: { n: "熱", g: { act: 4, cf: 18 }, sk: { n: "過熱砲", desc: "必中 4d8+敏捷修正。敵の防御-1", dmg: [4, 8, 0, "dex"], defdown: 1 } },
+    ninja: { n: "忍気", g: { act: 6, hit: 3, cf: 10 }, sk: { n: "分身の術", desc: "必中 3d6+2+器用さ修正。次の敵の攻撃をかわす", dmg: [3, 6, 2, "skl"], shadow: 1 } },
+    viper: { n: "蛇毒", g: { hit: 4, crit: 6, cf: 14 }, sk: { n: "蛇神の毒牙", desc: "必中 2d8+2+器用さ修正。18秒間、猛毒", dmg: [2, 8, 2, "skl"], debuffs: [D.dot(5, 18, "猛毒")] } },
+    bard: { n: "詩", g: { hit: 3, tick: 6, cf: 10 }, sk: { n: "終奏", desc: "必中 3d8+2+器用さ修正。15秒間ヘイスト(+30%)", dmg: [3, 8, 2, "skl"], buffs: [B.haste(0.3, 15)] } },
+    machinist: { n: "熱", g: { act: 4, cf: 18 }, sk: { n: "過熱砲", desc: "必中 4d8+器用さ修正。敵の防御-1", dmg: [4, 8, 0, "skl"], defdown: 1 } },
     dancer: { n: "歌劇", g: { act: 6, tick: 3, cf: 12 }, sk: { n: "流星の舞", desc: "必中 3d6+2+敏捷修正。次のATBが50%から。15秒間、与ダメージ+15%", dmg: [3, 6, 2, "dex"], haste: 50, buffs: [B.dmg(0.15, 15)] } },
-    redmage: { n: "魔力均衡", g: { act: 6, cf: 12 }, sk: { n: "合体詠唱", desc: "必中 3d10+2+知恵修正。HPを d8+2 回復", dmg: [3, 10, 2, "wis"], heal: [1, 8, 2] } },
-    pictomancer: { n: "絵具", g: { act: 6, hit: 2, cf: 10 }, sk: { n: "幻想画", desc: "必中 3d8+知恵修正。10秒間バリア", dmg: [3, 8, 0, "wis"], buffs: [B.shield(12, 10)] } },
+    redmage: { n: "魔力均衡", g: { act: 6, cf: 12 }, sk: { n: "合体詠唱", desc: "必中 3d10+2+知識修正。HPを d8+2 回復", dmg: [3, 10, 2, "wis"], heal: [1, 8, 2] } },
+    pictomancer: { n: "絵具", g: { act: 6, hit: 2, cf: 10 }, sk: { n: "幻想画", desc: "必中 3d8+知識修正。10秒間バリア", dmg: [3, 8, 0, "wis"], buffs: [B.shield(12, 10)] } },
     blackmage: { n: "星辰", dual: 1 },
-    summoner: { n: "召喚力", g: { hit: 3, act: 5, cf: 10 }, sk: { n: "星神の顕現", desc: "必中 4d8+2+知恵修正。15秒間リジェネ", dmg: [4, 8, 2, "wis"], buffs: [B.regen(3, 15)] } },
-    scholar: { n: "妖精", g: { act: 6, tick: 5, cf: 8 }, sk: { n: "妖精の大癒", desc: "HPを 2d8+6+知恵修正 回復。毒を消し、12秒間バリア", heal: [2, 8, 6, "wis"], cure: 1, buffs: [B.shield(12, 12)] } },
-    whitemage: { n: "百合", g: { tick: 8, act: 3, cf: 8 }, sk: { n: "聖花の癒し", desc: "HPを 2d8+6+知恵修正 回復。15秒間リジェネ", heal: [2, 8, 6, "wis"], buffs: [B.regen(3, 15)] } },
-    astrologian: { n: "天啓", g: { act: 6, tick: 3, cf: 8 }, sk: { n: "天啓のカード", desc: "必中 2d8+知恵修正。HPを d6+2 回復。15秒間、与ダメージ+20%", dmg: [2, 8, 0, "wis"], heal: [1, 6, 2], buffs: [B.dmg(0.2, 15)] } },
-    sage: { n: "蛇胆", g: { tick: 8, act: 3, cf: 8 }, sk: { n: "毒蛇の恵み", desc: "HPを 2d8+4+知恵修正 回復。15秒間バリア", heal: [2, 8, 4, "wis"], buffs: [B.shield(14, 15)] } }
+    summoner: { n: "召喚力", g: { hit: 3, act: 5, cf: 10 }, sk: { n: "星神の顕現", desc: "必中 4d8+2+知識修正。15秒間リジェネ", dmg: [4, 8, 2, "wis"], buffs: [B.regen(3, 15)] } },
+    scholar: { n: "妖精", g: { act: 6, tick: 5, cf: 8 }, sk: { n: "妖精の大癒", desc: "HPを 2d8+6+知識修正 回復。毒を消し、12秒間バリア", heal: [2, 8, 6, "wis"], cure: 1, buffs: [B.shield(12, 12)] } },
+    whitemage: { n: "百合", g: { tick: 8, act: 3, cf: 8 }, sk: { n: "聖花の癒し", desc: "HPを 2d8+6+知識修正 回復。15秒間リジェネ", heal: [2, 8, 6, "wis"], buffs: [B.regen(3, 15)] } },
+    astrologian: { n: "天啓", g: { act: 6, tick: 3, cf: 8 }, sk: { n: "天啓のカード", desc: "必中 2d8+知識修正。HPを d6+2 回復。15秒間、与ダメージ+20%", dmg: [2, 8, 0, "wis"], heal: [1, 6, 2], buffs: [B.dmg(0.2, 15)] } },
+    sage: { n: "蛇胆", g: { tick: 8, act: 3, cf: 8 }, sk: { n: "毒蛇の恵み", desc: "HPを 2d8+4+知識修正 回復。15秒間バリア", heal: [2, 8, 4, "wis"], buffs: [B.shield(14, 15)] } }
   };
   Object.keys(JG).forEach((k) => { const j = JG[k]; if (j.g) Object.keys(j.g).forEach((e) => { j.g[e] = Math.round(j.g[e] * 1.4); }); });
   (function () {
@@ -2924,7 +2947,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     logHead("終わり");
     log("意識が闇に沈む。第" + G.floor + "層で、あなたは倒れた。", "bad");
     log("倒した相手 " + G.kills + "体、討ち取った主 " + G.bosses + "体。憎悪を " + ash + " 手に入れた。");
-    log("到達レベルは Lv " + G.lv + "(" + G.job.n + ")。割り振ったパッシブツリーと習得した技は、ここで全て失われる。", "bad");
+    log("到達レベルは Lv " + G.lv + "(" + G.job.n + ")。割り振ったパッシブツリーと習得したスキルは、ここで全て失われる。", "bad");
     log("憎悪は、次の挑戦で永続的な力になる。");
     if (rec.ghost) log("倒れたあなたの姿が、第" + ghostFloor(rec.ghost) + "層の闇に残った。次の挑戦で、敵として現れる。", "dice");
     log("気がつけば、最初の砦を見下ろす丘に立っていた。");
@@ -3037,7 +3060,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     bomb: { n: "爆裂薬", price: 30, battle: true, desc: "戦闘中のみ。必中で固定ダメージ(階層で増加)", use: () => { const dm = 10 + Math.floor(G.floor * 0.9) + rnd(0, 6); log("爆裂薬を投げつけた！", "good"); hitEnemy(dm, false); renderEnemy(); return true; } },
     smoke: { n: "煙玉", price: 25, battle: true, desc: "戦闘中のみ。主以外の敵から確実に逃げる", use: () => { if (enemy.boss) { log("主には、煙玉が通じない。"); return false; } log("煙玉が弾け、視界が白く染まる。うまく逃げ切った。", "good"); inBattle = false; atbStop(); $("#enemyBox").hidden = true; render(); nextBtn(); return "end"; } },
     charm: { n: "身代わりの護符", price: 90, passive: true, desc: "持っているだけで有効。倒れる時に一度だけHP半分で踏みとどまる" },
-    elixir: { n: "力の秘薬", price: 70, desc: "筋力・敏捷・知恵のどれか1つが、この挑戦の間+1", use: () => { const k = pick(["str", "dex", "wis"]); G[k] += 1; recalc(); log("力の秘薬を飲み干した。" + STAT[k] + "が1上がった。", "good"); return true; } },
+    elixir: { n: "力の秘薬", price: 70, desc: "筋力・敏捷・知識のどれか1つが、この挑戦の間+1", use: () => { const k = pick(["str", "dex", "wis", "skl"]); G[k] += 1; recalc(); log("力の秘薬を飲み干した。" + STAT[k] + "が1上がった。", "good"); return true; } },
     tome: { n: "経験の書", price: 45, desc: "読むと経験値を得る(階層で増加)", use: () => { log("経験の書を読み込んだ。", "good"); gainXp(30 + G.floor * 3); return true; } },
     gdew: { n: "聖者の雫", price: 60, desc: "HPを最大の5割、MPを最大の25%回復する", use: () => { const h = healR(Math.ceil(G.maxHp * 0.5)); addSpR(Math.max(sc(8), Math.ceil(G.maxSp * 0.25))); log("聖者の雫が喉を潤した。HPが " + h + " 回復し、MPも戻った。", "good"); return true; } },
     hipotion: { n: "ハイポーション", price: 55, desc: "HPを最大の45%回復し、毒を消す", use: () => { if (G.hp >= G.maxHp && !G.poison) { log("いまは必要ない。"); return false; } const h = healR(Math.ceil(G.maxHp * 0.45) + sc(3 * T("herb"))); G.poison = 0; log("ハイポーションを飲んだ。HPが " + h + " 回復し、毒も抜けた。", "good"); return true; } },
@@ -3074,21 +3097,21 @@ body:not(.title):not(.fighting) .stage { display: none; }
   }
 
   /* ================= 装備の比較 ================= */
-  const SPECIAL_KEYS = ["first", "barrier", "nosp", "counter", "double", "kill", "lowhp", "guard", "skilldmg", "skillcost", "wischeck", "drainres", "poisonres", "edef", "eatk"];
+  const SPECIAL_KEYS = ["first", "barrier", "nosp", "counter", "double", "kill", "lowhp", "skilldmg", "skillcost", "wischeck", "drainres", "poisonres", "edef", "eatk"];
   const BAS_ORDER = ["crit", "regen", "sprec", "healpow", "herb", "gold", "xp", "flee"];
   function deriveSet(items) {
-    const list = [items.wpn, items.head, items.body, items.feet, items.r0, items.r1].filter(Boolean);
-    const cur = [G.wpn, G.head, G.body, G.feet, G.rings[0], G.rings[1]].filter(Boolean);
+    const list = [items.wpn, items.head, items.body, items.feet, items.hands, items.legs, items.r0, items.r1].filter(Boolean);
+    const cur = [G.wpn, G.head, G.body, G.feet, G.hands, G.legs, G.rings[0], G.rings[1]].filter(Boolean);
     const gb = {}, cb = {}, B = {};
     list.forEach((it) => Object.keys(it.b || {}).forEach((k) => { gb[k] = (gb[k] || 0) + it.b[k]; B[k] = (B[k] || 0) + it.b[k]; }));
     cur.forEach((it) => Object.keys(it.b || {}).forEach((k) => { cb[k] = (cb[k] || 0) + it.b[k]; }));
     const jb = jobWpnB(items.wpn, G.job); Object.keys(jb).forEach((k) => { B[k] = (B[k] || 0) + jb[k]; });
     Object.keys(G.tree || {}).forEach((id) => { const n = TREE_BY[id]; if (n && n.b) Object.keys(n.b).forEach((k) => { B[k] = (B[k] || 0) + n.b[k] * G.tree[id]; }); });
-    const st = {}; ["str", "dex", "wis"].forEach((k) => { st[k] = G[k] - (cb[k] || 0) + (gb[k] || 0); });
+    SKL(); const st = {}; ["str", "dex", "wis", "skl"].forEach((k) => { st[k] = G[k] - (cb[k] || 0) + (gb[k] || 0); });
     const tc = (k) => G.traits.filter((t) => t.key === k).length;
-    const w = items.wpn, ad = (items.head ? items.head.def : 0) + (items.body ? items.body.def : 0) + (items.feet ? items.feet.def : 0);
+    const w = items.wpn, ad = (items.head ? items.head.def : 0) + (items.body ? items.body.def : 0) + (items.feet ? items.feet.def : 0) + (items.hands ? items.hands.def : 0) + (items.legs ? items.legs.def : 0);
     const o = { B: B, st: st, w: w };
-    o.hit = mod(st[w.stat]) + w.atk + tc("atk") + (B.atk || 0);
+    o.hit = mod(st[w.stat]) + mod(st.skl) + w.atk + tc("atk") + (B.atk || 0);
     o.dmg = U * ((w.die + 1) / 2 + Math.max(0, mod(st[w.stat])) + w.dmg + tc("dmg") + (B.dmg || 0));
     o.def = 10 + mod(st.dex) + ad + tc("def") + (B.def || 0);
     o.hp = sc(Math.max(10, 20 + mod(st.str) * 2 + upEff("hp") + G.hpBonus + (B.hp || 0) + (G.god === "ash" ? -6 : 0)));
@@ -3097,7 +3120,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
   }
   const r1 = (n) => (Math.round(n * 10) / 10);
   function cmpRows(it, slot) {
-    const base = { wpn: G.wpn, head: G.head, body: G.body, feet: G.feet, r0: G.rings[0], r1: G.rings[1] };
+    const base = { wpn: G.wpn, head: G.head, body: G.body, feet: G.feet, hands: G.hands, legs: G.legs, r0: G.rings[0], r1: G.rings[1] };
     const nu = Object.assign({}, base);
     nu[slot === "weapon" ? "wpn" : slot] = it;
     const a = deriveSet(base), b = deriveSet(nu);
@@ -3154,7 +3177,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     logEl.scrollTop = logEl.scrollHeight;
   }
 
-  /* ================= 装備・技 ================= */
+  /* ================= 装備・スキル ================= */
   function tierFor(f) { return f <= 30 ? Math.floor(f / 10) : Math.min(14, 3 + Math.floor((f - 30) / 80)); }
   function randomItem(kind) {
     const f = G.floor;
@@ -3163,7 +3186,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     if (d(4) === 1) t -= 1;
     t = Math.max(0, Math.min(14, t));
     let k = kind === "relic" ? "ring" : kind;
-    if (!k || !ITEMS[k]) { const r = d(100); k = r <= 24 ? "weapon" : r <= 38 ? "head" : r <= 52 ? "body" : r <= 66 ? "feet" : "ring"; }
+    if (!k || !ITEMS[k]) { const r = d(100); k = r <= 20 ? "weapon" : r <= 32 ? "head" : r <= 44 ? "body" : r <= 54 ? "feet" : r <= 64 ? "hands" : r <= 74 ? "legs" : "ring"; }
     const list = ITEMS[k];
     let pool = list.filter((i) => i.t === t);
     if (!pool.length) pool = list.filter((i) => i.t <= t);
@@ -3229,8 +3252,8 @@ body:not(.title):not(.fighting) .stage { display: none; }
     nu.n = nu.nb + "+" + p;
     return nu;
   }
-  const AFFIX = [{ atk: 1 }, { dmg: 1 }, { crit: 1 }, { hp: 6 }, { def: 1 }, { regen: 1 }, { kill: 1 }, { sp: 3 }, { skilldmg: 1 }, { first: 1 }, { double: 1 }, { healpow: 1 }, { guard: 1 }, { sprec: 1 }];
-  const AFFIX_CAP = { crit: 3, first: 1, double: 3, guard: 6, sprec: 4, regen: 8 };
+  const AFFIX = [{ atk: 1 }, { dmg: 1 }, { crit: 1 }, { hp: 6 }, { def: 1 }, { regen: 1 }, { kill: 1 }, { sp: 3 }, { skilldmg: 1 }, { first: 1 }, { double: 1 }, { healpow: 1 }, { sprec: 1 }];
+  const AFFIX_CAP = { crit: 3, first: 1, double: 3, sprec: 4, regen: 8 };
   function rerolled(it) {
     const nu = Object.assign({}, it), k = 1 + Math.floor((it.t || 0) / 3), b = {};
     shuffle(AFFIX).slice(0, 2 + (it.rar || 0 ? 1 : 0)).forEach((a) => Object.keys(a).forEach((key) => { b[key] = Math.min(AFFIX_CAP[key] || 999, a[key] * k); }));
@@ -3252,7 +3275,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
   }
   function smithMenu(first) {
     if (!first) log("「次は、どれだ」");
-    const slots = [["wpn", "武器"], ["head", "頭"], ["body", "胴"], ["feet", "足"], ["r0", "指輪Ⅰ"], ["r1", "指輪Ⅱ"]];
+    const slots = [["wpn", "武器"], ["head", "頭"], ["body", "胴"], ["feet", "足"], ["hands", "手"], ["legs", "脚"], ["r0", "指輪Ⅰ"], ["r1", "指輪Ⅱ"]];
     const list = [];
     slots.forEach((sl) => {
       const it = getSlot(sl[0]); if (!it) return;
@@ -3280,7 +3303,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     });
   }
   function rerollPick() {
-    const slots = [["wpn", "武器"], ["head", "頭"], ["body", "胴"], ["feet", "足"], ["r0", "指輪Ⅰ"], ["r1", "指輪Ⅱ"]];
+    const slots = [["wpn", "武器"], ["head", "頭"], ["body", "胴"], ["feet", "足"], ["hands", "手"], ["legs", "脚"], ["r0", "指輪Ⅰ"], ["r1", "指輪Ⅱ"]];
     const list = [];
     slots.forEach((sl) => { const it = getSlot(sl[0]); if (!it) return; list.push({ label: sl[1] + ":" + it.n, note: "打ち直し " + rerollCost(it) + "ギル", disabled: G.gold < rerollCost(it), fn: () => rerollAsk(sl[0], it) }); });
     list.push({ label: "戻る", alt: true, fn: () => smithMenu(false) });
@@ -3384,11 +3407,12 @@ body:not(.title):not(.fighting) .stage { display: none; }
     const defx = Math.floor(dd0 / 8) + Math.floor(late / 30);
     const trueFinal = false;
     const zm = zoneMul(ZONES[z]);
-    hp = Math.max(1, sc(Math.round(hp * zm)));
+    const HARD_HP = 2.0, HARD_DMG = 1.7; /* 難易度上昇: 敵HP×2.0・与ダメ×1.7 */
+    hp = Math.max(1, sc(Math.round(hp * zm * HARD_HP)));
     return {
       n: (boss ? "【主】" : mini ? "【番人】" : elite ? "【強敵】" : "") + base.n, hp: hp, maxHp: hp,
-      def: Math.max(4, base.def + Math.floor(fb / 7) + defx - E("edef")), atk: Math.max(0, base.atk + Math.floor(fb / 5) + atkx + (elite ? 2 : 0) - E("eatk")),
-      dmg: [sc(Math.round((base.dmg[0] + Math.floor(fb / 6) + Math.floor(dd0 / 10)) * dm * zm)), sc(Math.round((base.dmg[1] + Math.floor(fb / 5) + Math.floor(dd0 / 6)) * dm * zm))],
+      def: Math.max(4, base.def + Math.floor(fb / 7) + defx + 2 - E("edef")), atk: Math.max(0, base.atk + Math.floor(fb / 5) + atkx + 2 + (elite ? 2 : 0) - E("eatk")),
+      dmg: [sc(Math.round((base.dmg[0] + Math.floor(fb / 6) + Math.floor(dd0 / 10)) * dm * zm * HARD_DMG)), sc(Math.round((base.dmg[1] + Math.floor(fb / 5) + Math.floor(dd0 / 6)) * dm * zm * HARD_DMG))],
       drain: base.drain || 0, poison: base.poison || 0, twice: base.twice || 0, regen: base.regen || 0, greed: base.greed || 0, pois: 0, debuffs: [], boss: !!boss, mini: !!mini, elite: elite, final: !!boss && z === MAXZ, trueFinal: trueFinal,
       key: base.n, gim: lordish ? (base.gim || "") : "", acts: 0, tele: null, teleText: "", shield: 0, loot: 0, phase: 0
     };
@@ -3396,7 +3420,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
   /* ---------- ATB(アクティブ・タイム・バトル) ----------
      自分のゲージが満タンになった時だけ行動を選べる。敵のゲージは表示されない。 */
   let atb = { p: 0, e: 0, ready: false, et: 4, last: 0, raf: 0, run: false };
-  const playerFillTime = () => Math.max(isMelee() ? 0.8 : 1.2, ((4.0 - 0.25 * mod(G.dex)) / (1 + fx(G.buffs, "haste"))) * (isMelee() ? 0.6 : 1)) * (hasAil("slow") ? 1.6 : 1);
+  const playerFillTime = () => Math.max(isMelee() ? 0.8 : 1.2, ((4.0 - 0.25 * mod(G.dex)) / (1 + fx(G.buffs, "haste") + (T("dwd") > 0 && !G.hands ? 0.25 : 0))) * (isMelee() ? 0.6 : 1)) * (hasAil("slow") ? 1.6 : 1);
   function atbStop() {
     atb.run = false;
     if (G) { G.buffs = []; G.ail = []; }
@@ -3433,7 +3457,9 @@ body:not(.title):not(.fighting) .stage { display: none; }
     if (i >= 0) { G.buffs.splice(i, 1); return true; }
     return false;
   }
-  const critMin = () => Math.max(14, 20 - (G.god === "star" ? 1 : 0) - T("crit") - fx(G.buffs, "crit"));
+  /* 命中(器用さ・命中補正)が高いほど会心の範囲も広がる */
+  const critSyn = () => Math.floor(Math.max(0, mod(SKL()) + T("atk")) / 3);
+  const critMin = () => T("resolute") > 0 ? 99 : Math.max(12, 20 - (G.god === "star" ? 1 : 0) - T("crit") - critSyn() - fx(G.buffs, "crit"));
   const outMult = () => (isMelee() ? 0.68 * (1 + Math.min(0.45, (G.chain || 0) * 0.03)) : 1) * (1 + fx(G.buffs, "dmgUp") + blmBonus()) * (1 + fx(enemy.debuffs, "vuln")) * (hasAil("hex") ? 0.75 : 1);
   function hitEnemy(dm, crit, lucky) {
     dm = Math.max(1, sc(dm * (0.94 + Math.random() * 0.12)));
@@ -3444,6 +3470,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
       if (dm <= 0) { flash("#stage"); SFX.play("hit"); shakeScreen(0); return; }
     }
     enemy.hp -= dm;
+    if (T("leech") > 0) { const lh = healR(Math.max(1, Math.round(dm * 0.02 * T("leech")))); if (lh > 0) log("HPを " + lh + " 吸収した。", "good"); }
     if (enemy.feed) enemy.feedDmg += dm;
     const ratio = dm / Math.max(1, enemy.maxHp), big = ratio >= 0.2;
     log(enemy.n + " に " + dm + " のダメージ。", "good");
@@ -3535,7 +3562,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
   const RBON = [[],
     [{ atk: 1 }, { dmg: 1 }, { crit: 1 }, { hp: 8 }, { def: 1 }, { regen: 1 }, { kill: 1 }, { sp: 4 }, { skilldmg: 1 }],
     [{ atk: 2 }, { dmg: 2 }, { crit: 1, first: 1 }, { hp: 14 }, { def: 2 }, { regen: 2 }, { kill: 2 }, { sp: 8, healpow: 1 }, { skilldmg: 2 }, { double: 1 }],
-    [{ atk: 3, dmg: 2 }, { dmg: 4, crit: 1 }, { hp: 24, regen: 1 }, { def: 3, guard: 1 }, { kill: 3, double: 1 }, { sp: 12, skilldmg: 2 }, { crit: 2, first: 1 }, { regen: 3, hp: 10 }]];
+    [{ atk: 3, dmg: 2 }, { dmg: 4, crit: 1 }, { hp: 24, regen: 1 }, { def: 3 }, { kill: 3, double: 1 }, { sp: 12, skilldmg: 2 }, { crit: 2, first: 1 }, { regen: 3, hp: 10 }]];
   const mergeB = (a, b) => { const o = Object.assign({}, a || {}); Object.keys(b).forEach((k) => { o[k] = (o[k] || 0) + b[k]; }); return o; };
   const rarTag = (it) => (it && it.sig ? "【専用】" : it && it.rar ? "【" + RAR[it.rar].nm + "】" : "");
   function makeRare(kind) {
@@ -3721,7 +3748,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     list.push({ label: steps[ci].n, note: "コンボ" + (ci + 1) + "/" + steps.length + " / " + steps[ci].desc, icon: skillIcon(steps[ci]), cd: true, disabled: !ready, fn: useCombo });
     const addSkill = (s, run) => {
       const cost = skCost(s);
-      const lack = (s.hp && G.hp <= sc(s.hp)) || G.sp < sc(cost);
+      const lack = (s.hp && G.hp <= sc(s.hp)) || (T("bloodmagic") > 0 ? G.hp <= sc(cost) : G.sp < sc(cost));
       list.push({ label: s.n, note: costText({ hp: s.hp, cost: cost }) + " / " + s.desc, icon: skillIcon(s), cd: true, alt: true, disabled: !ready || lack, fn: run });
     };
     jobGcds().forEach((o) => addSkill(o.s, () => runSkill(o.s, o.id, false, false)));
@@ -3776,7 +3803,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     abilBtns.forEach((x) => {
       const left = G.rc[x.o.id] || 0;
       const cost = skCost(x.o.s);
-      x.b.disabled = !inBattle || left > 0 || G.sp < sc(cost);
+      x.b.disabled = !inBattle || left > 0 || (T("bloodmagic") > 0 ? G.hp <= sc(cost) : G.sp < sc(cost));
       x.st.textContent = left > 0 ? "リキャスト " + Math.ceil(left) + "秒" : "使用可" + (cost ? " MP" + NF(sc(cost)) : "");
       x.cd.style.height = (left > 0 ? Math.min(100, (left / x.o.s.rc) * 100) : 0) + "%";
     });
@@ -3802,7 +3829,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     G.jg = full ? 0 : Math.max(0, G.jg - c);
     G.jgOver = 0;
     G.gsPow = full ? 1.8 : 0.85;
-    log("ゲージ技" + (full ? "【強化】" : "") + "「" + jgd.sk.n + "」", "good");
+    log("ゲージスキル" + (full ? "【強化】" : "") + "「" + jgd.sk.n + "」", "good");
     if (full) { SFX.play("lb"); shakeScreen(2); popup("#stage", "BURST!", "gold"); burstFx(14, 200); }
     try { runSkill(jgd.sk, "gs", false, false); } finally { G.gsPow = 0; }
   }
@@ -3816,7 +3843,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     const r = d(20);
     const sure = consumeSure();
     const pity = (G.missStreak || 0) >= 2 ? 3 : 0;
-    const m = 3 + Math.min(6, Math.floor(G.lv / 5)) + pity + mod(G[st]) + w.atk + (G.buff ? 2 : 0) + (G.god === "star" ? 1 : 0) + (o.hitBonus || 0) + G.firstBonus + T("atk");
+    const m = 3 + Math.min(6, Math.floor(G.lv / 5)) + pity + mod(G[st]) + mod(SKL()) + w.atk + (G.buff ? 2 : 0) + (G.god === "star" ? 1 : 0) + (o.hitBonus || 0) + G.firstBonus + T("atk");
     const total = r + m;
     const crit = sure || r >= critMin();
     const hit = crit || (r !== 1 && total >= enemy.def);
@@ -3845,7 +3872,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
   function rollSpec(sp) {
     let t = sp[2] || 0;
     for (let i = 0; i < sp[0]; i++) t += d(sp[1]);
-    if (sp[3]) t += Math.max(0, mod(G[sp[3]]));
+    if (sp[3]) { SKL(); t += Math.max(0, mod(G[sp[3]])); }
     return t;
   }
   function useSkill(k) { runSkill(SK(k), k, false); }
@@ -3853,7 +3880,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     const cost = isLB ? 0 : skCost(s);
     const pw = G.gsPow || 1;
     if (!isLB && s.hp) { G.hp -= sc(s.hp); log("HPを " + NF(sc(s.hp)) + " 捧げた。", "bad"); }
-    if (cost) G.sp -= sc(cost);
+    if (cost) { if (T("bloodmagic") > 0) { G.hp -= sc(cost); log("魔力の代わりに血を捧げた。", "bad"); } else G.sp -= sc(cost); }
     if (isLB) { log("リミットブレイク！「" + s.n + "」", "good"); SFX.play("lb"); shake("#stage"); }
     else if (isAbil) log("アビリティ「" + s.n + "」", "good");
     else log("「" + s.n + "」を使った。");
@@ -3908,8 +3935,9 @@ body:not(.title):not(.fighting) .stage { display: none; }
     endPlayerAction();
   }
   function enemyStrike() {
-    if (G.shadow) { log(enemy.n + " の攻撃は、影をすり抜けた。", "good"); G.shadow = false; return; }
-    const defv = 10 + mod(G.dex) + armDef() + T("def") + (G.hp <= G.maxHp / 3 ? T("lowhp") : 0) + (G.guard ? 4 + 2 * T("guard") : 0);
+    let shDm = 1;
+    if (G.shadow) { if (T("bulwark") > 0) { shDm = 0.7; G.shadow = false; log("影が攻撃を和らげた。", "good"); } else { log(enemy.n + " の攻撃は、影をすり抜けた。", "good"); G.shadow = false; return; } }
+    const defv = 10 + mod(G.dex) + armDef() + T("def") + (G.hp <= G.maxHp / 3 ? T("lowhp") : 0) + (G.guard ? 4 : 0);
     const r = d(20);
     const atk = enemy.atk + (G.god === "star" ? 1 : 0);
     const total = r + atk;
@@ -3918,6 +3946,9 @@ body:not(.title):not(.fighting) .stage { display: none; }
     if (!hit) { log("攻撃をかわした。"); return; }
     let dm = rnd(enemy.dmg[0], enemy.dmg[1]);
     if (r === 20) dm *= 2;
+    if (T("deflect") > 0 && Math.random() < Math.min(0.75, 0.25 * T("deflect"))) { dm = Math.ceil(dm / 2); log("攻撃を受け流した！", "good"); }
+    if (shDm < 1) dm = Math.ceil(dm * shDm);
+    if (G.guard && T("bulwark") > 0) dm = Math.ceil(dm * 0.7);
     if (G.guard) dm = Math.ceil(dm / 2);
     if (G.ward > 0) dm = Math.ceil(dm / 2);
     dm = mitigate(dm);
@@ -3999,7 +4030,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
       log("パッシブスキル習得「" + t[1] + "」:" + TRAITS[t[2]], "good");
     }
     if (G.lv === 3 && G.job.combo[2]) log("コンボが3段に伸びた「" + G.job.combo[2].n + "」:" + G.job.combo[2].desc, "good");
-    G.job.gcd.forEach((x) => { if (x[0] === G.lv) log("職業技を習得「" + x[1].n + "」:" + x[1].desc, "good"); });
+    G.job.gcd.forEach((x) => { if (x[0] === G.lv) log("職業スキルを習得「" + x[1].n + "」:" + x[1].desc, "good"); });
     G.job.abil.forEach((x) => { if (x[0] === G.lv) log("アビリティを習得「" + x[1].n + "」(リキャスト" + x[1].rc + "秒):" + x[1].desc, "good"); });
   }
   function gainXp(base) {
@@ -4076,7 +4107,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
       log("踊り場に、小さな祭壇があった。燭台の火だけが静かに揺れている。");
       setChoices([
         { label: "10ギルを供える", disabled: G.gold < 10, fn: () => { G.gold -= 10; const h = heal(rnd(8, 14)); addSp(3); log("火が一瞬だけ強まった。HPが " + h + " 回復し、MPが戻る。", "good"); nextBtn(); } },
-        { label: "黙って祈る", note: "知恵で判定", fn: () => { if (check("wis", 11, "祈り")) { addSp(4); log("心が静まった。MPが回復した。", "good"); } else log("何も起こらなかった。"); nextBtn(); } },
+        { label: "黙って祈る", note: "知識で判定", fn: () => { if (check("wis", 11, "祈り")) { addSp(4); log("心が静まった。MPが回復した。", "good"); } else log("何も起こらなかった。"); nextBtn(); } },
         { label: "燭台を持ち去る", note: "筋力で判定", alt: true, fn: () => {
           if (check("str", 12, "持ち出し")) { const g = gainGold(rnd(15, 30)); log("銀の燭台を外せた。" + g + " ギルで売れそうだ。", "good"); nextBtn(); }
           else { log("祭壇が崩れて、破片が降ってきた。", "bad"); addSp(-2); if (!hurt(rnd(2, 5), "")) nextBtn(); }
@@ -4093,7 +4124,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     function whisper() {
       log("どこからか、聞き覚えのある声が名前を呼ぶ。");
       setChoices([
-        { label: "耳を傾ける", note: "知恵で判定", fn: () => { if (check("wis", 12, "精神")) { const g = gainGold(rnd(10, 25)); log("声の主は、落とし物の場所を教えてくれた。" + g + " ギルを拾った。", "good"); } else { addSp(-3); log("声は途中から、知らない言葉に変わった。MPが300減った。", "bad"); } nextBtn(); } },
+        { label: "耳を傾ける", note: "知識で判定", fn: () => { if (check("wis", 12, "精神")) { const g = gainGold(rnd(10, 25)); log("声の主は、落とし物の場所を教えてくれた。" + g + " ギルを拾った。", "good"); } else { addSp(-3); log("声は途中から、知らない言葉に変わった。MPが300減った。", "bad"); } nextBtn(); } },
         { label: "耳をふさいで進む", alt: true, fn: () => { log("足早に通り過ぎた。"); nextBtn(); } }
       ]);
     },
@@ -4122,7 +4153,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     function graffiti() {
       log("壁一面に、先人の書き込みがある。「下には灯りが残っている」「引き返せ」。");
       setChoices([
-        { label: "じっくり読む", note: "知恵で判定", fn: () => { if (check("wis", 11, "読解")) { G.buff = 1; log("先人の知恵が頭に入った。次の戦闘で攻撃に+2の加護を得る。", "good"); } else { addSp(-1); log("文字が滲んで、意味が取れなかった。"); } nextBtn(); } },
+        { label: "じっくり読む", note: "知識で判定", fn: () => { if (check("wis", 11, "読解")) { G.buff = 1; log("先人の知識が頭に入った。次の戦闘で攻撃に+2の加護を得る。", "good"); } else { addSp(-1); log("文字が滲んで、意味が取れなかった。"); } nextBtn(); } },
         { label: "自分の名前を書き足す", alt: true, fn: () => { addSp(2); log("誰かに見つけてもらえる気がして、MPが200回復した。", "good"); nextBtn(); } }
       ]);
     },
@@ -4153,7 +4184,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     function crystalShard() {
       log("黒く濁ったクリスタルの欠片が、階段に突き刺さっている。触れると、かすかに温かい。中で、何かの光が身をよじっている。");
       setChoices([
-        { label: "残った光を吸い取る", note: "知恵で判定", fn: () => {
+        { label: "残った光を吸い取る", note: "知識で判定", fn: () => {
           if (check("wis", 12, "吸収")) { G.spBonus += 2; recalc(); addSp(4); log("冷たい光が体に満ちた。最大MPが200増えた。", "good"); nextBtn(); }
           else { log("黒い光が逆流し、内側から焼かれた。", "bad"); if (!hurt(rnd(4, 7), "")) nextBtn(); }
         } },
@@ -4178,8 +4209,8 @@ body:not(.title):not(.fighting) .stage { display: none; }
           const h = heal(Math.ceil(G.maxHp * 0.3)); addSp(3);
           log("騎士は何も言わず、少しだけ場所を空けた。HPが " + h + " 回復し、MPも戻った。", "good"); nextBtn();
         } },
-        { label: "言葉を交わす", note: "知恵で判定", alt: true, fn: () => {
-          if (check("wis", 13, "対話")) { log("騎士は途切れ途切れに、かつての技を語った。", "good"); skillOffer(nextBtn); }
+        { label: "言葉を交わす", note: "知識で判定", alt: true, fn: () => {
+          if (check("wis", 13, "対話")) { log("騎士は途切れ途切れに、かつてのスキルを語った。", "good"); skillOffer(nextBtn); }
           else { log("騎士は、あなたを敵だと思い込んだ。", "bad"); battle(false); }
         } },
         { label: "手合わせを頼む", note: "筋力で判定", alt: true, fn: () => {
@@ -4196,8 +4227,8 @@ body:not(.title):not(.fighting) .stage { display: none; }
           G.gold -= 40; { const nw = Object.assign({}, G.wpn, { n: up(G.wpn.n), atk: G.wpn.atk + 1, dmg: G.wpn.dmg + 1 }); equipTo("wpn", nw); }
           log("刃に、青白い光が宿った。" + G.wpn.n + " になった。", "good"); nextBtn();
         } },
-        { label: "防具を繕ってもらう(40ギル)", note: "胴(なければ頭・足)の防御+1", disabled: G.gold < 40 || !["body", "head", "feet"].some((k) => G[k]), fn: () => {
-          const sl = ["body", "head", "feet"].find((k) => G[k]);
+        { label: "防具を繕ってもらう(40ギル)", note: "胴(なければ他の防具)の防御+1", disabled: G.gold < 40 || !["body", "head", "legs", "hands", "feet"].some((k) => G[k]), fn: () => {
+          const sl = ["body", "head", "legs", "hands", "feet"].find((k) => G[k]);
           G.gold -= 40; G[sl] = Object.assign({}, G[sl], { n: up(G[sl].n), def: G[sl].def + 1 });
           log("継ぎ目が、音もなく塞がった。" + G[sl].n + " になった。", "good"); nextBtn();
         } },
@@ -4240,7 +4271,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
       function organ() {
         log("崩れたオルガンの鍵盤に、まだ温もりがある。");
         setChoices([
-          { label: "弾いてみる", note: "知恵で判定", fn: () => { if (check("wis", 12, "演奏")) { const h = heal(8); addSp(2); log("旋律が空間に満ちた。HPが " + h + " 回復し、MPが200戻った。", "good"); } else { addSp(-3); log("不協和音が頭蓋に響く。MPが300減った。", "bad"); } nextBtn(); } },
+          { label: "弾いてみる", note: "知識で判定", fn: () => { if (check("wis", 12, "演奏")) { const h = heal(8); addSp(2); log("旋律が空間に満ちた。HPが " + h + " 回復し、MPが200戻った。", "good"); } else { addSp(-3); log("不協和音が頭蓋に響く。MPが300減った。", "bad"); } nextBtn(); } },
           { label: "そっと離れる", alt: true, fn: nextBtn }
         ]);
       },
@@ -4248,7 +4279,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
         log("懺悔室の格子の向こうに、誰かの気配がある。「罪を、聞こう」");
         setChoices([
           { label: "正直に告白する", fn: () => { addSp(4); G.gold = Math.max(0, G.gold - 10); log("胸のつかえが取れた。MPが400回復したが、布施にギルを取られた。", "good"); nextBtn(); } },
-          { label: "嘘をつく", note: "知恵で判定", alt: true, fn: () => { if (check("wis", 13, "欺き")) { const g = gainGold(20); log("聴き手は満足して、礼金をくれた。" + g + " ギル。", "good"); nextBtn(); } else { log("格子の奥から、見えない鞭が飛んだ。", "bad"); if (!hurt(rnd(3, 6), "")) nextBtn(); } } }
+          { label: "嘘をつく", note: "知識で判定", alt: true, fn: () => { if (check("wis", 13, "欺き")) { const g = gainGold(20); log("聴き手は満足して、礼金をくれた。" + g + " ギル。", "good"); nextBtn(); } else { log("格子の奥から、見えない鞭が飛んだ。", "bad"); if (!hurt(rnd(3, 6), "")) nextBtn(); } } }
         ]);
       },
       function reliquary() {
@@ -4264,7 +4295,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
         log("溺れた巡礼者の行列が、無言のまま階段を上っていく。全員が、同じ方向を見ている。");
         setChoices([
           { label: "列の後ろについていく", note: "MPを200消費", fn: () => { addSp(-2); G.herb += 2; log("行列は、誰かの落とした荷を拾わせてくれた。ポーション +2。"); nextBtn(); } },
-          { label: "声をかける", note: "知恵で判定", alt: true, fn: () => { if (check("wis", 13, "対話")) { const g = gainGold(rnd(15, 30)); log("巡礼者のひとりが、握りしめていたギルを差し出した。" + g + " ギル。", "good"); } else { addSp(-3); log("全員が、同時にこちらを向いた。MPが300減った。", "bad"); } nextBtn(); } },
+          { label: "声をかける", note: "知識で判定", alt: true, fn: () => { if (check("wis", 13, "対話")) { const g = gainGold(rnd(15, 30)); log("巡礼者のひとりが、握りしめていたギルを差し出した。" + g + " ギル。", "good"); } else { addSp(-3); log("全員が、同時にこちらを向いた。MPが300減った。", "bad"); } nextBtn(); } },
           { label: "道を譲る", alt: true, fn: nextBtn }
         ]);
       },
@@ -4294,14 +4325,14 @@ body:not(.title):not(.fighting) .stage { display: none; }
       function codex() {
         log("宙に浮いた写本が、ひとりでにページをめくっている。");
         setChoices([
-          { label: "読む", note: "知恵で判定", fn: () => { if (check("wis", 13, "読解")) { log("見知らぬ文字が、意味を持ちはじめた。", "good"); skillOffer(nextBtn); } else { addSp(-4); log("文字が目の奥に焼きついた。MPが400減った。", "bad"); nextBtn(); } } },
+          { label: "読む", note: "知識で判定", fn: () => { if (check("wis", 13, "読解")) { log("見知らぬ文字が、意味を持ちはじめた。", "good"); skillOffer(nextBtn); } else { addSp(-4); log("文字が目の奥に焼きついた。MPが400減った。", "bad"); nextBtn(); } } },
           { label: "ページを破り取る", alt: true, fn: () => { const g = gainGold(rnd(15, 28)); log("破り取った数頁は、売れそうだ。" + g + " ギル。"); nextBtn(); } }
         ]);
       },
       function constellation() {
         log("床に星座が描かれている。線をなぞると、淡い光が走った。");
         setChoices([
-          { label: "星座をなぞる", note: "知恵で判定", fn: () => { if (check("wis", 12, "星読み")) { G.buff = 1; addSp(3); log("星の位置が、答えを教えてくれた。次の戦闘で攻撃+2、MPも回復。", "good"); } else { G.poison = Math.max(G.poison, 3); log("光が皮膚に刺さり、毒のように広がった。", "bad"); } nextBtn(); } },
+          { label: "星座をなぞる", note: "知識で判定", fn: () => { if (check("wis", 12, "星読み")) { G.buff = 1; addSp(3); log("星の位置が、答えを教えてくれた。次の戦闘で攻撃+2、MPも回復。", "good"); } else { G.poison = Math.max(G.poison, 3); log("光が皮膚に刺さり、毒のように広がった。", "bad"); } nextBtn(); } },
           { label: "足跡を残さず通り過ぎる", alt: true, fn: nextBtn }
         ]);
       }
@@ -4336,7 +4367,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     function library() {
       log("崩れかけた書架の間に、まだ読める本が一冊だけ残っている。");
       setChoices([
-        { label: "読み解く", note: "知恵で判定", fn: () => { if (check("wis", dcF() + 1, "読解")) { gainXp(14 + G.floor * 2); if (d(3) === 1) return skillOffer(nextBtn); log("知識が、確かに身についた。", "good"); } else { addSp(-3); log("文字が頭の中で歪んだ。MPが300減った。", "bad"); } nextBtn(); } },
+        { label: "読み解く", note: "知識で判定", fn: () => { if (check("wis", dcF() + 1, "読解")) { gainXp(14 + G.floor * 2); if (d(3) === 1) return skillOffer(nextBtn); log("知識が、確かに身についた。", "good"); } else { addSp(-3); log("文字が頭の中で歪んだ。MPが300減った。", "bad"); } nextBtn(); } },
         { label: "売れそうな頁を破り取る", alt: true, fn: () => { const g = gainGold(rnd(12, 24) + G.floor); log(g + " ギルになりそうだ。"); nextBtn(); } }
       ]);
     },
@@ -4399,7 +4430,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     function abyssWhisper() {
       log("闇そのものが、あなたの憎しみを褒めている。");
       setChoices([
-        { label: "耳を傾ける", note: "知恵で判定 / 憎悪を得る", fn: () => { if (check("wis", 15, "精神")) { const a = 8 + Math.floor(G.floor / 5); rec.ash += a; saveRec(); log("囁きは、憎悪の欠片を残していった。憎悪 +" + a, "good"); } else { addSp(-5); log("声が頭蓋の内側で反響した。MPが500減った。", "bad"); if (hurt(rnd(3, 8), "")) return; } nextBtn(); } },
+        { label: "耳を傾ける", note: "知識で判定 / 憎悪を得る", fn: () => { if (check("wis", 15, "精神")) { const a = 8 + Math.floor(G.floor / 5); rec.ash += a; saveRec(); log("囁きは、憎悪の欠片を残していった。憎悪 +" + a, "good"); } else { addSp(-5); log("声が頭蓋の内側で反響した。MPが500減った。", "bad"); if (hurt(rnd(3, 8), "")) return; } nextBtn(); } },
         { label: "拒む", alt: true, fn: nextBtn }
       ]);
     },
@@ -4456,7 +4487,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
       const it = makeRare(0), price = Math.round((60 + (it.t || 0) * 40) * priceMul() * (1 + it.rar));
       setChoices([
         { label: rarTag(it) + it.n + "(" + price + "ギル)", note: fmtItem(it), disabled: G.gold < price, fn: () => buyGear(it, price, nextBtn, () => wanderer()) },
-        { label: "値切る", note: "知恵で判定。成功で半額", alt: true, fn: () => { if (check("wis", 14 + Math.floor(G.floor / 60), "交渉") && G.gold >= Math.round(price / 2)) { const p2 = Math.round(price / 2); buyGear(it, p2, nextBtn, nextBtn); } else { log("旅商人は鼻で笑って、闇に消えた。"); nextBtn(); } } },
+        { label: "値切る", note: "知識で判定。成功で半額", alt: true, fn: () => { if (check("wis", 14 + Math.floor(G.floor / 60), "交渉") && G.gold >= Math.round(price / 2)) { const p2 = Math.round(price / 2); buyGear(it, p2, nextBtn, nextBtn); } else { log("旅商人は鼻で笑って、闇に消えた。"); nextBtn(); } } },
         { label: "断る", alt: true, fn: nextBtn }
       ]);
     },
@@ -4480,7 +4511,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
       setChoices([
         { label: "飲む", fn: () => { const h = heal(Math.ceil(G.maxHp * 0.5)); addSp(Math.ceil(G.maxSp * 0.5)); SFX.play("rest"); log("冷たい水が、体の芯まで染みた。HPが " + h + " 回復し、MPも戻った。", "good"); nextBtn(); } },
         { label: "瓶に汲む", alt: true, fn: () => { addItem("hipotion", 1); SFX.play("item"); log("泉の水を、ハイポーションの瓶に詰めた。", "good"); nextBtn(); } },
-        { label: "水面に手をかざす", note: "知恵で判定", alt: true, fn: () => { if (check("wis", 13 + Math.floor(G.floor / 60), "泉")) { gainXp(40 + G.floor * 4); log("水面が、見知らぬ記憶を映した。経験が身に染みた。", "good"); } else log("水面は、ただ静かに揺れていた。"); nextBtn(); } }
+        { label: "水面に手をかざす", note: "知識で判定", alt: true, fn: () => { if (check("wis", 13 + Math.floor(G.floor / 60), "泉")) { gainXp(40 + G.floor * 4); log("水面が、見知らぬ記憶を映した。経験が身に染みた。", "good"); } else log("水面は、ただ静かに揺れていた。"); nextBtn(); } }
       ]);
     },
     function trainingYard() {
@@ -4502,7 +4533,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     function tablet() {
       log("苔むした石板に、古い文字が刻まれている。読み解けば、力になりそうだ。");
       setChoices([
-        { label: "読み解く", note: "知恵で判定。成功でパッシブポイントを得る", fn: () => { if (check("wis", 14 + Math.floor(G.floor / 50), "解読")) { log("石板の言葉が、体に染みこんでいく。", "good"); return skillOffer(nextBtn); } log("文字は、にじんで読めなくなった。"); gainXp(10 + G.floor); nextBtn(); } },
+        { label: "読み解く", note: "知識で判定。成功でパッシブポイントを得る", fn: () => { if (check("wis", 14 + Math.floor(G.floor / 50), "解読")) { log("石板の言葉が、体に染みこんでいく。", "good"); return skillOffer(nextBtn); } log("文字は、にじんで読めなくなった。"); gainXp(10 + G.floor); nextBtn(); } },
         { label: "拓本を取る", alt: true, fn: () => { const g = gainGold(evGold(20, 40), true); log("拓本は、収集家に高く売れそうだ。" + g + " ギル。"); nextBtn(); } },
         { label: "立ち去る", alt: true, fn: nextBtn }
       ]);
@@ -4660,7 +4691,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
         b.appendChild(mkEl("p", "idesc", c.desc));
       });
       b.appendChild(mkEl("h4", "", "装備"));
-      [["武器", G.wpn], ["頭", G.head], ["胴", G.body], ["足", G.feet], ["指輪Ⅰ", G.rings[0]], ["指輪Ⅱ", G.rings[1]]].forEach((x) => {
+      [["武器", G.wpn], ["頭", G.head], ["胴", G.body], ["足", G.feet], ["手", G.hands], ["脚", G.legs], ["指輪Ⅰ", G.rings[0]], ["指輪Ⅱ", G.rings[1]]].forEach((x) => {
         const box = mkEl("div", "item");
         box.appendChild(mkEl("div", "iname", x[0] + "　" + (x[1] ? x[1].n : "なし")));
         if (x[1]) box.appendChild(mkEl("div", "idesc", itemDesc(x[1])));
@@ -4681,7 +4712,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
       b.appendChild(kv("MP", NF(G.sp) + " / " + NF(G.maxSp)));
       b.appendChild(kv("ギル", G.gold));
       b.appendChild(mkEl("h4", "", "能力値"));
-      [["筋力", "str"], ["敏捷", "dex"], ["知恵", "wis"]].forEach((x) => b.appendChild(kv(x[0], G[x[1]] + "(修正 " + sgn(mod(G[x[1]])) + ")")));
+      [["筋力", "str"], ["敏捷", "dex"], ["知識", "wis"], ["器用さ", "skl"]].forEach((x) => b.appendChild(kv(x[0], G[x[1]] + "(修正 " + sgn(mod(G[x[1]])) + ")")));
       b.appendChild(mkEl("h4", "", "戦闘"));
       const w = G.wpn;
       b.appendChild(kv("攻撃判定", "d20 " + sgn(mod(G[w.stat]) + w.atk + T("atk")) + "(" + STAT[w.stat] + "依存)"));
@@ -4696,7 +4727,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
       const jd = JG[G.job.id];
       b.appendChild(mkEl("h4", "", "ジョブゲージ"));
       b.appendChild(mkEl("p", "", jd.n));
-      b.appendChild(mkEl("p", "idesc", jd.dual ? "氷結で氷、火炎・劫火で炎に傾く。炎2以上で与ダメージ増、氷2以上でMP回復" : "満タンでゲージ技「" + jd.sk.n + "」:" + jd.sk.desc));
+      b.appendChild(mkEl("p", "idesc", jd.dual ? "氷結で氷、火炎・劫火で炎に傾く。炎2以上で与ダメージ増、氷2以上でMP回復" : "満タンでゲージスキル「" + jd.sk.n + "」:" + jd.sk.desc));
       b.appendChild(mkEl("h4", "", "コンボ"));
       G.job.combo.forEach((c, i) => {
         const open = i < 2 || G.lv >= 3;
@@ -4705,7 +4736,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
         box.appendChild(mkEl("div", "idesc", c.desc));
         b.appendChild(box);
       });
-      b.appendChild(mkEl("h4", "", "技"));
+      b.appendChild(mkEl("h4", "", "スキル"));
       G.job.gcd.forEach((x) => {
         const open = x[0] <= G.lv;
         const box = mkEl("div", "item" + (open ? "" : " dim"));
@@ -4775,7 +4806,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     wrap.innerHTML =
       "<div><b>" + (preview.str + upEff("str") + j.str) + "</b><span>筋力</span></div>" +
       "<div><b>" + (preview.dex + upEff("dex") + j.dex) + "</b><span>敏捷</span></div>" +
-      "<div><b>" + (preview.wis + upEff("wis") + j.wis) + "</b><span>知恵</span></div>";
+      "<div><b>" + (preview.wis + upEff("wis") + j.wis) + "</b><span>知識</span></div><div><b>" + ((preview.skl == null ? 10 : preview.skl) + upEff("skl") + (j.skl || JOB_SKL[j.id] || 0)) + "</b><span>器用さ</span></div>";
     logEl.appendChild(wrap);
     log(j.n + "　" + j.desc, "dice");
     log("コンボ:" + j.combo.map((x) => x.n).join(" → "), "dice");
