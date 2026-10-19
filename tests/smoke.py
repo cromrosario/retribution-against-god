@@ -18,6 +18,13 @@ async def main():
         fought = False
         for _ in range(500):
             if await pg.locator("#choices.battle").count(): fought = True
+            # 購入・装備などの確認ポップアップ(.cf-ov)が出たら先に閉じる(出たままだとボタンが押せずタイムアウトする)
+            if await pg.locator(".cf-ov").count():
+                ok = pg.locator(".cf-ov .cf-ok:not([disabled])")
+                if await ok.count(): await ok.first.click()
+                else: await pg.locator(".cf-ov .cf-no").first.click()
+                await pg.wait_for_timeout(120)
+                continue
             bt = pg.locator("#choices button:not([disabled])")
             if await bt.count(): await bt.first.click()
             await pg.wait_for_timeout(120)
