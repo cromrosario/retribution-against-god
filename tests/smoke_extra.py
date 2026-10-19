@@ -75,7 +75,8 @@ def static_checks(src):
     check(not guard_effects, "効果データに guard(守護)が残っていない: %d 件" % len(guard_effects))
 
     # --- ツリー ---
-    check("const open = true;" in src, "パッシブツリーの接続制限が撤廃されている")
+    check("parentsOf(n).some" not in src.split("function nodeState")[1][:700], "パッシブツリーの接続制限が撤廃されている")
+    check("const TREE_GATE = { n: 4, k: 12 }" in src, "ノータブル/キーストーンの解放条件(累計Pt)がある")
     for name in ["レゾリュートテクニック", "バルワーク", "ブラッドマジック", "ダンスウィズデス", "ヴァール・パクト"]:
         check(name in src, "キーストーン「%s」がある" % name)
 
@@ -87,6 +88,8 @@ def static_checks(src):
     for w in ["短弓", "短銃", "苦無", "手裏剣", "銃"]:
         check('["%s", "skl"' % w in src, "武器種 %s が器用さ依存" % w)
     check(len(re.findall(r'\[\d+, \d+, \d+, "skl"\]', src)) >= 5, "ゲージスキル5種が器用さ修正になっている")
+
+    check("window.__RAG" in src and "test=1" in src, "?test=1 の入口(window.__RAG)がある")
 
     # --- 難易度 ---
     m = re.search(r"const HARD_HP = ([\d.]+), HARD_DMG = ([\d.]+)", src)
@@ -163,6 +166,67 @@ def dom_checks(path):
     check(not errors, "ページエラー/コンソールエラーが無い" + ("" if not errors else ": " + " | ".join(errors[:3])))
 
 
+def hook_checks(path):
+    """?test=1 で公開される window.__RAG を使って、効果の数値を直接確認する。"""
+    print("[内部値チェック (?test=1)]")
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        warn("playwright が未インストールのため内部値チェックを省略")
+        return
+    errors = []
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page(viewport={"width": 420, "height": 860})
+        page.on("pageerror", lambda e: errors.append("pageerror: %s" % e))
+        page.goto(path.resolve().as_uri() + "?test=1")
+        page.wait_for_timeout(800)
+        check(page.evaluate("typeof window.__RAG") == "object", "?test=1 で window.__RAG が公開される")
+        plain = browser.new_page()
+        plain.goto(path.resolve().as_uri())
+        plain.wait_for_timeout(300)
+        check(plain.evaluate("typeof window.__RAG") == "undefined", "?test=1 が無いときは公開されない")
+        start = page.get_by_role("button", name=re.compile("旅立つ"))
+        if start.count() == 0:
+            warn("「旅立つ」が見つからず内部値チェックを省略")
+            browser.close()
+            return
+        start.first.click()
+        page.wait_for_timeout(600)
+        r = page.evaluate("""() => {
+          const R = window.__RAG, G = R.G, out = {};
+          out.skl = G.skl;
+          out.critBase = R.critMin();
+          const d0 = R.armDef();
+          G.hands = { n: "t", def: 3, b: {} }; G.legs = { n: "t", def: 2, b: {} };
+          out.defGain = R.armDef() - d0;
+          G.hands = null; G.legs = null;
+          const keys = ["leech", "deflect", "bloodmagic", "bulwark", "dwd", "resolute"];
+          out.before = keys.map((k) => R.T(k));
+          keys.forEach((k) => G.traits.push({ key: k }));
+          out.after = keys.map((k) => R.T(k));
+          out.critResolute = R.critMin();
+          return out;
+        }""")
+        check(isinstance(r["skl"], (int, float)) and r["skl"] == r["skl"], "新規ランの G.skl が数値 (%s)" % r["skl"])
+        check(12 <= r["critBase"] <= 20, "critMin() が 12〜20 (%s)" % r["critBase"])
+        check(r["defGain"] == 5, "手・脚の防具が防御に反映される (+%s)" % r["defGain"])
+        check(all(v == 0 for v in r["before"]), "効果キーは初期状態で 0")
+        check(all(v == 1 for v in r["after"]), "traits から効果キーが数えられる")
+        check(r["critResolute"] == 99, "レゾリュートテクニックで会心が出なくなる (critMin=99)")
+        r2 = page.evaluate("""() => {
+          const R = window.__RAG; const out = {};
+          const hp = [];
+          for (let i = 0; i < 8; i++) { const e = R.makeEnemy(false, false); hp.push(e.hp); }
+          out.hp = Math.min(...hp);
+          out.atk = R.makeEnemy(false, false).atk;
+          return out;
+        }""")
+        check(r2["hp"] > 0, "makeEnemy が敵を作れる (HP最小 %s)" % r2["hp"])
+        browser.close()
+    check(not errors, "内部値チェック中にページエラーが無い" + ("" if not errors else ": " + " | ".join(errors[:3])))
+
+
 def main():
     if not HTML or not Path(HTML).exists():
         print("ゲームHTMLが見つかりません。引数で指定してください: python tests/smoke_extra.py path/to/index.html")
@@ -171,6 +235,7 @@ def main():
     src = Path(HTML).read_text(encoding="utf-8")
     static_checks(src)
     dom_checks(Path(HTML))
+    hook_checks(Path(HTML))
     print("\n結果: 失敗 %d / 警告 %d" % (len(failures), len(warnings)))
     return 1 if failures else 0
 

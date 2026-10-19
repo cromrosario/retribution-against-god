@@ -2260,24 +2260,24 @@ body:not(.title):not(.fighting) .stage { display: none; }
     const mk = (br, row, lane, id, n, desc, kind, b, stat) => { const o = { br: br, row: row, lane: lane, id: id, n: n, desc: desc, kind: kind, max: kind === "m" ? 3 : 1, cost: kind === "m" ? 1 : kind === "n" ? 2 : 3, b: b || {}, stat: stat || null }; TREE.push(o); TREE_BY[id] = o; };
     const DEF = [
       { st: ["鍛錬", "一撃が重くなる", { dmg: 1 }], key: ["レゾリュートテクニック", "受け流しが2倍になるが、会心が出なくなる", { deflect: 2, dmg: 3, resolute: 1 }], lanes: [
-        [["照準", "狙いが正確に", { atk: 1 }], ["練達", "命中がさらに上がる", { atk: 1 }], ["ロックオン", "急所を捉える(会心・命中)", { crit: 1, atk: 1 }], ["技能", "器用さが上がり、外さない", { atk: 1 }, { skl: 2 }]],
-        [["剛力", "筋力が上がり、腕が重くなる", { dmg: 1 }, { str: 2 }], ["強打", "一撃が重い", { dmg: 1 }], ["届く一撃", "近接の一撃が重くなる", { dmg: 3, atk: 1 }], ["重撃", "叩き潰す", { dmg: 1 }]],
+        [["照準", "狙いが正確に", { atk: 1 }], ["練達", "命中が上がり、手の防具が強くなる", { atk: 1, hdef: 1 }], ["ロックオン", "急所を捉える(会心・命中)", { crit: 1, atk: 1 }], ["技能", "器用さが上がり、外さない", { atk: 1 }, { skl: 2 }]],
+        [["剛力", "筋力が上がり、腕が重くなる", { dmg: 1 }, { str: 2 }], ["強健な肉体", "筋力が上がり、一撃が重い", { dmg: 1 }, { str: 1 }], ["届く一撃", "近接の一撃が重くなる", { dmg: 3, atk: 1 }], ["重撃", "叩き潰す", { dmg: 1 }]],
         [["血気", "血が滾る", { hp: 4 }], ["闘志", "傷つくほど強く", { hp: 5 }], ["殺人者の本能", "追い詰められるほど強く", { lowhp: 1, dmg: 1 }], ["巨大な武器", "筋力が上がり、命を燃やす", { hp: 5 }, { str: 1 }]]] },
       { st: ["頑健", "生命力が増す", { hp: 6 }], key: ["バルワーク", "身を守る間はさらに被ダメ-30%。影でも攻撃を完全には避けられない", { bulwark: 1, def: 4, hp: 14, atk: -2 }], lanes: [
         [["重装防具", "手と脚の防具が強くなる", { hdef: 1, ldef: 1 }], ["受け流し", "守りが堅い", { def: 1 }], ["耐久性", "開戦時の被害を和らげる", { barrier: 1, def: 1 }], ["鉄のスリッパ", "脚の防具が強くなる", { ldef: 1 }]],
-        [["重いユニット", "筋力が上がり、倒れぬ体になる", { hp: 8 }, { str: 1 }], ["活力", "生命が溢れる", { hp: 8 }], ["不屈", "最大ライフが大きく増える", { hp: 20 }], ["生命", "尽きぬ命", { hp: 8 }]],
+        [["重いユニット", "筋力が上がり、倒れぬ体になる", { hp: 8 }, { str: 1 }], ["活力", "生命が溢れる", { hp: 8 }], ["不屈", "最大ライフが大きく増える", { hp: 20 }], ["屈強な肉体", "筋力が上がり、尽きぬ命になる", { hp: 8 }, { str: 1 }]],
         [["革製のガントレット", "手の防具が強くなる", { hdef: 1 }], ["返し", "受けた痛みを返す", { counter: 1 }], ["反撃の構え", "受け流して打ち返す", { def: 2, counter: 1 }], ["毒除け", "毒と魔力奪取に強い", { poisonres: 1, drainres: 1 }]]] },
       { st: ["魔力の泉", "魔力が湧く", { sp: 4 }], key: ["ブラッドマジック", "スキルのMPを、代わりにHPで支払う", { bloodmagic: 1, skilldmg: 5, hp: 12 }], lanes: [
-        [["創意工夫", "知識が上がり、スキルが冴える", { skilldmg: 1 }, { wis: 2 }], ["魔刃", "スキルが鋭くなる", { skilldmg: 1 }], ["威力のある呪文", "スキルが敵の守りを蝕む", { skilldmg: 2, edef: 1 }], ["魔弾", "魔の弾丸", { skilldmg: 1 }]],
+        [["創意工夫", "知識が上がり、スキルが冴える", { skilldmg: 1 }, { wis: 2 }], ["魔刃", "スキルが鋭くなる", { skilldmg: 1 }], ["威力のある呪文", "スキルが敵の守りを蝕む", { skilldmg: 2, edef: 1 }], ["知識の探究", "知識が上がり、魔の弾丸が鋭くなる", { skilldmg: 1 }, { wis: 1 }]],
         [["魔泉", "魔力が増える", { sp: 3 }], ["魔力循環", "歩くだけで魔力が戻る", { sprec: 1 }], ["控えめな詠唱", "魔力を無駄にしない", { skillcost: 1, sp: 2 }], ["博識", "知識と器用さが上がり、魔力が溢れる", { sp: 4 }, { wis: 1, skl: 1 }]],
         [["洞察力", "知識が上がり、回復が増す", { healpow: 1 }, { wis: 1 }], ["瞑想", "心を整える", { sprec: 1 }], ["明晰さ", "知識が深まり回復が増す", { healpow: 2, wischeck: 1 }], ["祝福", "傷が癒え続ける", { regen: 1 }]]] },
       { st: ["身のこなし", "敏捷が上がる", {}, { dex: 1 }], key: ["ダンスウィズデス", "手の防具を外している間、行動が25%速い。守りは捨てる", { dwd: 1, double: 3, first: 1, def: -3 }], lanes: [
-        [["精確な一撃", "器用さが上がり、先に当てる", { atk: 1 }, { skl: 2 }], ["連撃", "追撃しやすい", { double: 1 }], ["迅速な一撃", "風より速く当てる", { first: 1, atk: 2 }], ["追撃", "倒れぬ敵にもう一撃", { double: 1 }]],
-        [["韋駄天", "逃げ足が速い", { flee: 2 }], ["影渡り", "影のように動く", { flee: 2 }], ["逃走戦略", "先手と逃走", { first: 1, flee: 2 }], ["俊足", "さらに速く", { flee: 1 }, { dex: 1 }]],
-        [["眼力", "敵の命中を鈍らせる", { eatk: 1 }], ["強化された反射神経", "器用さが上がり、動きを読む", { eatk: 1 }, { skl: 1 }], ["イーグルアイ", "遠くを見通す", { atk: 3, crit: 1 }], ["洞察", "敵の守りを見抜く", { edef: 1 }]]] },
+        [["精確な一撃", "器用さが上がり、先に当てる", { atk: 1 }, { skl: 2 }], ["連撃", "追撃しやすい", { double: 1 }], ["迅速な一撃", "風より速く当てる", { first: 1, atk: 2 }], ["熟練の技", "器用さが上がり、もう一撃入れる", { double: 1 }, { skl: 1 }]],
+        [["韋駄天", "逃げ足が速い", { flee: 2 }], ["影渡り", "影のように動く", { flee: 2 }], ["逃走戦略", "先手と逃走", { first: 1, flee: 2 }], ["俊足", "さらに速く。脚の防具が強くなる", { flee: 1, ldef: 1 }, { dex: 1 }]],
+        [["眼力", "敵の命中を鈍らせる", { eatk: 1 }], ["強化された反射神経", "器用さが上がり、動きを読む", { eatk: 1 }, { skl: 1 }], ["イーグルアイ", "遠くを見通す", { atk: 3, crit: 1 }], ["鋭い観察眼", "器用さが上がり、敵の守りを見抜く", { edef: 1 }, { skl: 1 }]]] },
       { st: ["黄金の嗅覚", "金のにおいを嗅ぎ分ける", { gold: 1 }], key: ["ヴァール・パクト", "HP吸収が強まるが、薬が効きにくくなる", { leech: 5, kill: 2, hp: 8, herb: -2 }], lanes: [
         [["商才", "稼ぎが増える", { gold: 1 }], ["拾い上げ", "薬が見つかる", { herb: 1 }], ["効率的な錬金術", "金と薬が見つかる", { gold: 2, herb: 1 }], ["蓄財", "さらに稼ぐ", { gold: 1 }]],
-        [["戦の記憶", "戦いから学ぶ", { xp: 1 }], ["研鑽", "経験が積もる", { xp: 1 }], ["パラゴン", "多くを学ぶ", { xp: 2, wischeck: 1 }], ["知見", "知識が増える", { xp: 1 }]],
+        [["戦の記憶", "戦いから学ぶ", { xp: 1 }], ["研鑽", "経験が積もる", { xp: 1 }], ["パラゴン", "多くを学ぶ", { xp: 2, wischeck: 1 }], ["知見", "知識が増える", { xp: 1 }, { wis: 1 }]],
         [["生気", "倒した敵の命を啜る", { kill: 1 }], ["再起", "歩くほど傷が癒える", { regen: 1 }], ["死から流れ出る命", "傷が見る間に塞がる", { regen: 2, hp: 12 }], ["吸命", "深く啜る", { kill: 1, leech: 1 }]]] }
     ];
     DEF.forEach((d, br) => {
@@ -2295,6 +2295,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
     return v;
   }
   const treeUsed = () => (G && G.tree ? Object.keys(G.tree).reduce((a, id) => a + (TREE_BY[id] ? TREE_BY[id].cost * G.tree[id] : 0), 0) : 0);
+  const TREE_GATE = { n: 4, k: 12 }; /* ノータブルは累計4Pt、キーストーンは累計12Pt使うと解放 */
   const treeRanks = () => (G && G.tree ? Object.keys(G.tree).reduce((a, id) => a + G.tree[id], 0) : 0);
   const nodeText = (n) => { const p = []; if (n.stat) Object.keys(n.stat).forEach((k) => p.push(STAT[k] + "+" + n.stat[k])); const bt = bonText(n.b); if (bt) p.push(bt); return p.join("・"); };
   function parentsOf(n) {
@@ -2315,8 +2316,8 @@ body:not(.title):not(.fighting) .stage { display: none; }
     const r = tr[n.id] || 0;
     if (r >= n.max) return "on";
     const cr = crossOf(n);
-    /* 接続制限を撤廃: どのノードからでも取得できる(旧: 前のノードか隣の系統の同段を取得済みで開放) */
-    const open = true;
+    /* 接続制限はなし。代わりに、ノータブル・キーストーンはツリーに一定数のPtを使っていると解放される(序盤に強力なものを無理なく取れないように) */
+    const open = !(G && (TREE_GATE[n.kind] || 0) > treeUsed());
     if (!open) return "lk";
     return r > 0 ? "part" : "open";
   }
@@ -2427,7 +2428,7 @@ body:not(.title):not(.fighting) .stage { display: none; }
       confirmPopup({
         title: iconOf(n) + " " + n.n + "(" + r + "/" + n.max + ")" + (n.kind === "k" ? "【極意】" : n.kind === "n" ? "【要所】" : "") + "　" + TBR[n.br].n,
         lines: [{ t: n.desc }, { t: "1段階ごとに:" + nodeText(n), c: "gd" },
-          { t: st === "lk" ? "つながる手前のノードを先に取る必要がある。" : st === "on" ? "最大まで習得済み。" : "必要Pt " + n.cost + (view ? "" : "(残り " + (G.tpts || 0) + ")"), c: "dim" }],
+          { t: st === "lk" ? "ツリーに合計 " + (TREE_GATE[n.kind] || 0) + " Pt 使うと解放される(いま " + treeUsed() + " Pt)。" : st === "on" ? "最大まで習得済み。" : "必要Pt " + n.cost + (view ? "" : "(残り " + (G.tpts || 0) + ")"), c: "dim" }],
         ok: "割り振る", no: "戻る", okDisabled: !can,
         onOk: () => { if (allocNode(n)) treeBuild($("#ovBody")); }
       });
@@ -4914,6 +4915,11 @@ body:not(.title):not(.fighting) .stage { display: none; }
     log("仲間の形見を背負い、最初の拠点へ向かう。");
     render();
     chooseStronghold(0, nextBtn);
+  }
+
+  /* テスト用の入口: URL に ?test=1 があるときだけ内部を公開する(通常プレイでは何もしない) */
+  if (/[?&]test=1(&|$)/.test(location.search)) {
+    window.__RAG = { get G() { return G; }, get enemy() { return enemy; }, T: T, E: E, armDef: armDef, critMin: critMin, makeEnemy: makeEnemy, mod: mod, SKL: SKL };
   }
 
   titleScreen();
