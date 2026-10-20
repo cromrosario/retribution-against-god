@@ -1,0 +1,14 @@
+{
+  // Cloudflare の Worker「retribution-against-god」と同じ構成。
+  // GitHub に push すると Workers Builds が `npx wrangler deploy` を実行して公開を更新する。
+  "name": "retribution-against-god",
+  "main": "worker.js",
+  "compatibility_date": "2025-09-01",
+  // ゲーム本体(game/index.html)を静的ファイルとして配信する。/api/* は worker.js が処理する。
+  "assets": { "directory": "./game", "binding": "ASSETS" },
+  // アカウント用のセーブ保存先(D1)。
+  "d1_databases": [
+    { "binding": "DB", "database_name": "retribution-saves", "database_id": "4d43e6dd-3b67-4eda-b580-75a6c99957a6" }
+  ],
+  "observability": { "enabled": false }
+}
