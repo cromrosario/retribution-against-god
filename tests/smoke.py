@@ -59,16 +59,18 @@ async def main():
         if await pg.locator("#treeBtn").count(): fails.append("パッシブボタンが残っている")
 
         # 第1段階: 戦闘してレベルが上がるまで
-        fought = False
+        # この版のHUDにはレベル表示が無いので、レベルアップの演出(.banner.lv)かログの文言で検知する
+        fought = leveled = False
         for _ in range(500):
             if await pg.locator("#choices.battle").count(): fought = True
             if await step_overlays(pg): await pg.wait_for_timeout(120); continue
             bt = pg.locator("#choices button:not([disabled])")
             if await bt.count(): await bt.first.click()
             await pg.wait_for_timeout(120)
-            if fought and (await pg.locator("#lvLabel").inner_text()).strip() != "Lv 1": break
+            if await pg.locator(".banner.lv").count() or "レベルが上がった" in await pg.locator("#log").inner_text(): leveled = True
+            if fought and leveled: break
         if not fought: fails.append("戦闘に入れない")
-        if (await pg.locator("#lvLabel").inner_text()).strip() == "Lv 1": fails.append("レベルが上がらない")
+        if not leveled: fails.append("レベルが上がらない")
         hp = await pg.locator("#hpNum").inner_text()
         if "," not in hp: fails.append("HPが100倍になっていない: " + hp)
 
