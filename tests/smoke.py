@@ -17,6 +17,25 @@ MUST_ONCE = [
 MUST_NOT = ["treeB", "#treeBtn", "TREE_BY", "パッシブツリー"]
 
 
+TRACE = []  # (段階, 手番, 操作, 層表示)
+
+
+async def state(pg):
+    """いまの画面の要約(失敗時に表示する)"""
+    js = """() => {
+      const t = (q) => { const e = document.querySelector(q); return e ? e.innerText.replace(/\\s+/g, ' ').slice(0, 300) : '(なし)'; };
+      const ov = ['.cf-ov', '#dice', '.rare-ov', '.d6-ov', '.dice-ov', '.banner'].filter((q) => document.querySelector(q));
+      const btns = [...document.querySelectorAll('#choices button')].map((b) => (b.disabled ? '[無効]' : '') + b.innerText.replace(/\\s+/g, ' ').slice(0, 40));
+      const top = (() => { const b = document.querySelector('#choices button'); if (!b) return '(ボタンなし)';
+        const r = b.getBoundingClientRect(); const e = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        return e ? (e.tagName + '#' + e.id + '.' + e.className).slice(0, 80) : '(画面外)'; })();
+      return { body: document.body.className, choicesClass: (document.querySelector('#choices') || {}).className,
+        floor: t('#floorLabel'), choices: btns, overlays: ov, ovHidden: (document.querySelector('#ov') || {}).hidden,
+        topAtFirstButton: top, log: t('#log') };
+    }"""
+    return await pg.evaluate(js)
+
+
 async def step_overlays(pg):
     """演出・確認ポップアップが出ていたら処理する。処理したら True"""
     if await pg.locator(".cf-ov").count():  # 購入・装備などの確認
@@ -63,13 +82,21 @@ async def main():
         fought = leveled = False
         for _ in range(500):
             if await pg.locator("#choices.battle").count(): fought = True
-            if await step_overlays(pg): await pg.wait_for_timeout(120); continue
+            if await step_overlays(pg): TRACE.append(("1", _, "(演出/確認を閉じた)", "")); await pg.wait_for_timeout(120); continue
             bt = pg.locator("#choices button:not([disabled])")
-            if await bt.count(): await bt.first.click()
+            if await bt.count():
+                TRACE.append(("1", _, (await bt.first.inner_text()).replace("\n", " ")[:30], (await pg.locator("#floorLabel").inner_text()).replace("\n", " ")[:20]))
+                await bt.first.click()
+            else:
+                TRACE.append(("1", _, "(押せるボタンなし)", ""))
             await pg.wait_for_timeout(120)
             if await pg.locator(".banner.lv").count() or "レベルが上がった" in await pg.locator("#log").inner_text(): leveled = True
             if fought and leveled: break
-        if not fought: fails.append("戦闘に入れない")
+        if not fought:
+            fails.append("戦闘に入れない")
+            fails.append("状態: " + str(await state(pg)))
+            fails.append("直近の操作: " + str(TRACE[-15:]))
+            await pg.screenshot(path=str(pathlib.Path(__file__).resolve().parent / "smoke_fail.png"), full_page=True)
         if not leveled: fails.append("レベルが上がらない")
         hp = await pg.locator("#hpNum").inner_text()
         if "," not in hp: fails.append("HPが100倍になっていない: " + hp)
@@ -105,6 +132,7 @@ async def main():
         await b.close()
 
     for e in errs: fails.append("JSエラー: " + e)
+    if fails and TRACE: info.append("操作数: " + str(len(TRACE)) + " / 最初の5手: " + str(TRACE[:5]))
     print("FAIL" if fails else "OK", *fails, *("INFO: " + i for i in info), sep="\n")
     sys.exit(1 if fails else 0)
 

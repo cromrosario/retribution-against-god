@@ -74,15 +74,17 @@ def static_checks(src):
     guard_effects = re.findall(r"[{,]\s*guard:\s*\d", src)
     check(not guard_effects, "効果データに guard(守護)が残っていない: %d 件" % len(guard_effects))
 
-    # --- ツリー ---
-    check("parentsOf(n).some" not in src.split("function nodeState")[1][:700], "パッシブツリーの接続制限が撤廃されている")
-    check("const TREE_GATE = { n: 4, k: 12 }" in src, "ノータブル/キーストーンの解放条件(累計Pt)がある")
-    for name in ["レゾリュートテクニック", "バルワーク", "ブラッドマジック", "ダンスウィズデス", "ヴァール・パクト"]:
-        check(name in src, "キーストーン「%s」がある" % name)
+    # --- パッシブツリー(削除済み) ---
+    for t in ["TREE_GATE", "treeB", "#treeBtn", "TREE_BY", "function nodeState", "パッシブツリー"]:
+        check(t not in src, "パッシブツリーの残骸が無い: %s" % t)
 
-    # --- キーストーン効果キー ---
+    # --- 旧キーストーンの効果キー(処理は残っている。供給元はツリー削除で無くなり、今は traits/装備/契約からのみ) ---
     for key in ["leech", "deflect", "bloodmagic", "bulwark", "dwd", "resolute", "hdef", "ldef"]:
-        check(re.search(r"\b%s\b" % key, src) is not None, "効果キー %s が実装されている" % key)
+        check(re.search(r"\b%s\b" % key, src) is not None, "効果キー %s の処理が残っている" % key)
+
+    # --- TRPGイベント・UIスキン・画像・難易度(追加分) ---
+    for t in ["==== TRPG:BEGIN", "==== EVIMG:BEGIN", "==== SKIN:BEGIN", "==== BOSSIMG:BEGIN", "==== ZBG:BEGIN", "==== DIFF:BEGIN"]:
+        check(src.count(t) == 1, "組み込みブロックが1つある: %s" % t)
 
     # --- 武器・スキル ---
     for w in ["短弓", "短銃", "苦無", "手裏剣", "銃"]:
@@ -140,11 +142,8 @@ def dom_checks(path):
             check("経験値" in body, "ステータス画面に「経験値」がある")
             page.locator("#ovClose").click()
 
-            # パッシブ画面
-            page.locator("#treeBtn").click()
-            page.wait_for_timeout(500)
-            check(page.locator("#ovBody").inner_text() != "", "パッシブ画面が開ける")
-            page.locator("#ovClose").click()
+            # パッシブ画面(削除済み)
+            check(page.locator("#treeBtn").count() == 0, "パッシブボタンが無い")
 
             # 戦闘まで進んで HUD を確認(到達できなければ警告のみ)
             reached = False
@@ -152,6 +151,12 @@ def dom_checks(path):
                 if page.locator("body.fighting").count():
                     reached = True
                     break
+                # 判定・レアドロップの演出は、タップで閉じる(閉じられない間は待つ)
+                if page.locator("#dice, .rare-ov").count():
+                    try: page.locator("#dice, .rare-ov").first.click(timeout=2000)
+                    except Exception: pass
+                    page.wait_for_timeout(200)
+                    continue
                 # 確認ポップアップ(.cf-ov)が出ているとボタンが押せないので、先に閉じる
                 if page.locator(".cf-ov").count():
                     ok = page.locator(".cf-ov .cf-ok:not([disabled])")
