@@ -463,6 +463,31 @@ body:not(.title):not(.fighting) .stage { display: none; }
 html[data-zbg] body::before { inset: -6px; filter: blur(1px) saturate(0.95);
   background: linear-gradient(rgba(2, 3, 12, 0.55), rgba(2, 3, 12, 0.82)), var(--art) center 40% / cover no-repeat, #02030a; }
 /* ==== ZBG-CSS:END ==== */
+/* ==== LAYOUT-CSS:BEGIN (自動挿入。apply_layout.py の CSS を直して再実行する) ==== */
+/* 1. 下端: 100dvh を使う(未対応の端末は従来の高さのまま) */
+@supports (height: 100dvh) {
+  html, body { height: 100dvh; }
+  .app { bottom: auto; height: 100dvh; }
+  body::before, html[data-zbg] body::before { bottom: auto; height: 100dvh; }
+  .overlay, .dice-ov, .d6-ov { bottom: auto; height: 100dvh; }
+}
+/* 2. タイトル画像は余った縦を埋める */
+.titleart { max-height: none; }
+/* 3. HUD: HPとMPだけ。LB・ゲージは戦闘中だけ。肖像はステータス画面へ */
+.me > .pc { display: none; }
+.me { grid-template-columns: minmax(0, 1fr); }
+body:not(.fighting) .me .bars2.one, body:not(.fighting) #jgRow { display: none; }
+.pc-big { text-align: center; margin: 2px 0 10px; }
+.pc-big img { width: 96px; height: auto; image-rendering: pixelated; padding: 4px; border: 2px solid #aab4ff; border-radius: 4px; background: radial-gradient(#121d78, #04062a); }
+/* 5. イベント画面: 選択肢を小さく、挿絵を小さく */
+body:not(.fighting):not(.home) .choices:not(.battle) button { min-height: 36px; padding-top: 4px; padding-bottom: 4px; column-gap: 8px; flex-wrap: nowrap; font-size: 14px; }
+body:not(.fighting):not(.home) .choices:not(.battle) .ic { width: 18px; height: 18px; }
+body:not(.fighting):not(.home) .choices:not(.battle) .sub-note { flex-basis: auto; margin-left: auto; text-align: right; font-size: 11px; line-height: 1.3; max-width: 48%; padding-left: 0 !important; }
+.log .ev-art:not(.boss-intro) { width: auto !important; max-width: 100%; max-height: 17vh !important; aspect-ratio: auto !important; margin: 4px auto 6px !important; }
+/* 6. 背景: 暗幕を薄く、ぼかしなし、パネルは半透明 */
+html[data-zbg] body::before { inset: 0; filter: none; background: linear-gradient(rgba(2, 3, 12, 0.12), rgba(2, 3, 12, 0.38)), var(--art) center / cover no-repeat, #02030a; }
+.stage, .me, .choices, .abilities, .log { background: linear-gradient(180deg, rgba(10, 16, 32, 0.68), rgba(5, 9, 18, 0.76)); }
+/* ==== LAYOUT-CSS:END ==== */
 </style>
 </head>
 <body>
@@ -3632,7 +3657,7 @@ function tuneEnemy(e) {
     inBattle = true;
     G.ail = [];
     G.shadow = false; G.ward = T("barrier") ? 1 : 0; G.firstBonus = (relicIs("first") ? 3 : 0) + (T("first") ? 3 : 0);
-    G.guard = false; G.nextP = 0; G.buffs = []; atb.tick = 0; G.rc = {}; G.combo = 0; G.comboT = 0; G.chain = 0; G.mpAcc = 0; G.jgOver = 0;
+    G.guard = false; G.nextP = 0; G.buffs = []; atb.tick = 0; G.rc = {}; G.combo = 0; G.comboT = 0; G.chain = 0; G.mpAcc = 0; G.jgOver = 0; battleFill();
     const zz = ZONES[zoneOf(G.floor)];
     if (ghostE) { log("闇の中に、見覚えのある姿が立っていた。倒れたときの、あなた自身だ。", "bad"); SFX.play("ghost"); }
     else {
@@ -4504,6 +4529,21 @@ function bgStatus(b) {
   b.appendChild(box);
 }
 /* ==== BG:END ==== */
+/* ==== LAYOUT-JS:BEGIN (自動挿入。apply_layout.py の JS を直して再実行する) ==== */
+/* 戦闘開始時: LB は満タン、ジョブゲージも満タン(段階型の黒魔道士は対象外) */
+function battleFill() {
+  if (!G) return;
+  G.lb = 100;
+  const jd = JG[G.job.id];
+  if (jd && jd.g && !jd.dual) { G.jg = 100; G.jgOver = 1; }
+}
+/* ステータス画面の先頭に自キャラの絵を出す(HUD の肖像と同じ画像) */
+function statusPortrait() {
+  const w = mkEl("div", "pc-big"), pc = document.getElementById("pcImg");
+  if (pc && pc.src) { const im = document.createElement("img"); im.src = pc.src; im.alt = ""; w.appendChild(im); }
+  return w;
+}
+/* ==== LAYOUT-JS:END ==== */
 /* ==== TRPG:BEGIN (自動挿入ブロック。編集は trpg_events.js で行い、add_trpg_events.py を再実行する) ==== */
 /* ---------- TRPG イベントシステム ----------
    構成: [エンジン] 状態・判定・効果・画面 / [データ] TRPG_EVENTS
@@ -5462,6 +5502,7 @@ const EVIMG = {
   $("#statBtn").addEventListener("click", () => {
     if (!G) return;
     openOv("ステータス", (b) => {
+      b.appendChild(statusPortrait());
       const need = xpNeed(G.lv);
       b.appendChild(mkEl("h4", "", "基本"));
       b.appendChild(kv("職業", G.job.n + "　Lv " + G.lv + (G.lv >= MAXLV ? "(最大)" : "")));
