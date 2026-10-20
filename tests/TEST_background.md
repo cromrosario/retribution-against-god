@@ -45,3 +45,21 @@ window.__RAG.E("hp")
 - HP の100倍表記が崩れていない(経歴の hp は `recalc` 内で `sc()` される)。
 - JS エラーなし。
 - 既知: `deriveSet()`(装備比較の表示)は経歴・契約のボーナスを反映しない。
+
+---
+
+# テスト指示 — 上部2行の非表示(apply_hide_lines.py)
+
+```
+python3 tools/apply_hide_lines.py game/index.html            # 適用(2回目は「すでに非表示」)
+python3 tools/apply_hide_lines.py game/index.html --remove   # 元に戻す
+```
+
+| 確認 | 期待 |
+|---|---|
+| CSS の `/* HIDE_LINES */` | 1件(`.stats, .gear … { display: none !important; }`) |
+| `#statsLine` / `#gearLine` 要素 | 残っている(DOM には存在する。見えないだけ) |
+| 画面(非戦闘・戦闘とも) | 「職業 … Lv / 筋力 … / 武器 … / 指輪 … / スキル / アビリティ / 職業パッシブ」の2行が出ない |
+| ステータス画面・持ち物画面 | 能力値・装備・スキル・職業パッシブが従来どおり見られる |
+| smoke.py / smoke_extra.py | 通過(※ `#statsLine` `#gearLine` の**表示テキスト**を読んでいるテストがあると失敗する。その場合は `textContent` に変えるか、そのチェックを外す) |
+| JS エラー | なし |
