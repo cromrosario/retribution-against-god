@@ -488,6 +488,23 @@ body:not(.fighting):not(.home) .choices:not(.battle) .sub-note { flex-basis: aut
 html[data-zbg] body::before { inset: 0; filter: none; background: linear-gradient(rgba(2, 3, 12, 0.12), rgba(2, 3, 12, 0.38)), var(--art) center / cover no-repeat, #02030a; }
 .stage, .me, .choices, .abilities, .log { background: linear-gradient(180deg, rgba(10, 16, 32, 0.68), rgba(5, 9, 18, 0.76)); }
 /* ==== LAYOUT-CSS:END ==== */
+/* ==== BATTLEUI-CSS:BEGIN (自動挿入。apply_battle_ui.py を直して再実行する) ==== */
+/* 戦闘中だけ自キャラの絵をHUDに出す(戦闘外は apply_layout.py のとおり非表示) */
+body.fighting .me { grid-template-columns: auto minmax(0, 1fr); }
+body.fighting .me > .pc { display: block; width: 56px; }
+/* ==== BATTLEUI-CSS:END ==== */
+/* ==== FIT-CSS:BEGIN (自動挿入。apply_fit.py を直して再実行する) ==== */
+/* 1. イベント挿絵: ログ枠の幅いっぱい(左右の余白ぶんまで広げる)。比率 378:250 のまま、高さは 32vh まで */
+.log img.ev-art:not(.boss-intro) { display: block; width: calc(100% + 20px) !important; max-width: none; margin: 2px -10px 8px !important; aspect-ratio: 378 / 250 !important; max-height: 32vh !important; object-fit: cover; border-radius: 0; }
+/* 2. ホーム画面から起動したとき: JS が --appH(画面の実高さ)を入れた場合だけ、その高さを使う */
+html[data-fit], html[data-fit] body { height: var(--appH); }
+html[data-fit] .app { bottom: auto; height: var(--appH); padding-bottom: calc(8px + max(env(safe-area-inset-bottom, 0px), 12px)); }
+html[data-fit] body::before, html[data-fit][data-zbg] body::before { bottom: auto; height: var(--appH); }
+html[data-fit] .overlay, html[data-fit] .dice-ov, html[data-fit] .d6-ov, html[data-fit] .cf-ov, html[data-fit] .rare-ov { bottom: auto; height: var(--appH); }
+/* ==== FIT-CSS:END ==== */
+/* ==== BGFIX-CSS:BEGIN (自動挿入。apply_bgfix.py を直して再実行する) ==== */
+body { background: transparent; }
+/* ==== BGFIX-CSS:END ==== */
 </style>
 </head>
 <body>
@@ -4544,6 +4561,42 @@ function statusPortrait() {
   return w;
 }
 /* ==== LAYOUT-JS:END ==== */
+/* ==== BATTLEUI-JS:BEGIN (自動挿入。apply_battle_ui.py を直して再実行する) ==== */
+/* 戦闘開始時のLB・ジョブゲージ満タンをやめる。同名の関数宣言は後ろが優先されるので、空にして上書きする */
+function battleFill() {}
+/* ==== BATTLEUI-JS:END ==== */
+/* ==== FIT-JS:BEGIN (自動挿入。apply_fit.py を直して再実行する) ==== */
+/* ホーム画面起動(スタンドアロン)で、レイアウトの高さが画面より短いとき(iOS)は画面の高さに合わせる。
+   ブラウザで開いたとき・横長・タブレットでは何もしない。?fitdebug=1 で測定線を出す。 */
+function fitApp() {
+  try {
+    const de = document.documentElement;
+    const sa = navigator.standalone === true || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    const portrait = window.innerHeight >= window.innerWidth;
+    const sh = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+    const gap = sh - window.innerHeight;
+    if (sa && window.innerWidth <= 600 && gap > 0 && gap <= 140) {
+      de.style.setProperty("--appH", sh + "px"); de.setAttribute("data-fit", "1");
+    } else { de.removeAttribute("data-fit"); de.style.removeProperty("--appH"); }
+    fitDebug(sa, sh);
+  } catch (e) { /* 失敗しても従来の表示のまま */ }
+}
+function fitDebug(sa, sh) {
+  if (!/[?&]fitdebug=1/.test(location.search)) return;
+  let box = document.getElementById("fitDbg");
+  if (!box) { box = document.createElement("div"); box.id = "fitDbg"; box.style.cssText = "position:fixed;left:0;top:0;width:100%;z-index:9999;pointer-events:none;font:11px/1.3 monospace;color:#fff"; document.body.appendChild(box); }
+  const line = (css, label, col) => '<div style="position:fixed;left:0;right:0;' + css + ';border-top:3px solid ' + col + '"><span style="background:' + col + ';color:#000;padding:0 4px">' + label + '</span></div>';
+  const probe = document.createElement("div"); probe.style.cssText = "position:fixed;visibility:hidden;padding-bottom:env(safe-area-inset-bottom,0px)"; document.body.appendChild(probe);
+  const inb = parseFloat(getComputedStyle(probe).paddingBottom) || 0; probe.remove();
+  box.innerHTML = line("top:100dvh", "橙 100dvh", "orange") + line("top:100svh", "緑 100svh", "#3c3") + line("bottom:0", "赤 bottom:0", "#f44") + line("top:" + (document.documentElement.style.getPropertyValue("--appH") || "0px"), "青 --appH", "#4af")
+    + '<div style="position:fixed;left:6px;top:60px;background:#000a;padding:3px 6px">standalone=' + sa + " inner=" + innerWidth + "x" + innerHeight + " screen=" + screen.width + "x" + screen.height + " 使用=" + sh + " 下inset=" + inb + " fit=" + document.documentElement.hasAttribute("data-fit") + "</div>";
+}
+window.addEventListener("resize", fitApp);
+window.addEventListener("orientationchange", () => setTimeout(fitApp, 300));
+window.addEventListener("pageshow", fitApp);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) fitApp(); });
+fitApp(); setTimeout(fitApp, 300); setTimeout(fitApp, 1200);
+/* ==== FIT-JS:END ==== */
 /* ==== TRPG:BEGIN (自動挿入ブロック。編集は trpg_events.js で行い、add_trpg_events.py を再実行する) ==== */
 /* ---------- TRPG イベントシステム ----------
    構成: [エンジン] 状態・判定・効果・画面 / [データ] TRPG_EVENTS
