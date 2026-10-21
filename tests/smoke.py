@@ -36,19 +36,43 @@ async def state(pg):
     return await pg.evaluate(js)
 
 
+EXIT_WORDS = ("鍛冶場を出る", "立ち去る")      # 店・鍛冶場・イベントから抜けるボタン(優先して押す)
+AVOID_WORDS = ("ボーナスを打ち直す", "を鍛える")  # 押すと同じ画面に戻ってループするボタン
+
+
+async def pick(pg):
+    """押すボタンを選ぶ。戦闘中は先頭(コンボ)、それ以外は『出る』系を優先し、ループするボタンは避ける。"""
+    bt = pg.locator("#choices button:not([disabled])")
+    n = await bt.count()
+    if n == 0: return None
+    if await pg.locator("#choices.battle").count(): return bt.first
+    texts = [t.replace("\n", " ") for t in await bt.all_inner_texts()]
+    for w in EXIT_WORDS:
+        for i, t in enumerate(texts):
+            if w in t: return bt.nth(i)
+    for i, t in enumerate(texts):
+        if not any(w in t for w in AVOID_WORDS): return bt.nth(i)
+    return bt.first
+
+
+async def tap(pg, sel):
+    """演出は自動で消えることがある。クリック直前に消えても失敗にしない"""
+    try: await pg.locator(sel).first.click(timeout=1500)
+    except Exception: pass
+
+
 async def step_overlays(pg):
     """演出・確認ポップアップが出ていたら処理する。処理したら True"""
     if await pg.locator(".cf-ov").count():  # 購入・装備などの確認
         ok = pg.locator(".cf-ov .cf-ok:not([disabled])")
-        if await ok.count(): await ok.first.click()
-        else: await pg.locator(".cf-ov .cf-no").first.click()
+        await tap(pg, ".cf-ov .cf-ok:not([disabled])" if await ok.count() else ".cf-ov .cf-no")
         return True
     if await pg.locator("#dice").count():  # d20 / 2D6 判定の演出(確定後はタップで閉じる)
-        await pg.locator("#dice").click(); return True
+        await tap(pg, "#dice"); return True
     if await pg.locator(".rare-ov").count():  # レアドロップ演出
-        await pg.locator(".rare-ov").click(); return True
+        await tap(pg, ".rare-ov"); return True
     if await pg.locator("#ov:not([hidden])").count():  # 持ち物・ステータスなどの重ね表示
-        await pg.locator("#ovClose").click(); return True
+        await tap(pg, "#ovClose"); return True
     return False
 
 
@@ -83,10 +107,10 @@ async def main():
         for _ in range(500):
             if await pg.locator("#choices.battle").count(): fought = True
             if await step_overlays(pg): TRACE.append(("1", _, "(演出/確認を閉じた)", "")); await pg.wait_for_timeout(120); continue
-            bt = pg.locator("#choices button:not([disabled])")
-            if await bt.count():
-                TRACE.append(("1", _, (await bt.first.inner_text()).replace("\n", " ")[:30], (await pg.locator("#floorLabel").inner_text()).replace("\n", " ")[:20]))
-                await bt.first.click()
+            bt = await pick(pg)
+            if bt is not None:
+                TRACE.append(("1", _, (await bt.inner_text()).replace("\n", " ")[:30], (await pg.locator("#floorLabel").inner_text()).replace("\n", " ")[:20]))
+                await bt.click()
             else:
                 TRACE.append(("1", _, "(押せるボタンなし)", ""))
             await pg.wait_for_timeout(120)
@@ -120,8 +144,8 @@ async def main():
             if await door.count():
                 events += 1; await door.first.click()
             else:
-                bt = pg.locator("#choices button:not([disabled])")
-                if await bt.count(): await bt.first.click()
+                bt = await pick(pg)
+                if bt is not None: await bt.click()
             await pg.wait_for_timeout(120)
         info.append(f"イベント部屋 {events}回 / 挿絵を観測 {seen_art}回 / 2D6演出を観測 {seen_d6}回")
         if events >= 5 and seen_art == 0: fails.append("イベント部屋に入っているのに挿絵が一度も出ない")
