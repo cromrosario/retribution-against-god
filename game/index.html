@@ -505,6 +505,18 @@ html[data-fit] .overlay, html[data-fit] .dice-ov, html[data-fit] .d6-ov, html[da
 /* ==== BGFIX-CSS:BEGIN (自動挿入。apply_bgfix.py を直して再実行する) ==== */
 body { background: transparent; }
 /* ==== BGFIX-CSS:END ==== */
+/* ==== UI2-CSS:BEGIN (自動挿入。apply_ui2.py を直して再実行する) ==== */
+/* 1. 戦闘外: HP/MP(.me)を画面の一番下へ(.app は縦並びの flex。order で最後に回す)。戦闘中は今までの位置 */
+body:not(.fighting) .me { order: 99; }
+/* 2. 選択肢をさらに小さく(戦闘外・タイトル以外)。数値は下の1行を変えれば調整できる */
+body:not(.fighting):not(.home) .choices:not(.battle) { padding: 2px; }
+body:not(.fighting):not(.home) .choices:not(.battle) button { min-height: 28px; padding: 2px 8px 2px 28px; column-gap: 6px; font-size: 13px; line-height: 1.25; }
+body:not(.fighting):not(.home) .choices:not(.battle) .ic { width: 14px; height: 14px; }
+body:not(.fighting):not(.home) .choices:not(.battle) .sub-note { font-size: 10px; line-height: 1.2; }
+/* 3. イベント挿絵をさらに大きく: 挿絵があるときだけログ枠を画面の左右いっぱいまで広げ、比率を 4:3(横長を少し縦にトリミング)、高さは 42vh まで */
+body:not(.fighting):not(.home) .log:has(img.ev-art:not(.boss-intro)) { margin-left: -10px; margin-right: -10px; border-left: 0; border-right: 0; border-radius: 0; }
+body .log img.ev-art:not(.boss-intro) { aspect-ratio: 4 / 3 !important; max-height: 42vh !important; }
+/* ==== UI2-CSS:END ==== */
 </style>
 </head>
 <body>
