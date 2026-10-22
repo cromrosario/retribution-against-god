@@ -3832,9 +3832,9 @@ function tuneEnemy(e) {
       list.push({ label: s.n, note: costText({ hp: s.hp, cost: cost }) + " / " + s.desc, icon: skillIcon(s), cd: true, alt: true, disabled: !ready || lack, fn: run });
     };
     jobGcds().forEach((o) => addSkill(o.s, () => runSkill(o.s, o.id, false, false)));
-    const inashi = G.job.id === "samurai"; /* LB3 */
-    list.push({ label: inashi ? "いなし" : "身を守る", note: inashi ? "刃で受け流す。次の行動まで被ダメージ軽減" : "次の行動まで被ダメージ軽減", icon: "shield", cd: true, alt: true, disabled: !ready,
-      fn: () => { G.guard = true; if (typeof SFX !== "undefined") SFX.play("guard"); log(inashi ? "刃を寝かせ、攻撃をいなす構えをとる。(次の行動を選ぶまで続く)" : "身を低くして、構えを固める。(次の行動を選ぶまで続く)"); endPlayerAction(); } });
+    list.push({ label: "身を守る", note: "次の行動まで被ダメージ軽減", icon: "shield", cd: true, alt: true, disabled: !ready,
+      fn: () => { G.guard = true; log("身を低くして、構えを固める。(次の行動を選ぶまで続く)"); endPlayerAction(); } });
+    /* LB3 */ if (typeof guardTune === "function") guardTune(list[list.length - 1]);
     list.push({ label: "逃げる", note: enemy.boss ? "主からは逃げられない" : "敏捷で判定", icon: "flee", cd: true, alt: true, disabled: !ready || enemy.boss, fn: flee });
     setChoices(list);
     $("#choices").className = "choices battle";
@@ -4873,6 +4873,15 @@ function useLB() {
   const sk = lbSkill(lv);
   G.lb = 0; lbSeen = 0;
   runSkill(sk, "lb", true, false);
+}
+/* 身を守る(ガード)のボタンの調整: 全職業で防御の音を足し、侍は「いなし」に差し替える */
+function guardTune(g) {
+  const base = g.fn;
+  g.fn = () => { if (typeof SFX !== "undefined") SFX.play("guard"); base(); };
+  if (G.job.id === "samurai") {
+    g.label = "いなし"; g.note = "刃で受け流す。次の行動まで被ダメージ軽減";
+    g.fn = () => { G.guard = true; if (typeof SFX !== "undefined") SFX.play("guard"); log("刃を寝かせ、攻撃をいなす構えをとる。(次の行動を選ぶまで続く)"); endPlayerAction(); };
+  }
 }
 /* ==== LB3-JS:END ==== */
 /* ==== UI4-JS:BEGIN (自動挿入。apply_ui4.py を直して再実行する) ==== */
