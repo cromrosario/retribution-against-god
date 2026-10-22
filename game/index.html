@@ -553,6 +553,28 @@ body:not(.fighting):not(.title) .choices:not(.battle):not(:has(button:nth-child(
 /* 7. ダブルタップ拡大を止める */
 html, body, * { touch-action: manipulation; }
 /* ==== UI3-CSS:END ==== */
+/* ==== VER-CSS:BEGIN (自動挿入。apply_version.py を直して再実行する) ==== */
+#ver { position: fixed; left: 8px; bottom: calc(env(safe-area-inset-bottom, 0px) + 2px); z-index: 2; font-size: 10px; color: rgba(190, 200, 255, 0.5); pointer-events: none; display: none; }
+body.title #ver { display: block; }
+/* ==== VER-CSS:END ==== */
+/* ==== PC-CSS:BEGIN (自動挿入。apply_pc_samurai.py を直して再実行する) ==== */
+/* 職業専用の絵(横長の全身像): 戦闘のHUDは少し大きく、ステータス画面は等倍(128px) */
+body.fighting .me > .pc.wide { width: 64px; }
+.pc-big img.wide { width: 128px; padding: 2px; }
+/* ==== PC-CSS:END ==== */
+/* ==== LB3-CSS:BEGIN (自動挿入。apply_lb3.py を直して再実行する) ==== */
+/* LBゲージ: 3段階の区切りと、段階ごとの色 */
+.bar.lb { position: relative; }
+.bar.lb::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, transparent calc(33.33% - 1px), rgba(0, 0, 0, 0.85) calc(33.33% - 1px), rgba(0, 0, 0, 0.85) calc(33.33% + 1px), transparent calc(33.33% + 1px), transparent calc(66.66% - 1px), rgba(0, 0, 0, 0.85) calc(66.66% - 1px), rgba(0, 0, 0, 0.85) calc(66.66% + 1px), transparent calc(66.66% + 1px)); }
+.bar.lb.lv1 > i { background: linear-gradient(#fff3b8, #ffd24a 60%, #c99a0c); }
+.bar.lb.lv2 > i { background: linear-gradient(#ffe0a0, #ff9a2e 60%, #c4600a); }
+.bar.lb.lv3 > i { background: linear-gradient(#ffd0c0, #ff5a3a 60%, #b01c0c); }
+/* ==== LB3-CSS:END ==== */
+/* ==== UI4-CSS:BEGIN (自動挿入。apply_ui4.py を直して再実行する) ==== */
+/* 毒・加護・誓いの行(効果の行の先頭)。タイトルやメニューでは出さない */
+#stateLine { color: #e3d4ff; }
+body.title #stateLine { display: none; }
+/* ==== UI4-CSS:END ==== */
 </style>
 </head>
 <body>
@@ -645,7 +667,7 @@ html, body, * { touch-action: manipulation; }
   const GODS = {
     tide: { n: "眠れる潮王", desc: "毎階、HP+100。ただしMPが毎階-100" },
     lamp: { n: "黒き灯の聖母", desc: "最大MP+400、ポーションの回復+300。ただし獲得ギルが3/4" },
-    star: { n: "星々の沈黙", desc: "命中+1、19・20で会心。ただし敵の命中+1" },
+    star: { n: "星々の沈黙", desc: "命中+1、19・20でクリティカルヒット。ただし敵の命中+1" },
     ash: { n: "灰の司祭神", desc: "敵を倒すとHP+300。ただし最大HP-600" }
   };
 
@@ -819,7 +841,7 @@ html, body, * { touch-action: manipulation; }
   /* ---- 指輪の生成: 効果 × 素材 ---- */
   const RTPL = [
     ["力", "str", [1, 1, 2, 2]], ["俊敏", "dex", [1, 1, 2, 2]], ["叡智", "wis", [1, 1, 2, 2]], ["生命", "hp", [5, 8, 12, 16]], ["魔力", "sp", [3, 4, 6, 8]],
-    ["鉄", "def", [1, 1, 1, 2]], ["精密", "atk", [1, 1, 2, 2]], ["剛力", "dmg", [1, 1, 2, 3]], ["会心", "crit", [1, 1, 1, 2]], ["再生", "regen", [1, 1, 1, 2]],
+    ["鉄", "def", [1, 1, 1, 2]], ["精密", "atk", [1, 1, 2, 2]], ["剛力", "dmg", [1, 1, 2, 3]], ["クリティカル", "crit", [1, 1, 1, 2]], ["再生", "regen", [1, 1, 1, 2]],
     ["瞑想", "sprec", [1, 1, 1, 2]], ["薬師", "herb", [1, 1, 2, 2]], ["守銭奴", "gold", [1, 2, 2, 3]], ["吸血", "kill", [1, 1, 2, 2]], ["耐魔", "drainres", [1, 1, 1, 2]],
     ["俊足", "flee", [1, 2, 2, 3]], ["先手", "first", [1, 1, 1, 1]], ["解毒", "poisonres", [1, 1, 1, 2]], ["節約", "skillcost", [1, 1, 1, 1]], ["術式", "skilldmg", [1, 1, 2, 2]],
     ["癒し", "healpow", [1, 1, 2, 3]], ["報復", "counter", [1, 1, 2, 3]], ["背水", "lowhp", [1, 1, 1, 2]], ["加護", "barrier", [1, 1, 1, 1]],
@@ -914,13 +936,13 @@ html, body, * { touch-action: manipulation; }
   const B = {
     dmg: (v, s) => ({ n: "攻撃↑" + Math.round(v * 100) + "%", sec: s, dmgUp: v }),
     mit: (v, s) => ({ n: "被ダメ↓" + Math.round(v * 100) + "%", sec: s, mit: v }),
-    crit: (v, s) => ({ n: "会心↑", sec: s, crit: v }),
+    crit: (v, s) => ({ n: "クリティカル率↑", sec: s, crit: v }),
     haste: (v, s) => ({ n: "ヘイスト", sec: s, haste: v }),
     regen: (v, s) => ({ n: "リジェネ", sec: s, regen: v }),
     mpregen: (v, s) => ({ n: "MP回復", sec: s, mpregen: v }),
     shield: (v, s) => ({ n: "バリア", sec: s, shield: v }),
     inv: (s) => ({ n: "不死身", sec: s, invuln: 1 }),
-    sure: () => ({ n: "必中会心", sec: 30, sure: 1 }),
+    sure: () => ({ n: "必中クリティカル", sec: 30, sure: 1 }),
     steal: (v, s) => ({ n: "吸収", sec: s, steal: v }),
     mphit: (v, s) => ({ n: "MP吸収", sec: s, mpOnHit: v })
   };
@@ -943,7 +965,7 @@ html, body, * { touch-action: manipulation; }
     warrior: {
       combo: [C("重斬", "通常攻撃", { strikes: 1 }), C("渦斬", "ダメージ1.4倍", { strikes: 1, mult: 1.4 }), C("嵐の斧", "ダメージ1.8倍。20秒間、与ダメージ+10%", { strikes: 1, mult: 1.8, buffs: [B.dmg(0.1, 20)] })],
       gcd: [[1, { n: "原初の一撃", cost: 4, desc: "命中+2、ダメージ2倍", strikes: 1, hit: 2, mult: 2 }], [6, { n: "猛り狂う斧", cost: 5, desc: "ダメージ1.3倍で2回攻撃", strikes: 2, mult: 1.3 }]],
-      abil: [[1, A("怒りの解放", 50, "15秒間、与ダメージ+20%・会心↑", { buffs: [B.dmg(0.2, 15), B.crit(2, 15)] })], [4, A("血潮の渇望", 30, "10秒間、被ダメージ-20%。与ダメージの半分を吸収", { buffs: [B.mit(0.2, 10), B.steal(0.5, 10)] })], [8, A("死線の踏み留まり", 120, "10秒間HPが1未満にならない。HPを回復", { buffs: [B.inv(10)], heal: [2, 8, 6, "str"] })]],
+      abil: [[1, A("怒りの解放", 50, "15秒間、与ダメージ+20%・クリティカルヒット率上昇", { buffs: [B.dmg(0.2, 15), B.crit(2, 15)] })], [4, A("血潮の渇望", 30, "10秒間、被ダメージ-20%。与ダメージの半分を吸収", { buffs: [B.mit(0.2, 10), B.steal(0.5, 10)] })], [8, A("死線の踏み留まり", 120, "10秒間HPが1未満にならない。HPを回復", { buffs: [B.inv(10)], heal: [2, 8, 6, "str"] })]],
       lb: { n: "不滅の咆哮", desc: "10秒間HPが1未満にならない。15秒間、与ダメージ+30%と吸収", buffs: [B.inv(10), B.dmg(0.3, 15), B.steal(0.5, 15)] } },
     darkknight: {
       combo: [C("闇の斬撃", "通常攻撃", { strikes: 1 }), C("魂の吸引", "ダメージ1.3倍。MP+2", { strikes: 1, mult: 1.3, spGain: 2 }), C("魂の殲滅", "ダメージ1.8倍。MP+3", { strikes: 1, mult: 1.8, spGain: 3 })],
@@ -962,13 +984,13 @@ html, body, * { touch-action: manipulation; }
       lb: { n: "百烈の極み", desc: "命中+3の通常攻撃を6回", strikes: 6, hit: 3 } },
     samurai: {
       combo: [C("刃風", "通常攻撃", { strikes: 1 }), C("月光の太刀", "ダメージ1.4倍。20秒間ヘイスト(+10%)", { strikes: 1, mult: 1.4, buffs: [B.haste(0.1, 20)] }), C("花車", "ダメージ1.8倍。20秒間、与ダメージ+10%", { strikes: 1, mult: 1.8, buffs: [B.dmg(0.1, 20)] })],
-      gcd: [[1, { n: "彼岸の一太刀", cost: 3, desc: "必中 d8+2+敏捷修正。24秒間、出血", dmg: [1, 8, 2, "dex"], debuffs: [D.dot(4, 24, "出血")] }], [6, { n: "三花の太刀", cost: 6, desc: "必ず会心。必中 3d10+4+敏捷修正", dmg: [3, 10, 4, "dex"], crits: 1 }]],
-      abil: [[1, A("必殺剣・閃", 20, "必中 d10+2+敏捷修正", { dmg: [1, 10, 2, "dex"] })], [4, A("心眼の構え", 30, "6秒間、被ダメージ-20%", { buffs: [B.mit(0.2, 6)] })], [8, A("明鏡止水", 60, "ATBを50%溜め、次の攻撃を必ず会心にする", { atb: 50, buffs: [B.sure()] })]],
-      lb: { n: "一閃・終の型", desc: "必ず会心になる、必中の6d10+5+敏捷修正。次のATBが50%から始まる", dmg: [6, 10, 5, "dex"], crits: 1, haste: 50 } },
+      gcd: [[1, { n: "彼岸の一太刀", cost: 3, desc: "必中 d8+2+敏捷修正。24秒間、出血", dmg: [1, 8, 2, "dex"], debuffs: [D.dot(4, 24, "出血")] }], [6, { n: "三花の太刀", cost: 6, desc: "必ずクリティカルヒット。必中 3d10+4+敏捷修正", dmg: [3, 10, 4, "dex"], crits: 1 }]],
+      abil: [[1, A("必殺剣・閃", 20, "必中 d10+2+敏捷修正", { dmg: [1, 10, 2, "dex"] })], [4, A("心眼の構え", 30, "6秒間、被ダメージ-20%", { buffs: [B.mit(0.2, 6)] })], [8, A("明鏡止水", 60, "ATBを50%溜め、次の攻撃を必ずクリティカルヒットにする", { atb: 50, buffs: [B.sure()] })]],
+      lb: { n: "一閃・終の型", desc: "必ずクリティカルヒットになる、必中の6d10+5+敏捷修正。次のATBが50%から始まる", dmg: [6, 10, 5, "dex"], crits: 1, haste: 50 } },
     dragoon: {
       combo: [C("突き", "通常攻撃", { strikes: 1 }), C("貫通撃", "ダメージ1.4倍", { strikes: 1, mult: 1.4 }), C("竜牙穿", "ダメージ1.8倍。24秒間、裂傷", { strikes: 1, mult: 1.8, debuffs: [D.dot(3, 24, "裂傷")] })],
       gcd: [[1, { n: "竜牙の連槍", cost: 4, desc: "命中+1の通常攻撃を2回", strikes: 2, hit: 1 }], [6, { n: "天竜の一撃", cost: 6, desc: "必中 3d10+2+筋力修正", dmg: [3, 10, 2, "str"] }]],
-      abil: [[1, A("跳躍", 30, "必中 d10+2+筋力修正。次の敵の攻撃をかわす", { dmg: [1, 10, 2, "str"], shadow: 1 })], [4, A("竜槍の昂り", 60, "15秒間、与ダメージ+20%", { buffs: [B.dmg(0.2, 15)] })], [8, A("戦いの連祷", 90, "15秒間、会心↑。次の攻撃が必ず会心", { buffs: [B.crit(3, 15), B.sure()] })]],
+      abil: [[1, A("跳躍", 30, "必中 d10+2+筋力修正。次の敵の攻撃をかわす", { dmg: [1, 10, 2, "str"], shadow: 1 })], [4, A("竜槍の昂り", 60, "15秒間、与ダメージ+20%", { buffs: [B.dmg(0.2, 15)] })], [8, A("戦いの連祷", 90, "15秒間、クリティカルヒット率上昇。次の攻撃が必ずクリティカルヒット", { buffs: [B.crit(3, 15), B.sure()] })]],
       lb: { n: "天穿つ竜槍", desc: "20秒間、敵の被ダメージ+20%。必中の6d10+5+筋力修正", debuffs: [D.vuln(0.2, 20)], dmg: [6, 10, 5, "str"] } },
     reaper: {
       combo: [C("斬首", "通常攻撃", { strikes: 1 }), C("渦刈り", "ダメージ1.4倍", { strikes: 1, mult: 1.4 }), C("断罪の刈り取り", "ダメージ1.8倍。MP+2(魂)", { strikes: 1, mult: 1.8, spGain: 2 })],
@@ -993,12 +1015,12 @@ html, body, * { touch-action: manipulation; }
     machinist: {
       combo: [C("速射", "通常攻撃", { strikes: 1 }), C("狙撃", "ダメージ1.4倍", { strikes: 1, mult: 1.4 }), C("精密射撃", "ダメージ1.8倍。MP+2(ヒート)", { strikes: 1, mult: 1.8, spGain: 2 })],
       gcd: [[1, { n: "榴弾", cost: 3, desc: "必中 d10+2+敏捷修正。敵の防御-1", dmg: [1, 10, 2, "dex"], defdown: 1 }], [6, { n: "過熱放射", cost: 6, desc: "必中 4d7+敏捷修正", dmg: [4, 7, 0, "dex"] }]],
-      abil: [[1, A("照準補正", 40, "次の攻撃・スキルが必ず会心", { buffs: [B.sure()] })], [4, A("自動砲台", 60, "必中 2d6+敏捷修正。15秒間、敵にスロウ", { dmg: [2, 6, 0, "dex"], debuffs: [D.slow(0.3, 15)] })], [8, A("戦術の展開", 90, "15秒間、被ダメージ-15%", { buffs: [B.mit(0.15, 15)] })]],
+      abil: [[1, A("照準補正", 40, "次の攻撃・スキルが必ずクリティカルヒット", { buffs: [B.sure()] })], [4, A("自動砲台", 60, "必中 2d6+敏捷修正。15秒間、敵にスロウ", { dmg: [2, 6, 0, "dex"], debuffs: [D.slow(0.3, 15)] })], [8, A("戦術の展開", 90, "15秒間、被ダメージ-15%", { buffs: [B.mit(0.15, 15)] })]],
       lb: { n: "大口径砲撃", desc: "必中の8d10+敏捷修正", dmg: [8, 10, 0, "dex"] } },
     dancer: {
       combo: [C("円舞斬", "通常攻撃", { strikes: 1 }), C("双輪舞", "ダメージ1.4倍", { strikes: 1, mult: 1.4 }), C("噴水の舞", "ダメージ1.6倍。次のATBが30%から始まる", { strikes: 1, mult: 1.6, haste: 30 })],
-      gcd: [[1, { n: "進行の舞", cost: 3, desc: "20秒間、与ダメージ+15%。次のATBが50%から", buffs: [B.dmg(0.15, 20)], haste: 50 }], [6, { n: "終幕の大舞踏", cost: 6, desc: "15秒間、会心↑。必中 3d6+2+敏捷修正", buffs: [B.crit(3, 15)], dmg: [3, 6, 2, "dex"] }]],
-      abil: [[1, A("喝采の舞", 30, "ATBを40%溜める", { atb: 40 })], [4, A("癒しの円舞", 60, "HPを d8+4+敏捷修正 回復。15秒間、被ダメージ-15%", { heal: [1, 8, 4, "dex"], buffs: [B.mit(0.15, 15)] })], [8, A("魅惑の舞踏", 90, "20秒間、会心↑・与ダメージ+10%", { buffs: [B.crit(3, 20), B.dmg(0.1, 20)] })]],
+      gcd: [[1, { n: "進行の舞", cost: 3, desc: "20秒間、与ダメージ+15%。次のATBが50%から", buffs: [B.dmg(0.15, 20)], haste: 50 }], [6, { n: "終幕の大舞踏", cost: 6, desc: "15秒間、クリティカルヒット率上昇。必中 3d6+2+敏捷修正", buffs: [B.crit(3, 15)], dmg: [3, 6, 2, "dex"] }]],
+      abil: [[1, A("喝采の舞", 30, "ATBを40%溜める", { atb: 40 })], [4, A("癒しの円舞", 60, "HPを d8+4+敏捷修正 回復。15秒間、被ダメージ-15%", { heal: [1, 8, 4, "dex"], buffs: [B.mit(0.15, 15)] })], [8, A("魅惑の舞踏", 90, "20秒間、クリティカルヒット率上昇・与ダメージ+10%", { buffs: [B.crit(3, 20), B.dmg(0.1, 20)] })]],
       lb: { n: "幕引きの大輪舞", desc: "20秒間、与ダメージ+20%・ヘイスト(+20%)。必中の5d10+5+敏捷修正", buffs: [B.dmg(0.2, 20), B.haste(0.2, 20)], dmg: [5, 10, 5, "dex"] } },
     redmage: {
       combo: [C("魔剣の突き", "通常攻撃", { strikes: 1 }), C("魔剣の斬り上げ", "ダメージ1.4倍", { strikes: 1, mult: 1.4 }), C("紅蓮の連撃", "ダメージ1.8倍。HPを d4+2 回復", { strikes: 1, mult: 1.8, heal: [1, 4, 2] })],
@@ -1023,7 +1045,7 @@ html, body, * { touch-action: manipulation; }
     scholar: {
       combo: [C("呪弾", "必中 d6+1+知識修正", { dmg: [1, 6, 1, "wis"] }), C("呪弾・連", "必中 d8+1+知識修正", { dmg: [1, 8, 1, "wis"] }), C("蝕みの呪弾", "必中 d8+2+知識修正。18秒間、蝕み", { dmg: [1, 8, 2, "wis"], debuffs: [D.dot(3, 18, "蝕み")] })],
       gcd: [[1, { n: "鼓舞の策", cost: 3, desc: "HPを d6+3+知識修正 回復し、15秒間バリア", heal: [1, 6, 3, "wis"], buffs: [B.shield(10, 15)] }], [6, { n: "生命の天秤", cost: 6, desc: "HPを 2d8+6+知識修正 回復し、毒を消し、MP+2", heal: [2, 8, 6, "wis"], cure: 1, spGain: 2 }]],
-      abil: [[1, A("弱点の看破", 60, "15秒間、敵の被ダメージ+15%。次の攻撃が必ず会心", { debuffs: [D.vuln(0.15, 15)], buffs: [B.sure()] })], [4, A("野戦治療の陣", 60, "18秒間、被ダメージ-15%とリジェネ", { buffs: [B.mit(0.15, 18), B.regen(3, 18)] })], [8, A("妖精の癒し", 30, "HPを d8+4+知識修正 回復", { heal: [1, 8, 4, "wis"] })]],
+      abil: [[1, A("弱点の看破", 60, "15秒間、敵の被ダメージ+15%。次の攻撃が必ずクリティカルヒット", { debuffs: [D.vuln(0.15, 15)], buffs: [B.sure()] })], [4, A("野戦治療の陣", 60, "18秒間、被ダメージ-15%とリジェネ", { buffs: [B.mit(0.15, 18), B.regen(3, 18)] })], [8, A("妖精の癒し", 30, "HPを d8+4+知識修正 回復", { heal: [1, 8, 4, "wis"] })]],
       lb: { n: "生命の律動", desc: "HPを全回復し、毒を消す。18秒間、被ダメージ-30%", fullHeal: 1, cure: 1, buffs: [B.mit(0.3, 18)] } },
     whitemage: {
       combo: [C("聖石", "必中 d6+1+知識修正", { dmg: [1, 6, 1, "wis"] }), C("聖石・連", "必中 d8+1+知識修正", { dmg: [1, 8, 1, "wis"] }), C("聖光", "必中 d8+2+知識修正。18秒間、聖痕", { dmg: [1, 8, 2, "wis"], debuffs: [D.dot(3, 18, "聖痕")] })],
@@ -1033,7 +1055,7 @@ html, body, * { touch-action: manipulation; }
     astrologian: {
       combo: [C("星弾", "必中 d6+1+知識修正", { dmg: [1, 6, 1, "wis"] }), C("星弾・連", "必中 d8+1+知識修正", { dmg: [1, 8, 1, "wis"] }), C("凶星", "必中 d8+2+知識修正。18秒間、凶星", { dmg: [1, 8, 2, "wis"], debuffs: [D.dot(3, 18, "凶星")] })],
       gcd: [[1, { n: "星の加護", cost: 3, desc: "HPを d6+2+知識修正 回復し、15秒間リジェネ", heal: [1, 6, 2, "wis"], buffs: [B.regen(3, 15)] }], [6, { n: "天球の巡り", cost: 5, desc: "HPを d8+6+知識修正 回復し、MP+3", heal: [1, 8, 6, "wis"], spGain: 3 }]],
-      abil: [[1, A("運命のカード", 30, "15秒間、与ダメージ+15%", { buffs: [B.dmg(0.15, 15)] })], [4, A("光速の詠唱", 90, "15秒間ヘイスト(+30%)", { buffs: [B.haste(0.3, 15)] })], [8, A("運命の星図", 90, "15秒間、与ダメージ+25%・会心↑", { buffs: [B.dmg(0.25, 15), B.crit(2, 15)] })]],
+      abil: [[1, A("運命のカード", 30, "15秒間、与ダメージ+15%", { buffs: [B.dmg(0.15, 15)] })], [4, A("光速の詠唱", 90, "15秒間ヘイスト(+30%)", { buffs: [B.haste(0.3, 15)] })], [8, A("運命の星図", 90, "15秒間、与ダメージ+25%・クリティカルヒット率上昇", { buffs: [B.dmg(0.25, 15), B.crit(2, 15)] })]],
       lb: { n: "星々の慈悲", desc: "HPを全回復する。20秒間、与ダメージ+25%", fullHeal: 1, buffs: [B.dmg(0.25, 20)] } },
     sage: {
       combo: [C("叡智の矢", "必中 d6+1+知識修正", { dmg: [1, 6, 1, "wis"] }), C("叡智の矢・連", "必中 d8+1+知識修正", { dmg: [1, 8, 1, "wis"] }), C("毒の叡智", "必中 d8+2+知識修正。18秒間、蝕毒", { dmg: [1, 8, 2, "wis"], debuffs: [D.dot(3, 18, "蝕毒")] })],
@@ -1043,7 +1065,7 @@ html, body, * { touch-action: manipulation; }
   };
   const TRAITS = {
     hp: "最大HP+600", sp: "最大MP+300", str: "筋力+1", dex: "敏捷+1", wis: "知識+1",
-    atk: "命中+1", dmg: "与ダメージ+100", def: "防御+1", crit: "会心の範囲が1広がる",
+    atk: "命中+1", dmg: "与ダメージ+100", def: "防御+1", crit: "クリティカルヒット率+5%",
     regen: "先へ進むたびHP+100", sprec: "先へ進むたびMP+100", herb: "ポーションの回復+300",
     gold: "獲得ギル+15%", kill: "敵を倒すとHP+200", drainres: "MPを奪う攻撃の効果-100",
     flee: "逃走判定+2", first: "戦闘開始時の最初の攻撃の命中+3", poisonres: "毒の持続-1",
@@ -1067,7 +1089,7 @@ html, body, * { touch-action: manipulation; }
       desc: "火薬を仕込んだ剣で戦う。盾と連続爆裂で、守りと攻めを両立する。",
             traits: [[2, "装填の手際", "atk"], [3, "硝煙の加護", "def"], [4, "炸薬の備蓄", "sp"], [6, "荒々しい牙", "dmg"], [8, "盾と刃", "def"], [10, "獣の本能", "hp"], [12, "爆ぜる魂", "crit"]] },
     { id: "monk", n: "モンク", str: 1, dex: 2, wis: 0, hp: 4, sp: 2, wpn: "鉄の手甲", arm: "革の胸当て",
-      desc: "素手の連撃で戦う。会心と追撃で爆発力がある。",
+      desc: "素手の連撃で戦う。クリティカルヒットと追撃で爆発力がある。",
             traits: [[2, "鍛えた拳", "dmg"], [3, "心眼", "atk"], [4, "静かな呼吸", "regen"], [6, "見切り", "def"], [8, "達人の域", "crit"], [10, "不動心", "drainres"], [12, "無我の境地", "double"]] },
     { id: "samurai", n: "侍", str: 1, dex: 2, wis: 0, hp: 4, sp: 2, cost: 30, wpn: "反りのある刀", arm: "革の胸当て",
       desc: "一太刀に懸ける剣客。居合で、次の行動を早めながら斬る。",
@@ -1123,7 +1145,7 @@ html, body, * { touch-action: manipulation; }
   const STN = { str: "筋力", dex: "敏捷", wis: "知識", skl: "器用さ" };
   function autoDesc(o) {
     const p = [];
-    if (o.crits) p.push("必ず会心");
+    if (o.crits) p.push("必ずクリティカルヒット");
     if (o.strikes) p.push((o.hit ? "命中+" + o.hit + "、" : "") + (o.mult && o.mult !== 1 ? "ダメージ" + o.mult + "倍の" : "") + "攻撃を" + o.strikes + "回");
     if (o.dmg) p.push("必中 " + o.dmg[0] + "d" + o.dmg[1] + (o.dmg[2] ? "+" + o.dmg[2] : "") + (o.dmg[3] ? "+" + STN[o.dmg[3]] + "修正" : ""));
     if (o.leech) p.push("与えた分の" + Math.round(o.leech * 100) + "%を回復");
@@ -1524,7 +1546,7 @@ html, body, * { touch-action: manipulation; }
     });
     return '<svg class="dot" viewBox="0 0 ' + d.w + " " + d.h + '" aria-hidden="true">' + Object.keys(by).map((c) => '<path class="' + c + '" d="' + by[c].join("") + '"/>').join("") + "</svg>";
   }
-  const playerImg = (cls) => '<img class="pc ' + (cls || "") + '" alt="" src="' + PLAYER_SRC + '">';
+  const playerImg = (cls) => '<img class="pc ' + (cls || "") + '" alt="" src="' + (typeof pcSrc === "function" ? pcSrc() : PLAYER_SRC) + '">'; /* PC:INLINE */
 /* ==== BOSSIMG:BEGIN (自動生成。apply_boss_images.py で作り直す) ==== */
 const BOSSIMG = {
   "夢魔": "data:image/webp;base64,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",
@@ -2101,6 +2123,7 @@ const ENEMYIMG = {
       clear: () => { [523, 659, 784, 1046].forEach((f, i) => tone(f, f, 0.2, "square", 0.05, i * 0.12)); [392, 494, 587].forEach((f) => tone(f, f, 0.8, "triangle", 0.04, 0.5)); },
       chest: () => { noise(0.22, 0.1, 0, 800); tone(500, 700, 0.1, "square", 0.05, 0.15); tone(900, 1200, 0.2, "triangle", 0.06, 0.25); },
       door: () => { noise(0.25, 0.12, 0, 700); tone(90, 70, 0.25, "triangle", 0.08); },
+      /* SE:LINE */ select: () => { tone(880, 1175, 0.06, "square", 0.035); tone(1175, 1175, 0.05, "square", 0.025, 0.045); }, cancel: () => tone(560, 360, 0.09, "triangle", 0.05), deny: () => { tone(170, 140, 0.1, "square", 0.045); tone(150, 120, 0.1, "square", 0.04, 0.1); }, open: () => { tone(480, 840, 0.09, "triangle", 0.05); noise(0.05, 0.03, 0, 4000); }, close: () => tone(840, 480, 0.08, "triangle", 0.045), swing: () => { noise(0.1, 0.07, 0, 2600); tone(520, 260, 0.09, "sawtooth", 0.035); }, miss: () => { noise(0.16, 0.06, 0, 1700); tone(400, 190, 0.15, "sine", 0.04); }, skill: () => { tone(330, 700, 0.12, "square", 0.045); noise(0.1, 0.09, 0, 3500); tone(700, 520, 0.1, "triangle", 0.04, 0.1); }, ability: () => { tone(700, 1050, 0.09, "triangle", 0.05); tone(1050, 1400, 0.1, "triangle", 0.04, 0.08); }, guard: () => { noise(0.1, 0.09, 0, 1500); tone(190, 250, 0.14, "triangle", 0.07); }, dot: () => { tone(150, 100, 0.14, "sawtooth", 0.05); noise(0.1, 0.06, 0, 700); }, regen: () => { tone(660, 880, 0.12, "sine", 0.04); tone(880, 1100, 0.1, "sine", 0.03, 0.09); }, expire: () => tone(520, 400, 0.08, "sine", 0.03), appear: () => { noise(0.3, 0.09, 0, 900); tone(130, 90, 0.3, "triangle", 0.07); }, flee: () => { noise(0.22, 0.09, 0, 2600); tone(300, 640, 0.2, "triangle", 0.05); }, success: () => { tone(784, 784, 0.08, "square", 0.045); tone(1175, 1175, 0.16, "square", 0.045, 0.08); }, fail: () => { tone(330, 250, 0.12, "sawtooth", 0.05); tone(250, 170, 0.18, "sawtooth", 0.05, 0.1); }, lbup: () => { tone(660, 1320, 0.18, "triangle", 0.07); tone(1320, 1320, 0.22, "sine", 0.05, 0.12); noise(0.12, 0.05, 0.1, 6000); }, /* SE:LINE-END */
       trap: () => { noise(0.12, 0.2, 0, 4000); tone(800, 200, 0.2, "sawtooth", 0.08); },
       rest: () => { tone(523, 523, 0.5, "sine", 0.05); tone(659, 659, 0.5, "sine", 0.045, 0.12); tone(784, 784, 0.7, "sine", 0.045, 0.24); },
       event: () => { tone(392, 392, 0.1, "sine", 0.05); tone(523, 523, 0.18, "sine", 0.05, 0.1); },
@@ -2372,7 +2395,7 @@ const ENEMYIMG = {
     let artSvg = null;
     if (fighting) { key = "e:" + enemy.n; seed = enemy.n; strong = enemy.boss; artSvg = enemyArt(enemy) || (enemy.ghost ? BOSS_ART.ghost : (enemy.boss ? BOSS_ART[enemy.key] : null)); }
     else if (G) { const zz = ZONES[zoneOf(Math.max(1, G.floor))]; key = "z:" + zz.name; seed = zz.name; name = zz.name; sub = zz.intro; }
-    else { key = "title"; seed = "邪神"; strong = true; name = "Retribution Against God"; sub = ""; roman = true; artSvg = playerImg("big"); }
+    else { key = "title:" + currentJob().id; seed = "邪神"; strong = true; name = "Retribution Against God"; sub = ""; roman = true; artSvg = playerImg("big"); } /* PC:INLINE */
     if (key === stageKey) return;
     stageKey = key;
     $("#sigil").innerHTML = artSvg || sigilSVG(seed, strong);
@@ -2409,12 +2432,12 @@ const ENEMYIMG = {
   }
   const BT = {
     hp: (v) => "最大HP+" + NF(sc(v)), sp: (v) => "最大MP+" + NF(sc(v)), str: (v) => "筋力+" + v, dex: (v) => "敏捷+" + v, wis: (v) => "知識+" + v, skl: (v) => "器用さ+" + v,
-    def: (v) => "防御+" + v, atk: (v) => "命中+" + v, dmg: (v) => "ダメージ+" + NF(sc(v)), crit: (v) => "会心範囲+" + v,
+    def: (v) => "防御+" + v, atk: (v) => "命中+" + v, dmg: (v) => "ダメージ+" + NF(sc(v)), crit: (v) => "クリティカルヒット率+" + (5 * v) + "%",
     regen: (v) => "進むたびHP+" + NF(sc(v)), sprec: (v) => "進むたびMP+" + NF(sc(v)), herb: (v) => "ポーション回復+" + NF(sc(3 * v)), gold: (v) => "獲得ギル+" + 15 * v + "%",
     kill: (v) => "撃破時HP+" + NF(sc(2 * v)), drainres: (v) => "MP奪取-" + NF(sc(v)), flee: (v) => "逃走+" + 2 * v, first: () => "初撃の命中+3", poisonres: (v) => "毒の持続-" + v,
     skillcost: (v) => "スキルのMP-" + NF(sc(v)), skilldmg: (v) => "スキルダメージ+" + NF(sc(3 * v)), healpow: (v) => "回復量+" + NF(sc(3 * v)), counter: (v) => "反撃率+" + 25 * v + "%",
     guard: (v) => "防御+" + 2 * v, lowhp: (v) => "瀕死時 ダメージ+" + NF(sc(3 * v)) + "・防御+" + v, barrier: () => "開戦時 被ダメ半減", xp: (v) => "獲得経験値+" + 15 * v + "%",
-    resolute: () => "会心が出なくなる", bulwark: () => "身を守る間の被ダメ-30%・影は完全回避できない", dwd: () => "手の防具なしで行動+25%速", leech: (v) => "HP吸収+" + 2 * v + "%", deflect: (v) => "受け流し率+" + 25 * v + "%(被ダメ半減)", bloodmagic: () => "スキルのMPをHPで支払う", hdef: (v) => "手の防具の防御+" + 2 * v + "倍", ldef: (v) => "脚の防具の防御+" + 2 * v + "倍", double: (v) => "追撃率+" + 20 * v + "%", nosp: () => "MPが自然に減らない", wischeck: (v) => "知識判定+" + 2 * v, edef: (v) => "敵の防御-" + v, eatk: (v) => "敵の命中-" + v
+    resolute: () => "クリティカルヒットが出なくなる", bulwark: () => "身を守る間の被ダメ-30%・影は完全回避できない", dwd: () => "手の防具なしで行動+25%速", leech: (v) => "HP吸収+" + 2 * v + "%", deflect: (v) => "受け流し率+" + 25 * v + "%(被ダメ半減)", bloodmagic: () => "スキルのMPをHPで支払う", hdef: (v) => "手の防具の防御+" + 2 * v + "倍", ldef: (v) => "脚の防具の防御+" + 2 * v + "倍", double: (v) => "追撃率+" + 20 * v + "%", nosp: () => "MPが自然に減らない", wischeck: (v) => "知識判定+" + 2 * v, edef: (v) => "敵の防御-" + v, eatk: (v) => "敵の命中-" + v
   };
   const bonText = (b) => Object.keys(b || {}).filter((k) => b[k] && BT[k]).map((k) => BT[k](b[k])).join("・").replace(/\+-/g, "-");
   const fmtItem = (it) => {
@@ -2453,6 +2476,7 @@ function zoneBg(z) {
   function render() {
     if (!G) return;
     recalc();
+    /* PC:LINE */ if (typeof syncPcImg === "function") syncPcImg(); /* PC:LINE-END */
     const z = zoneOf(Math.max(1, G.floor));
     $("#hud").hidden = false;
     $("#toolbar").hidden = false;
@@ -2475,6 +2499,7 @@ function zoneBg(z) {
       (G.god ? "　誓い <b>" + GODS[G.god].n + "</b>" : "") +
       (G.poison ? "　<b>毒 " + G.poison + "</b>" : "") +
       (G.buff ? "　<b>加護</b>" : "");
+    /* UI4:LINE */ if (typeof updateStateLine === "function") updateStateLine(); /* UI4:LINE-END */
     $("#gearLine").innerHTML =
       "<span>武器 <b>" + G.wpn.n + "</b></span><span>頭 <b>" + (G.head ? G.head.n : "なし") + "</b></span><span>胴 <b>" + (G.body ? G.body.n : "なし") + "</b></span><span>足 <b>" + (G.feet ? G.feet.n : "なし") + "</b></span><span>手 <b>" + (G.hands ? G.hands.n : "なし") + "</b></span><span>脚 <b>" + (G.legs ? G.legs.n : "なし") + "</b></span><span>指輪 <b>" + (G.rings[0] ? G.rings[0].n : "なし") + " / " + (G.rings[1] ? G.rings[1].n : "なし") + "</b></span>" +
       "<span>スキル <b>" + (jobGcds().map((o) => o.s.n).join("、") || "なし") + "</b></span>" +
@@ -2543,6 +2568,7 @@ function zoneBg(z) {
   }
   function dealToPlayer(dm) {
     G.hp -= dm;
+    /* SAM:LINE */ if (typeof onTakenHit === "function") onTakenHit(dm); /* SAM:LINE-END */
     G.lb = Math.min(100, G.lb + (dm / G.maxHp) * 35);
     log(dm + " のダメージを受けた。", "bad");
     if (dm > 0) { flash("#hud"); popup("#hud", "-" + dm, "bad"); SFX.play("hurt"); shake("#hud"); hurtFx(dm); jgGain("taken"); }
@@ -2668,7 +2694,7 @@ function zoneBg(z) {
   /* ================= ジョブゲージ ================= */
   /* g: 増加量 / sk: 満タンで使えるゲージスキル(MPを消費しない) */
   /* FFXIVのジョブゲージに倣い「ためて、使う」。
-     溜まる量は 行動(act) / 命中(hit) / 会心(crit) / コンボ完了(cf) / 被弾(taken) / 撃破(kill) / 時間(tick)。
+     溜まる量は 行動(act) / 命中(hit) / クリティカルヒット(crit) / コンボ完了(cf) / 被弾(taken) / 撃破(kill) / 時間(tick)。
      cost以上でスキルが使え(威力×0.85・繰り返し可)、100%なら全消費の【強化】(威力×1.8・効果時間1.5倍)が選べる。
      100%を超える分は溢れて無駄になる。 */
   const JG = {
@@ -2677,7 +2703,7 @@ function zoneBg(z) {
     darkknight: { n: "闇の血", g: { hit: 4, act: 3, cf: 16 }, sk: { n: "血の奔流", desc: "必中 3d10+筋力修正。6割を回復", dmg: [3, 10, 0, "str"], leech: 0.6 } },
     gunbreaker: { n: "火薬", cost: 34, g: { act: 3, cf: 24 }, sk: { n: "爆裂の連弾", desc: "命中+2、ダメージ1.5倍の攻撃を2回。必中 2d10 を追加", strikes: 2, hit: 2, mult: 1.5, dmg: [2, 10, 0, "str"] } },
     monk: { n: "気脈", cost: 40, g: { hit: 3, crit: 16, cf: 8 }, sk: { n: "気の奔流", desc: "必中 3d8+2+敏捷修正。HPを d8+4 回復", dmg: [3, 8, 2, "dex"], heal: [1, 8, 4] } },
-    samurai: { n: "剣気", g: { hit: 4, crit: 8, cf: 14 }, sk: { n: "奥義・斬鉄", desc: "必ず会心。必中 3d10+3+器用さ修正", dmg: [3, 10, 3, "skl"], crits: 1 } },
+    samurai: { n: "剣気", g: { hit: 4, crit: 8, cf: 14 }, sk: { n: "奥義・斬鉄", desc: "必ずクリティカルヒット。必中 3d10+3+器用さ修正", dmg: [3, 10, 3, "skl"], crits: 1 } },
     dragoon: { n: "竜血", g: { act: 5, hit: 3, cf: 12 }, sk: { n: "竜眼の咆哮", desc: "必中 3d8+2+筋力修正。15秒間、与ダメージ+15%", dmg: [3, 8, 2, "str"], buffs: [B.dmg(0.15, 15)] } },
     reaper: { n: "魂", g: { hit: 4, kill: 50, cf: 14 }, sk: { n: "魂の収穫", desc: "必中 3d8+筋力修正。半分を回復。MP+3", dmg: [3, 8, 0, "str"], leech: 0.5, spGain: 3 } },
     ninja: { n: "忍気", g: { act: 6, hit: 3, cf: 10 }, sk: { n: "分身の術", desc: "必中 3d6+2+器用さ修正。次の敵の攻撃をかわす", dmg: [3, 6, 2, "skl"], shadow: 1 } },
@@ -2867,6 +2893,7 @@ function rollDice2d6(a, b, m, total, dc, grade, label, statName) {
     const cyc = setInterval(() => { dn.textContent = d(20); if (++n > 13) { clearInterval(cyc); settle(); } }, 70);
     function settle() {
       done = true; dn.textContent = r; wrap.classList.add("settle");
+      /* SE:LINE */ SFX.play(ok ? "success" : "fail"); /* SE:LINE-END */
       const nat = r === 20 ? "致命の一撃！" : r === 1 ? "破滅の目……" : (ok ? "成功" : "失敗");
       res.innerHTML = "出目 " + r + " " + sgn(m) + " = <b style='display:inline;font-size:inherit'>" + total + "</b>(目標 " + dc + ")<b class='" + (ok ? "ok" : "ng") + "'></b>";
       res.querySelector("b.ok, b.ng").textContent = nat;
@@ -3454,6 +3481,7 @@ function rollDice2d6(a, b, m, total, dc, grade, label, statName) {
   function atbStop() {
     atb.run = false;
     if (G) { G.buffs = []; G.ail = []; }
+    /* UI4:LINE */ if (G) G.poison = 0; /* UI4:LINE-END */
     if (enemy) enemy.debuffs = [];
     if (atb.raf && typeof cancelAnimationFrame === "function") cancelAnimationFrame(atb.raf);
     atb.raf = 0;
@@ -3487,7 +3515,7 @@ function rollDice2d6(a, b, m, total, dc, grade, label, statName) {
     if (i >= 0) { G.buffs.splice(i, 1); return true; }
     return false;
   }
-  /* 命中(器用さ・命中補正)が高いほど会心の範囲も広がる */
+  /* 命中(器用さ・命中補正)が高いほどクリティカル率も上がる */
   const critSyn = () => Math.floor(Math.max(0, mod(SKL()) + T("atk")) / 3);
   const critMin = () => T("resolute") > 0 ? 99 : Math.max(12, 20 - (G.god === "star" ? 1 : 0) - T("crit") - critSyn() - fx(G.buffs, "crit"));
   const outMult = () => (isMelee() ? 0.68 * (1 + Math.min(0.45, (G.chain || 0) * 0.03)) : 1) * (1 + fx(G.buffs, "dmgUp") + blmBonus()) * (1 + fx(enemy.debuffs, "vuln")) * (hasAil("hex") ? 0.75 : 1);
@@ -3641,7 +3669,7 @@ function rollDice2d6(a, b, m, total, dc, grade, label, statName) {
     const expire = (list, who) => {
       for (let i = list.length - 1; i >= 0; i--) {
         list[i].t -= dt;
-        if (list[i].t <= 0) { log(who + "の「" + list[i].n + "」が切れた。", "dice"); list.splice(i, 1); }
+        if (list[i].t <= 0) { log(who + "の「" + list[i].n + "」が切れた。", "dice"); SFX.play("expire"); list.splice(i, 1); } /* SE:INLINE */
       }
     };
     expire(G.buffs, "あなた");
@@ -3675,6 +3703,7 @@ function rollDice2d6(a, b, m, total, dc, grade, label, statName) {
       if (fx(G.buffs, "invuln") && G.hp - n < 1) n = Math.max(0, G.hp - 1);
       G.hp -= n; parts.push(a.n + " " + n);
     });
+    /* UI4:LINE */ if (G.poison > 0) { let pn = sc(1 + Math.floor(G.floor / 10)); if (fx(G.buffs, "invuln") && G.hp - pn < 1) pn = Math.max(0, G.hp - 1); G.hp -= pn; G.poison -= 1; parts.push("毒 " + pn); } /* UI4:LINE-END */
     if (G.hp <= 0) { render(); return die(); }
     if (rg) parts.push("HP+" + heal(rg + Math.floor(G.floor / 10)));
     if (mr) { addSp(mr); parts.push("MP+" + NF(sc(mr))); }
@@ -3683,6 +3712,7 @@ function rollDice2d6(a, b, m, total, dc, grade, label, statName) {
       enemy.hp -= n;
       parts.push(enemy.n + "に継続ダメージ " + n);
     }
+    /* SE:LINE */ if (parts.length) SFX.play(parts.some((p) => !/^(HP|MP)\+/.test(p)) ? "dot" : "regen"); /* SE:LINE-END */
     if (parts.length) { log("(継続効果)" + parts.join(" / "), "dice"); render(); renderEnemy(); }
     if (enemy.hp <= 0) win();
   }
@@ -3696,12 +3726,12 @@ function rollDice2d6(a, b, m, total, dc, grade, label, statName) {
     $("#ailLine").textContent = inBattle && G.ail.length ? "状態異常:" + G.ail.map((a) => a.n + " " + Math.ceil(a.t) + "秒").join("　") : "";
     updateGauge();
     $("#lbBar").style.width = Math.min(100, Math.floor(G.lb)) + "%";
-    $("#lbWrap").className = "bar lb" + (G.lb >= 100 ? " full" : "");
-    $("#lbNum").textContent = G.lb >= 100 ? "発動可" : Math.floor(G.lb) + "%";
+    $("#lbWrap").className = "bar lb lv" + lbLevel() + (G.lb >= 100 ? " full" : ""); /* LB3 */
+    $("#lbNum").textContent = lbLevel() ? "Lv" + lbLevel() + (lbLevel() === 3 ? " MAX" : "") : Math.floor(G.lb) + "%"; lbWatch();
   }
   function becomeReady() {
     atb.p = 100; atb.ready = true; SFX.play("ready");
-    if (G.guard) { G.guard = false; log("防御を解いた。", "dice"); }
+    if (G.guard) { G.guard = false; log(G.job.id === "samurai" ? "いなしの構えを解いた。" : "防御を解いた。", "dice"); } /* LB3 */
     updateAtbBar();
     battleChoices();
   }
@@ -3718,7 +3748,7 @@ function rollDice2d6(a, b, m, total, dc, grade, label, statName) {
     const dt = Math.min(0.12, Math.max(0, (ts - atb.last) / 1000)) * 1.5; /* 戦闘速度 1.5倍 */
     atb.last = ts;
     if (inBattle && G && enemy) {
-      const paused = atb.ready || viewPaused;
+      /* ATBACTIVE:LINE */ const paused = viewPaused; /* 行動可でも止めない */ /* ATBACTIVE:LINE-END */
       if (!paused) {
         statusTick(dt);
         if (inBattle && G.jgDirty) { G.jgDirty = false; if (atb.ready) battleChoices(); }
@@ -3769,6 +3799,7 @@ function tuneEnemy(e) {
       if (boss && zz.art) log("着想:" + zz.art, "dice");
     }
     log(enemy.n + " が立ちはだかる！", "bad");
+    /* SE:LINE */ if (typeof onBattleStart === "function") onBattleStart(boss); /* SE:LINE-END */
     const eBase = Math.max(2.6, 4.4 - G.floor * 0.03);
     atb.et = eBase * (boss ? 0.9 : enemy.mini ? 0.95 : 1) * (enemy.twice ? 1.2 : 1) * (0.9 + Math.random() * 0.2); if (typeof DIFF !== "undefined") atb.et /= DIFF.speed;
     atb.p = rnd(10, 40) + ((T("first") || relicIs("first")) ? 30 : 0);
@@ -3783,8 +3814,8 @@ function tuneEnemy(e) {
   function battleChoices() {
     const ready = atb.ready;
     const list = [];
-    if (G.lb >= 100) {
-      list.push({ label: G.job.lb.n, note: "リミットブレイク / " + G.job.lb.desc, cls: "lb", icon: "lb", cd: true, disabled: !ready, fn: useLB });
+    if (lbLevel() > 0) { /* LB3 */
+      const lbLv = lbLevel(), lbSk = lbSkill(lbLv); list.push({ label: lbSk.n, note: "リミットブレイク Lv" + lbLv + " / " + lbSk.desc, cls: "lb", icon: "lb", cd: true, disabled: !ready, fn: useLB });
     }
     const jgd = JG[G.job.id], jc = jgd && jgd.cost || 50;
     if (jgd && jgd.sk && G.jg >= jc) {
@@ -3794,14 +3825,16 @@ function tuneEnemy(e) {
     const steps = comboSteps();
     const ci = G.combo % steps.length;
     list.push({ label: steps[ci].n, note: "コンボ" + (ci + 1) + "/" + steps.length + " / " + steps[ci].desc, icon: skillIcon(steps[ci]), cd: true, disabled: !ready, fn: useCombo });
+    /* SAM:LINE */ if (typeof extraChoices === "function") extraChoices(list); /* SAM:LINE-END */
     const addSkill = (s, run) => {
       const cost = skCost(s);
       const lack = (s.hp && G.hp <= sc(s.hp)) || (T("bloodmagic") > 0 ? G.hp <= sc(cost) : G.sp < sc(cost));
       list.push({ label: s.n, note: costText({ hp: s.hp, cost: cost }) + " / " + s.desc, icon: skillIcon(s), cd: true, alt: true, disabled: !ready || lack, fn: run });
     };
     jobGcds().forEach((o) => addSkill(o.s, () => runSkill(o.s, o.id, false, false)));
-    list.push({ label: "身を守る", note: "次の行動まで被ダメージ軽減", icon: "shield", cd: true, alt: true, disabled: !ready,
-      fn: () => { G.guard = true; log("身を低くして、構えを固める。(次の行動を選ぶまで続く)"); endPlayerAction(); } });
+    const inashi = G.job.id === "samurai"; /* LB3 */
+    list.push({ label: inashi ? "いなし" : "身を守る", note: inashi ? "刃で受け流す。次の行動まで被ダメージ軽減" : "次の行動まで被ダメージ軽減", icon: "shield", cd: true, alt: true, disabled: !ready,
+      fn: () => { G.guard = true; if (typeof SFX !== "undefined") SFX.play("guard"); log(inashi ? "刃を寝かせ、攻撃をいなす構えをとる。(次の行動を選ぶまで続く)" : "身を低くして、構えを固める。(次の行動を選ぶまで続く)"); endPlayerAction(); } });
     list.push({ label: "逃げる", note: enemy.boss ? "主からは逃げられない" : "敏捷で判定", icon: "flee", cd: true, alt: true, disabled: !ready || enemy.boss, fn: flee });
     setChoices(list);
     $("#choices").className = "choices battle";
@@ -3817,6 +3850,7 @@ function tuneEnemy(e) {
     G.comboT = G.combo ? 20 : 0;
     addSp(1);
     if (ci === steps.length - 1) jgGain("cf");
+    /* SAM:LINE */ if (typeof onComboDone === "function") onComboDone(ci, steps.length); /* SAM:LINE-END */
     runSkill(steps[ci], "c" + ci, false, false);
   }
   function buildAbilities() {
@@ -3890,6 +3924,7 @@ function tuneEnemy(e) {
     const w = G.wpn, st = w.stat;
     const r = d(20);
     const sure = consumeSure();
+    /* SE:LINE */ SFX.play("swing"); /* SE:LINE-END */
     const pity = (G.missStreak || 0) >= 2 ? 3 : 0;
     const m = 3 + Math.min(6, Math.floor(G.lv / 5)) + pity + mod(G[st]) + mod(SKL()) + w.atk + (G.buff ? 2 : 0) + (G.god === "star" ? 1 : 0) + (o.hitBonus || 0) + G.firstBonus + T("atk");
     const total = r + m;
@@ -3899,19 +3934,21 @@ function tuneEnemy(e) {
     G.firstBonus = 0;
     if (hit) {
       let dm = d(w.die) + Math.max(0, mod(G[st])) + w.dmg + T("dmg") + (G.hp <= G.maxHp / 3 ? 3 * T("lowhp") : 0);
-      if (crit) { dm *= 2; log(sure ? "狙いすました会心の一撃！" : "会心の一撃！", "good"); }
+      if (crit) { dm *= 2; log(sure ? "狙いすましたクリティカルヒット！" : "クリティカルヒット！", "good"); }
       if (o.mult) dm = Math.round(dm * o.mult);
-      if (T("double") && Math.random() < Math.min(0.8, 0.2 * T("double"))) { const ex = d(6); dm += ex; log("追撃！ +" + NF(sc(ex)), "good"); }
+      /* DBL:LINE */ let ex2 = 0; if (T("double") && Math.random() < Math.min(0.8, 0.2 * T("double"))) { ex2 = d(6); log("追撃！ +" + NF(sc(ex2)), "good"); } /* DBL:LINE-END */
       dm = Math.max(1, Math.round(dm * outMult()));
-      let lucky = false;
-      if (!crit && Math.random() < 0.07) { lucky = true; dm = Math.round(dm * 2.5); log("ラッキーヒット！ 手応えが違う！", "good"); SFX.play("lucky"); popup("#stage", "LUCKY!", "gold"); }
-      if (crit) jgGain("crit");
-      hitEnemy(dm, crit, lucky);
+      /* CRIT:BEGIN */ let lucky = false, crit2 = crit;
+      if (!crit && Math.random() < 0.07) { crit2 = true; dm = Math.round(dm * 2); log("クリティカルヒット！ 手応えが違う！", "good"); }
+      if (crit2) jgGain("crit");
+      hitEnemy(dm, crit2, lucky); /* CRIT:END */
+      /* DBL:LINE */ if (ex2 && enemy.hp > 0) twinHit(ex2); /* DBL:LINE-END */
       const mh = fx(G.buffs, "mpOnHit");
       if (mh) addSp(mh);
       G.missStreak = 0;
     } else {
       G.missStreak = (G.missStreak || 0) + 1;
+      /* SE:LINE */ SFX.play("miss"); /* SE:LINE-END */
       if (G.chain > 1 && !isMelee()) { G.chain = 0; chainShow(0); }
       log(r === 1 ? "足がもつれて、攻撃が大きく外れた。" : "攻撃は空を切った。");
     }
@@ -3933,6 +3970,7 @@ function tuneEnemy(e) {
     else if (isAbil) log("アビリティ「" + s.n + "」", "good");
     else log("「" + s.n + "」を使った。");
     if (G.hp <= 0) { render(); return die(); }
+    /* SE:LINE */ if (!isLB && !isAbil && (s.dmg || s.strikes)) SFX.play("skill"); else if (isAbil) SFX.play("ability"); /* SE:LINE-END */
     if (s.hpTo1) { G.hp = 1; log("自らのHPを1まで削った。", "bad"); }
     if (s.fullHeal) { G.hp = G.maxHp; log("HPが全回復した。", "good"); SFX.play("heal"); popup("#hud", "全回復", "good"); }
     if (s.heal) { const h = healR(Math.round((sc(rollSpec(s.heal) + 3 * T("healpow")) + Math.round(G.maxHp * (s.healPct || 0.06))) * pw)); log("HPが " + h + " 回復した。", "good"); SFX.play("heal"); popup("#hud", "+" + h, "good"); }
@@ -3956,7 +3994,7 @@ function tuneEnemy(e) {
     if (s.dmg) {
       let dm = Math.round((rollSpec(s.dmg) + 3 * T("skilldmg") + skillBonus(s, isLB)) * pw);
       const crit = s.crits || consumeSure() || d(20) >= critMin();
-      if (crit) { dm = Math.round(dm * 1.5); log("会心！", "good"); }
+      if (crit) { dm = Math.round(dm * 1.5); log("クリティカルヒット！", "good"); }
       dm = Math.max(1, Math.round(dm * outMult()));
       if (crit) jgGain("crit");
       hitEnemy(dm, crit);
@@ -3971,9 +4009,11 @@ function tuneEnemy(e) {
   function flee() {
     if (check("dex", 11 + Math.floor(G.floor / 4), "逃走", (relicIs("flee") ? 3 : 0) + 2 * T("flee"))) {
       log("階段の影に紛れて、うまく逃げ切った。", "good");
+      /* SE:LINE */ SFX.play("flee"); /* SE:LINE-END */
       inBattle = false; atbStop(); $("#enemyBox").hidden = true; nextBtn();
     } else {
       log("逃げ道をふさがれた！", "bad");
+      /* SE:LINE */ SFX.play("fail"); /* SE:LINE-END */
       endPlayerAction();
     }
   }
@@ -3991,6 +4031,7 @@ function tuneEnemy(e) {
     const total = r + atk;
     const hit = r === 20 || (r !== 1 && total >= defv);
     log("🎲 " + enemy.n + "の攻撃　d20[" + r + "] " + sgn(atk) + " = " + total + "(あなたの防御 " + defv + ")", "dice");
+    /* SE:LINE */ if (!hit) SFX.play("miss"); /* SE:LINE-END */
     if (!hit) { log("攻撃をかわした。"); return; }
     let dm = rnd(enemy.dmg[0], enemy.dmg[1]);
     if (r === 20) dm *= 2;
@@ -4001,6 +4042,7 @@ function tuneEnemy(e) {
     if (G.ward > 0) dm = Math.ceil(dm / 2);
     dm = mitigate(dm);
     G.hp -= dm;
+    /* SAM:LINE */ if (typeof onTakenHit === "function") onTakenHit(dm); /* SAM:LINE-END */
     G.lb = Math.min(100, G.lb + (dm / G.maxHp) * 35);
     log(dm + " のダメージを受けた。", "bad");
     if (dm > 0) { flash("#hud"); popup("#hud", "-" + dm, "bad"); SFX.play("hurt"); hurtFx(dm); jgGain("taken"); }
@@ -4545,7 +4587,7 @@ function tuneEnemy(e) {
         { label: "賭ける(" + stake + "ギル)", note: "d20の勝負。同値は引き分け", disabled: G.gold < stake, fn: () => {
           const me = d(20), him = d(20);
           log("🎲 あなた d20[" + me + "]　対　男 d20[" + him + "]", "dice");
-          if (me > him) { G.gold += stake; SFX.play("coin"); log("勝った！ " + stake + " ギルを手に入れた。", "good"); popup("#hud", "+" + stake + "G", "good"); if (me === 20) { log("会心の出目に、男は肩を落とした。さらに、袋を差し出した。", "good"); addItem(pick(["hipotion", "hiether"]), 1); } }
+          if (me > him) { G.gold += stake; SFX.play("coin"); log("勝った！ " + stake + " ギルを手に入れた。", "good"); popup("#hud", "+" + stake + "G", "good"); if (me === 20) { log("クリティカルの出目に、男は肩を落とした。さらに、袋を差し出した。", "good"); addItem(pick(["hipotion", "hiether"]), 1); } }
           else if (me < him) { G.gold -= stake; log("負けた。" + stake + " ギルが男の袋に消えた。", "bad"); }
           else log("引き分け。男は肩をすくめた。");
           render(); gambler();
@@ -4643,7 +4685,7 @@ function battleFill() {
 /* ステータス画面の先頭に自キャラの絵を出す(HUD の肖像と同じ画像) */
 function statusPortrait() {
   const w = mkEl("div", "pc-big"), pc = document.getElementById("pcImg");
-  if (pc && pc.src) { const im = document.createElement("img"); im.src = pc.src; im.alt = ""; w.appendChild(im); }
+  if (pc && pc.src) { const im = document.createElement("img"); im.src = pc.src; im.alt = ""; if (pc.classList.contains("wide")) im.className = "wide"; w.appendChild(im); } /* PC:INLINE */
   return w;
 }
 /* ==== LAYOUT-JS:END ==== */
@@ -4683,6 +4725,248 @@ window.addEventListener("pageshow", fitApp);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) fitApp(); });
 fitApp(); setTimeout(fitApp, 300); setTimeout(fitApp, 1200);
 /* ==== FIT-JS:END ==== */
+/* ==== VER-JS:BEGIN (自動挿入。apply_version.py を直して再実行する) ==== */
+/* デプロイ時に __BUILD__ が「日時 (コミット)」に置き換わる。置き換え前は先頭が _ のままなので、未スタンプと分かる */
+const BUILD_ID = "__BUILD__";
+function buildLabel() { return BUILD_ID.charAt(0) === "_" ? "ローカル(未スタンプ)" : BUILD_ID; }
+(function () {
+  if (document.getElementById("ver")) return;
+  const el = document.createElement("div"); el.id = "ver"; el.textContent = "v " + buildLabel();
+  document.body.appendChild(el);
+})();
+/* ==== VER-JS:END ==== */
+/* ==== PC-JS:BEGIN (自動挿入。apply_pc_samurai.py を直して再実行する) ==== */
+/* 職業ごとの自キャラの絵。ここに無い職業は、従来の PLAYER_SRC */
+const PC_SPRITE = {
+  samurai: "data:image/png;base64,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"
+};
+function pcSrc() {
+  const j = (G && G.job) || (typeof currentJob === "function" ? currentJob() : null);
+  return (j && PC_SPRITE[j.id]) || PLAYER_SRC;
+}
+/* HUD の自キャラ(#pcImg)を、いまの職業の絵に合わせる。render() の先頭から呼ばれる */
+function syncPcImg() {
+  const pc = document.getElementById("pcImg"); if (!pc || !G) return;
+  const key = G.job.id;
+  if (pc.dataset.k === key) return;
+  pc.dataset.k = key; pc.src = pcSrc();
+  pc.classList.toggle("wide", !!PC_SPRITE[key]);
+}
+/* ==== PC-JS:END ==== */
+/* ==== SE-JS:BEGIN (自動挿入。apply_se_menu.py を直して再実行する) ==== */
+/* ---- 全ボタンのタップ音。押せないボタンを触ったら deny ---- */
+(function () {
+  const btnOf = (e) => (e.target && e.target.closest ? e.target.closest("button") : null);
+  document.addEventListener("click", (e) => {
+    const b = btnOf(e);
+    if (!b || b.disabled) return;
+    if (b.closest("#ov")) SFX.play(b.id === "ovClose" ? "cancel" : "click");
+    else if (b.closest(".choices.battle")) SFX.play("click");
+    else if (b.closest(".choices")) SFX.play("select");
+    else SFX.play("click");
+  }, true);
+  document.addEventListener("pointerdown", (e) => { const b = btnOf(e); if (b && b.disabled) SFX.play("deny"); }, true);
+  /* 重ね表示(持ち物・ステータス・ログ・メニュー)の開閉 */
+  const ov = document.getElementById("ov");
+  if (ov && window.MutationObserver) {
+    let was = !ov.hidden;
+    new MutationObserver(() => { const now = !ov.hidden; if (now !== was) { SFX.play(now ? "open" : "close"); was = now; } }).observe(ov, { attributes: true, attributeFilter: ["hidden"] });
+  }
+})();
+/* 戦闘開始: 敵の出現音(主は専用の音があるので除く)と、LBの持ち越し分の同期 */
+function onBattleStart(boss) {
+  if (!boss) SFX.play("appear");
+  if (typeof lbSyncSeen === "function") lbSyncSeen();
+}
+/* ---- メニューボタン(ツールバー): ホームに戻る ---- */
+(function () {
+  const tb = document.getElementById("toolbar");
+  if (!tb || document.getElementById("menuBtn")) return;
+  const btn = document.createElement("button"); btn.className = "small-btn"; btn.id = "menuBtn"; btn.type = "button"; btn.textContent = "メニュー";
+  tb.appendChild(btn);
+  btn.addEventListener("click", () => {
+    if (!G) return;
+    openOv("メニュー", (b) => {
+      b.appendChild(mkEl("p", "idesc", "いまの冒険は、ホームに戻るときに保存されます。ホーム画面の「続きから」で再開できます。"));
+      if (typeof buildLabel === "function") b.appendChild(mkEl("p", "idesc", "バージョン: " + buildLabel()));
+      const home = mkEl("button", "small-btn", "ホームに戻る"); home.type = "button"; home.disabled = !!inBattle;
+      b.appendChild(home);
+      if (inBattle) b.appendChild(mkEl("p", "idesc", "戦闘中はホームに戻れません。戦闘が終わってから戻ってください。"));
+      home.addEventListener("click", () => {
+        closeOv();
+        confirmPopup({
+          title: "ホームに戻る", lines: [{ t: "いまの冒険を保存して、ホーム画面へ戻る。" }, { t: "「続きから」で、第" + G.floor + "層から再開できる。", c: "dim" }],
+          ok: "戻る", no: "やめる",
+          onOk: () => { saveRun(); titleScreen(); }
+        });
+      });
+    });
+  });
+})();
+/* ==== SE-JS:END ==== */
+/* ==== LB3-JS:BEGIN (自動挿入。apply_lb3.py を直して再実行する) ==== */
+/* ---- LB 3段階: ゲージ 33% / 67% / 100% で Lv1 / Lv2 / Lv3。使うと、どの段階でも溜まっているゲージは全て消費する ---- */
+const LB_F = [0, 0.4, 0.7, 1];   /* 段階ごとの威力の倍率(Lv3 が従来のLB) */
+const LB_NAMES = {               /* [Lv1, Lv2]。Lv3 は職業データの従来の名前 */
+  paladin: ["守りの誓い", "聖盾の誓約"], warrior: ["戦士の雄叫び", "不屈の咆哮"], darkknight: ["闇の目覚め", "冥府の胎動"],
+  gunbreaker: ["火花の一撃", "烈火の砲撃"], monk: ["十烈拳", "五十烈拳"], samurai: ["一閃・初の型", "一閃・中の型"],
+  dragoon: ["竜槍の一突き", "竜牙の穿ち"], reaper: ["魂の刈り取り", "死神の一薙ぎ"], ninja: ["影十本", "影百本"],
+  viper: ["蛇の一噛み", "百蛇の顎"], bard: ["流星の矢", "星屑の矢雨"], machinist: ["小口径砲撃", "中口径砲撃"],
+  dancer: ["序の舞", "破の舞"], redmage: ["紅の剣閃", "紅蓮の閃光"], pictomancer: ["小さな絵筆", "天を描く画"],
+  blackmage: ["流星の詠唱", "彗星の詠唱"], summoner: ["幼竜の咆哮", "竜王の咆哮"], scholar: ["命の鼓動", "生命の脈動"],
+  whitemage: ["祈りの聖歌", "聖なる合唱"], astrologian: ["星の囁き", "星々の祝福"], sage: ["小結界", "叡智の結界"]
+};
+const lbLevel = () => (G ? Math.min(3, Math.floor(G.lb * 3 / 100 + 1e-9)) : 0);
+let lbSeen = 0;
+function lbSyncSeen() { lbSeen = lbLevel(); }          /* 戦闘開始時: 持ち越したゲージでは音を鳴らさない */
+function lbWatch() { const lv = lbLevel(); if (lv > lbSeen && typeof SFX !== "undefined") SFX.play("lbup"); lbSeen = lv; }
+const lbStatName = { str: "筋力", dex: "敏捷", wis: "知識", skl: "器用さ" };
+function lbScaleBuff(b, f) {
+  const o = Object.assign({}, b);
+  o.sec = Math.max(4, Math.round(b.sec * f));
+  ["shield", "regen", "dot"].forEach((k) => { if (b[k]) o[k] = Math.max(1, Math.round(b[k] * f)); });
+  ["dmgUp", "mit", "vuln", "haste", "steal"].forEach((k) => { if (b[k]) o[k] = Math.round(b[k] * f * 100) / 100; });
+  if (b.dmgUp) o.n = "攻撃↑" + Math.round(o.dmgUp * 100) + "%";
+  if (b.mit) o.n = "被ダメ↓" + Math.round(o.mit * 100) + "%";
+  if (b.vuln) o.n = "被ダメ↑" + Math.round(o.vuln * 100) + "%";
+  return o;
+}
+function lbDesc(sk) {
+  const p = [], spec = (a) => a[0] + "d" + a[1] + (a[2] ? "+" + a[2] : "") + (a[3] ? "+" + lbStatName[a[3]] + "修正" : "");
+  if (sk.dmg) p.push("必中の" + spec(sk.dmg));
+  if (sk.strikes) p.push("命中+" + (sk.hit || 0) + "の通常攻撃を" + sk.strikes + "回");
+  if (sk.heal && sk.healPct) p.push("HPを最大の" + Math.round(sk.healPct * 100) + "%回復");
+  else if (sk.heal) p.push("HPを " + spec(sk.heal) + " 回復");
+  if (sk.leech) p.push("与えた分の" + Math.round(sk.leech * 100) + "%を回復");
+  if (sk.crits) p.push("確定でクリティカルヒット");
+  if (sk.cure) p.push("毒を消す");
+  if (sk.shadow) p.push("次の敵の攻撃をかわす");
+  if (sk.haste) p.push("次のATBが" + sk.haste + "%から始まる");
+  (sk.buffs || []).forEach((b) => p.push(b.n + " " + b.sec + "秒"));
+  (sk.debuffs || []).forEach((b) => p.push("敵に" + b.n + " " + b.sec + "秒"));
+  return p.join("。");
+}
+/* 段階 lv(1〜3)の技。Lv3 は従来のLBそのもの */
+function lbSkill(lv) {
+  const base = G.job.lb;
+  if (lv >= 3) return base;
+  const f = LB_F[lv];
+  const sp = (a) => [Math.max(1, Math.round(a[0] * f)), a[1], Math.round((a[2] || 0) * f), a[3]];
+  const sk = { n: (LB_NAMES[G.job.id] || [])[lv - 1] || (base.n + "(Lv" + lv + ")"), lvl: lv };
+  if (base.dmg) sk.dmg = sp(base.dmg);
+  if (base.heal) sk.heal = sp(base.heal);
+  if (base.fullHeal) { sk.heal = [1, 6, 0]; sk.healPct = lv === 1 ? 0.4 : 0.7; }   /* 全回復は Lv3 だけ。Lv1=4割、Lv2=7割 */
+  if (base.strikes) { sk.strikes = Math.max(1, Math.round(base.strikes * f)); sk.hit = base.hit; }
+  if (base.leech) sk.leech = base.leech;
+  if (base.haste) sk.haste = Math.round(base.haste * f);
+  if (base.crits && lv >= 2) sk.crits = 1;
+  if (base.cure && lv >= 2) sk.cure = 1;
+  if (base.shadow && lv >= 2) sk.shadow = 1;
+  if (base.buffs) sk.buffs = base.buffs.map((b) => lbScaleBuff(b, f));
+  if (base.debuffs) sk.debuffs = base.debuffs.map((b) => lbScaleBuff(b, f));
+  sk.desc = lbDesc(sk);
+  return sk;
+}
+/* 元の useLB を置き換える(後ろの宣言が優先される)。溜まっているゲージは全て消費する */
+function useLB() {
+  const lv = lbLevel(); if (!lv) return;
+  const sk = lbSkill(lv);
+  G.lb = 0; lbSeen = 0;
+  runSkill(sk, "lb", true, false);
+}
+/* ==== LB3-JS:END ==== */
+/* ==== UI4-JS:BEGIN (自動挿入。apply_ui4.py を直して再実行する) ==== */
+/* 毒・加護・誓いの行。効果の行(#buffWrap)の先頭に作る。buffWrap は UI3-JS が作るので、ブロックの並び順に関係なく、最初の更新(render)のときに作る */
+function updateStateLine() {
+  if (!G) return;
+  let el = document.getElementById("stateLine");
+  if (!el) {
+    const w = document.getElementById("buffWrap"); if (!w) return;
+    el = document.createElement("div"); el.id = "stateLine"; el.className = "buffs";
+    w.insertBefore(el, w.firstChild);
+  }
+  const bits = [];
+  if (G.poison) bits.push("毒 " + G.poison);
+  if (G.buff) bits.push("加護");
+  if (G.god) bits.push("誓い " + GODS[G.god].n);
+  el.textContent = bits.join("　");
+}
+/* イベントの本文を全部出してから、タップで選択肢を出す(本文のない段・選択肢が1つだけの段は、そのまま) */
+function gateChoices(list, art, st) {
+  if (!st || list.length <= 1 || !linesOf(st.t).length) return false;
+  setChoices([{ label: "▶ 選択肢を見る", note: "本文を読み終えたらタップ", icon: "event", fn: () => { setChoices(list); render(); } }]);
+  render(); scrollToArt(art);
+  return true;
+}
+/* ==== UI4-JS:END ==== */
+/* ==== DBL-JS:BEGIN (自動挿入。apply_double.py を直して再実行する) ==== */
+/* 追撃の2回目: ダメージは同時に確定させ、見た目(斬撃)だけ 0.2 秒遅らせる */
+let twinLag = 0;
+function twinHit(ex) {
+  const dm = Math.max(1, Math.round(ex * outMult()));
+  twinLag = 0.2;
+  try { hitEnemy(dm, false, false); } finally { twinLag = 0; }
+}
+/* 斬撃エフェクト(元の slashFx に、twinLag ぶんの遅れを足したもの。後ろの宣言が優先される) */
+function slashFx(strong) {
+  const host = document.querySelector("#stage"); if (!host) return;
+  const lag = twinLag || 0;
+  const mk = (rot, delay) => { const e = document.createElement("i"); e.className = "slash" + (strong ? " crit" : ""); e.style.setProperty("--rot", rot + "deg"); e.style.animationDelay = (delay + lag) + "s"; host.appendChild(e); setTimeout(() => { if (e.parentNode) e.parentNode.removeChild(e); }, 520 + Math.round(lag * 1000)); };
+  mk(-30 + Math.random() * 12, 0);
+  if (strong) mk(28 + Math.random() * 8, 0.07);
+}
+/* ==== DBL-JS:END ==== */
+/* ==== SAM-JS:BEGIN (自動挿入。apply_samurai.py を直して再実行する) ==== */
+/* ---- 侍のデータ調整(起動時に1回。JOBS は職業ごとに共有されるので、ここで書き換えれば戦闘にも反映される) ---- */
+(function () {
+  const sj = JOBS.find((j) => j.id === "samurai");
+  if (!sj) return;
+  /* 月と花の効果を入れ替え: 月光=与ダメージ、花車=ヘイスト */
+  const gekko = sj.combo[1], kasha = sj.combo[2];
+  if (gekko) { gekko.desc = "ダメージ1.4倍。20秒間、与ダメージ+10%"; gekko.buffs = [B.dmg(0.1, 20)]; }
+  if (kasha) { kasha.desc = "ダメージ1.8倍。20秒間ヘイスト(+10%)"; kasha.buffs = [B.haste(0.1, 20)]; }
+  /* 必殺剣・閃のリキャスト1秒(A() は下限10秒なので直接書き換える) */
+  const sen = sj.abil[0] && sj.abil[0][1]; if (sen) sen.rc = 1;
+  /* 心眼の構え: 被ダメージ-20%(6秒)。効果中に攻撃を受けるとリジェネ */
+  const te = sj.abil[1] && sj.abil[1][1];
+  if (te) { te.desc = "6秒間、被ダメージ-20%。効果中に攻撃を受けるとリジェネ(12秒)"; te.buffs = [Object.assign(B.mit(0.2, 6), { tengan: 1 })]; }
+})();
+/* ---- 雪月花 / 返し雪月花 ---- */
+const SGK_S = { n: "雪月花", desc: "必ずクリティカルヒット。必中 4d10+6+敏捷修正。このあと返し雪月花が使える", cost: 0, dmg: [4, 10, 6, "dex"], crits: 1 };
+const SGK_K = { n: "返し雪月花", desc: "必ずクリティカルヒット。必中 4d10+6+敏捷修正(雪月花の返し)", cost: 0, dmg: [4, 10, 6, "dex"], crits: 1 };
+/* 基礎コンボの最後(3段目)を決めたとき useCombo から呼ばれる */
+function onComboDone(ci, n) {
+  if (G.job.id !== "samurai" || ci !== n - 1) return;
+  if (!G.sgkS) log("三つの型がそろった。雪月花を放てる！", "good");
+  G.sgkS = 1;
+}
+/* battleChoices から呼ばれる: 使える状態のとき、雪月花・返し雪月花のボタンを足す */
+function extraChoices(list) {
+  if (!G || G.job.id !== "samurai") return;
+  const ready = atb.ready;
+  if (G.sgkS) list.push({ label: SGK_S.n, note: "コンボ完了 / " + SGK_S.desc, cls: "gs", icon: "sword", cd: true, disabled: !ready, fn: useSetsugekka });
+  if (G.sgkK) list.push({ label: SGK_K.n, note: SGK_K.desc, cls: "gs", icon: "sword", cd: true, disabled: !ready, fn: useKaeshi });
+}
+function useSetsugekka() {
+  if (!inBattle || !G.sgkS) return;
+  G.sgkS = 0; G.sgkK = 1;
+  runSkill(SGK_S, "sgk", false, false);
+  if (inBattle && enemy && enemy.hp > 0) log("返し雪月花が使える状態になった。", "good");
+}
+function useKaeshi() {
+  if (!inBattle || !G.sgkK) return;
+  G.sgkK = 0;
+  runSkill(SGK_K, "sgk", false, false);
+}
+/* 戦闘開始のたびに呼ばれている関数(BATTLEUI で空にしたもの)を、雪月花の状態リセットに使う。後ろの宣言が優先される */
+function battleFill() { if (G) { G.sgkS = 0; G.sgkK = 0; } }
+/* 心眼の構え: 効果中に攻撃を受けたらリジェネを付ける(敵の攻撃処理から呼ばれる) */
+function onTakenHit() {
+  if (!G || !G.buffs || !G.buffs.some((b) => b.tengan)) return;
+  applyBuffs(G.buffs, [B.regen(4, 12)], "tg");
+  log("心眼の力で、傷が癒えはじめた。(リジェネ 12秒)", "good");
+}
+/* ==== SAM-JS:END ==== */
 /* ==== UI3-JS:BEGIN (自動挿入。apply_ui3.py を直して再実行する) ==== */
 /* ダブルタップ拡大を止める(CSSの touch-action と合わせて) */
 try { const mv = document.querySelector('meta[name="viewport"]'); if (mv && !/user-scalable/.test(mv.content)) mv.content += ", maximum-scale=1, user-scalable=no"; } catch (e) { /* 何もしない */ }
@@ -4711,7 +4995,15 @@ function offerEquip(it, cont, bought) {
   logCmp(it);
   if (it.kind === "ring") log("指輪Ⅰ:" + (G.rings[0] ? fmtItem(G.rings[0]) : "なし") + "　指輪Ⅱ:" + (G.rings[1] ? fmtItem(G.rings[1]) : "なし"), "dice");
   else log("いまの" + SLOTN[it.kind] + ":" + (G[SLOTKEY[it.kind]] ? fmtItem(G[SLOTKEY[it.kind]]) : "なし"), "dice");
-  const eq = (slot) => () => { equipTo(slot, it); SFX.play("equip"); log(it.n + " を身につけた。", "good"); render(); cont(); };
+  const eq = (slot) => () => {
+    const old = getSlot(slot);
+    equipTo(slot, it); SFX.play("equip"); log(it.n + " を身につけた。", "good");
+    if (old) { /* 外した装備は、持ち物に空きがあれば入れる */
+      if (bag.length < BAGMAX) { bag.push(old); log("外した「" + old.n + "」を持ち物に入れた。(" + bag.length + " / " + BAGMAX + ")", "good"); }
+      else log("持ち物がいっぱいで、外した「" + old.n + "」は手放した。", "bad");
+    }
+    render(); cont();
+  };
   const choose = () => {
     const list = [];
     if (it.kind === "ring") {
@@ -4780,7 +5072,8 @@ function sellEntry(list, back, gearPrice) {
 }
 
 /* ---- 持ち物画面に「持ち物の装備品」を足す(元の処理が画面を作ったあとに追記) ---- */
-$("#itemBtn").addEventListener("click", () => {
+/* 元のクリック処理(画面を作り直す)のあとに追記するため、1拍おく(登録順で先に走ると消される) */
+$("#itemBtn").addEventListener("click", () => { setTimeout(() => {
   if (!G) return;
   const body = $("#ovBody"); if (!body) return;
   const bag = bagOf();
@@ -4819,7 +5112,7 @@ $("#itemBtn").addEventListener("click", () => {
   });
   const anchor = Array.prototype.find.call(body.querySelectorAll("h4"), (h) => h.textContent === "装備");
   if (anchor) body.insertBefore(frag, anchor); else body.appendChild(frag);
-});
+}, 0); });
 /* ==== UI3-JS:END ==== */
 /* ==== TRPG:BEGIN (自動挿入ブロック。編集は trpg_events.js で行い、add_trpg_events.py を再実行する) ==== */
 /* ---------- TRPG イベントシステム ----------
@@ -4979,6 +5272,7 @@ function showStep(ev, id) {
     list.push({ label: c.label, note: bits.join(" / "), icon: "event", alt: !!c.alt, disabled: !!lack, fn: () => choose(ev, c) });
   });
   if (!list.length) list.push({ label: "立ち去る", alt: true, fn: nextBtn });
+  /* UI4:LINE */ if (typeof gateChoices === "function" && gateChoices(list, art, st)) return; /* UI4:LINE-END */
   setChoices(list);
   render();
   scrollToArt(art);
@@ -5604,6 +5898,201 @@ const TRPG_EVENTS = [
 
 ];
 /* ==== TRPG:END ==== */
+/* ==== EV2:BEGIN (自動挿入。apply_events2.py を直して再実行する) ==== */
+TRPG_EVENTS.push(
+  /* ---- 王国の遺宝(A08) ---- */
+  {
+    id: "relics", title: "王国の遺宝", min: 10,
+    steps: { start: {
+      img: "A08",
+      t: ["崩れた書棚の影に、布を敷いた台座があった。王冠、杯、そして一振りの剣。", "誰かが並べたまま、時間だけが過ぎたようだ。"],
+      choices: [
+        { label: "【騎士】剣に一礼する", when: () => isJob("paladin", "warrior", "darkknight", "gunbreaker", "samurai"),
+          out: { c: "good", t: "剣は何も答えない。だが、構えを正した背に、見えない誰かの視線が重なった気がした。", fx: { hpPct: 0.3, xp: 10 }, equip: true } },
+        { label: "王冠を手に取る", rand: [
+          [55, { c: "good", t: ["冠を戴くと、見知らぬ王の記憶が頭を満たした。", "痛みはない。ただ、重い。"], fx: { xp: 14 }, j: "王国の遺宝の冠を手に取った" }],
+          [45, { c: "bad", t: "冠の内側に、毒を塗った針が仕込まれていた。", fx: { hp: -4, poison: 3 } }]
+        ] },
+        { label: "杯の中身を確かめる", check: { stat: "wis", dc: 10, tag: "鑑定" },
+          great: { c: "good", t: "澄んだ聖水だった。飲み干すと、身体の奥まで温まった。", fx: { hpPct: 0.5, sp: 4 } },
+          ok: { t: "薄い葡萄酒だった。飲み干すと、気力が少し戻った。", fx: { sp: 3 } },
+          fail: { c: "bad", t: "古い毒酒だった。喉が焼けた。", fx: { poison: 3, hp: -2 } },
+          fumble: { c: "bad", t: "一口で、視界が歪んだ。杯の底に、誰かの指輪が沈んでいた。", fx: { poison: 4, hp: -5 } } },
+        { label: "剣を調べる", check: { stat: "skl", dc: 10, tag: "目利き" },
+          great: { c: "good", t: "刃に刻まれた銘は本物だった。これは、ただの飾りではない。", rare: 1 },
+          ok: { t: "手入れすれば、まだ使えそうだ。", equip: true },
+          fail: { c: "bad", t: "触れた途端、剣は脆く砕けた。破片で手を切った。", fx: { hp: -3 } } },
+        { label: "そっとしておく", alt: true, out: { t: "遺宝には触れなかった。誰のものでもない物は、誰のものでもないままがいい。", fx: { xp: 4 } } }
+      ]
+    } }
+  },
+
+  /* ---- 祈りの灯(B09) ---- */
+  {
+    id: "shrine", title: "祈りの灯", min: 7,
+    steps: { start: {
+      img: "B09",
+      t: ["小さな祠の前に、細い蝋燭が一本だけ灯っている。", "風はないのに、炎は何かに祈るように揺れていた。"],
+      choices: [
+        { label: "祈りを捧げる", rand: [
+          [65, { c: "good", t: "灯が温かく揺れた。傷の痛みが、少し遠のいた。", fx: { hpPct: 0.4 } }],
+          [35, { t: "何も起こらなかった。ただ、少しだけ心が静まった。", fx: { sp: 1 } }]
+        ] },
+        { label: "ギルを供える", cost: { gold: 15 },
+          out: { c: "good", t: ["硬貨が祠に吸い込まれるように消えた。", "灯が明るく燃え上がり、身体の芯まで温かくなった。"], fx: { hpPct: 0.6, sp: 4 }, set: { shrine_paid: true } } },
+        { label: "灯を持ち去る", alt: true, check: { stat: "dex", dc: 11, tag: "盗み" },
+          great: { c: "good", t: "炎は消えなかった。灯と一緒に、祠の奥の小さな包みも手に入れた。", fx: { gold: 14, items: { ether: 1 } } },
+          ok: { t: "灯を掌で囲んで持ち出した。", fx: { gold: 8 } },
+          fail: { c: "bad", t: "炎がふっと消えた。暗闇の奥で、何かが身じろぎした。", battle: true } },
+        { label: "立ち去る", alt: true, out: { t: "祠に背を向けた。灯は、いつまでも背中を照らしていた。" } }
+      ]
+    } }
+  },
+
+  /* ---- 骸骨の番人(B07) ---- */
+  {
+    id: "skeleton", title: "骸骨の番人", min: 9,
+    steps: { start: {
+      img: "B07",
+      t: ["洞の壁際に、座ったままの骸骨がいた。傍らには、まだ油の残るランタン。", "誰かを待っているような姿勢だった。"],
+      choices: [
+        { label: "亡骸を調べる", check: { stat: "skl", dc: 10, tag: "探索" },
+          great: { c: "good", t: "懐から、古い財布と薬瓶が出てきた。", fx: { gold: 16, items: { herb: 1 } } },
+          ok: { t: "朽ちた袋の底に、数枚の硬貨が残っていた。", fx: { gold: 10 } },
+          fail: { c: "bad", t: "骸骨が、からりと崩れた。その音で、何かが目を覚ました。", battle: true } },
+        { label: "ランタンを借りる", out: { c: "good", t: "油は十分に残っていた。足元が、ずいぶん明るくなった。", fx: { buff: true } } },
+        { label: "祈りを捧げる", out: { c: "good", t: "名も知らない誰かのために、短く祈った。", fx: { xp: 10 }, j: "名もない骸骨に祈りを捧げた" } },
+        { label: "立ち去る", alt: true, out: { t: "骸骨は、動かなかった。" } }
+      ]
+    } }
+  },
+
+  /* ---- 鎖につながれた者(A07) ---- */
+  {
+    id: "chained", title: "鎖につながれた者", min: 11,
+    steps: { start: {
+      img: "A07",
+      t: ["洞の奥で、鎖につながれた者がうずくまっている。", "顔を上げると、乾いた唇が動いた。『……水を』"],
+      choices: [
+        { label: "鎖を断つ", check: { stat: "str", dc: 11, tag: "怪力" },
+          great: { c: "good", t: "鎖が音を立てて砕けた。解き放たれた男は、懐の包みを押しつけて去っていった。", fx: { gold: 14, items: { herb: 2 } }, set: { chained_freed: true } },
+          ok: { t: "鎖が切れた。男は礼を言い、闇の中へ消えていった。", fx: { xp: 12 } },
+          fail: { c: "bad", t: "鎖が跳ね返り、腕を打った。", fx: { hp: -4 } },
+          fumble: { c: "bad", t: "鎖の音が洞に響いた。見張りが、こちらへ来る。", battle: true } },
+        { label: "水を飲ませて、話を聞く", cost: { herb: 1 },
+          out: { c: "good", t: ["男は一息に飲み干し、掠れた声で話した。", "『上へ行くほど、あれは強くなる。……手ぶらで挑むな』"], fx: { xp: 10 }, j: "鎖につながれた男から助言を聞いた" } },
+        { label: "見張りの鍵を探す", check: { stat: "wis", dc: 10, tag: "推理" },
+          ok: { c: "good", t: "岩の窪みに、鍵が隠してあった。男は無言で頭を下げた。", fx: { xp: 8, gold: 8 } },
+          fail: { c: "bad", t: "探すうちに、見張りと鉢合わせした。", battle: true } },
+        { label: "見なかったことにする", alt: true, out: { c: "bad", t: "背中に、弱い声が追ってきた。振り返らなかった。", fx: { sp: -1 } } }
+      ]
+    } }
+  },
+
+  /* ---- 立ち尽くす騎士たち(A11) ---- */
+  {
+    id: "knights", title: "立ち尽くす騎士たち", min: 18,
+    steps: { start: {
+      img: "A11",
+      t: ["崩れた広間に、二人の騎士が立っている。", "鎧は傷だらけで、剣を下ろしたまま、ぴくりとも動かない。"],
+      choices: [
+        { label: "【騎士】敬礼する", when: () => isJob("paladin", "warrior", "darkknight", "gunbreaker", "samurai", "dragoon"),
+          out: { c: "good", t: "あなたの敬礼に、鎧の軋む音が応えた。二人はゆっくりと膝をつき、剣を差し出した。", fx: { xp: 14, hpPct: 0.3 }, equip: true } },
+        { label: "声をかける", rand: [
+          [55, { t: "兜を覗くと、中は空だった。足元に、主を失った財布が落ちていた。", fx: { gold: 12 } }],
+          [45, { c: "bad", t: "兜の奥で、赤い光が灯った。", battle: true }]
+        ] },
+        { label: "足音を忍ばせて通る", check: { stat: "dex", dc: 11, tag: "隠密" },
+          great: { c: "good", t: "気づかれずに通り抜け、広間の隅で、置き去りの荷を見つけた。", fx: { gold: 12, xp: 8 } },
+          ok: { t: "息を殺して通り抜けた。", fx: { xp: 8 } },
+          fail: { c: "bad", t: "鎧の一つが、音もなくこちらを向いた。", battle: true } },
+        { label: "鎧を剥ぐ", alt: true, check: { stat: "str", dc: 12, tag: "剥ぎ取り" },
+          great: { c: "good", t: "鎧の下から、見事な装備が現れた。", rare: 1 },
+          ok: { t: "まだ使える部品を手に入れた。", equip: true },
+          fail: { c: "bad", t: "鎧が崩れ、破片が降ってきた。", fx: { hp: -5 }, battle: true } }
+      ]
+    } }
+  },
+
+  /* ---- 赤い宴(B08) ---- */
+  {
+    id: "redfeast", title: "赤い宴", min: 22,
+    steps: { start: {
+      img: "B08",
+      t: ["赤く光る魔法陣を囲んで、黒衣の信徒たちが宴を開いている。", "卓の上には、供物と、見たくないものが並んでいた。"],
+      choices: [
+        { label: "宴に紛れ込む", check: { stat: "wis", dc: 12, tag: "偽装" },
+          great: { c: "good", t: "誰もあなたを疑わなかった。信徒の話から、いくつもの秘密が耳に入った。", fx: { xp: 18, ash: 1 } },
+          ok: { t: "席の隅で、静かに杯を空けた。", fx: { gold: 14, xp: 10 } },
+          fail: { c: "bad", t: "『見ない顔だな』。信徒の視線が、一斉にこちらを向いた。", battle: true },
+          fumble: { c: "bad", t: "杯に、何かが混ぜてあった。", fx: { poison: 4 }, battle: "elite" } },
+        { label: "奇襲して蹴散らす", check: { stat: "str", dc: 12, tag: "奇襲" },
+          ok: { c: "good", t: "卓ごとひっくり返した。逃げ惑う信徒の荷から、装備がこぼれ落ちた。", fx: { xp: 16, gold: 12 }, equip: true },
+          fail: { c: "bad", t: "あっという間に囲まれた。", battle: true } },
+        { label: "供物を盗む", check: { stat: "dex", dc: 11, tag: "盗み" },
+          ok: { c: "good", t: "供物の一部を懐に入れて、闇に溶けた。", fx: { gold: 18, items: { ether: 1 } } },
+          fail: { c: "bad", t: "皿が落ちる音が響いた。", fx: { hp: -5 }, battle: true } },
+        { label: "引き返す", alt: true, out: { t: "見なかったことにして、足音を殺して戻った。", fx: { xp: 3 } } }
+      ]
+    } }
+  },
+
+  /* ---- 見晴らしの丘(B06) ---- */
+  {
+    id: "overlook", title: "見晴らしの丘", min: 14,
+    steps: { start: {
+      img: "B06",
+      t: ["崩れた塔の跡で、一人の騎士が遠くの王国を見つめている。", "沈みかけた陽が、彼の肩に長い影を落としていた。"],
+      choices: [
+        { label: "隣に座る", out: { c: "good", t: ["並んで、黙って遠くを眺めた。", "『ここから見える灯が、すべてではない』と、騎士は言った。"], fx: { hpPct: 0.4, sp: 3 } } },
+        { label: "この拠点の主について尋ねる", check: { stat: "wis", dc: 10, tag: "聞き出す" },
+          ok: { c: "good", t: bossHint(false), fx: { xp: 6 } },
+          fail: { t: bossHint(true), fx: { xp: 4 } } },
+        { label: "名を尋ねる", out: { t: "『名は、もう捨てた』。それきり、騎士は口をつぐんだ。", fx: { xp: 5 }, j: "王国を見下ろす名なしの騎士に会った" } },
+        { label: "立ち去る", alt: true, out: { t: "騎士は、振り返らなかった。" } }
+      ]
+    } }
+  },
+
+  /* ---- 結晶の剣(B10) ---- */
+  {
+    id: "bluesword", title: "結晶の剣", min: 28,
+    steps: { start: {
+      img: "B10",
+      t: ["青い結晶の中心に、一振りの剣が突き立っている。", "刃は淡く光り、柄には、誰かの手の跡が擦り切れて残っていた。"],
+      choices: [
+        { label: "引き抜く", check: { stat: "str", dc: 13, tag: "怪力" },
+          great: { c: "good", t: "結晶が澄んだ音を立てて砕け、剣があなたの手に収まった。", rare: 2 },
+          ok: { c: "good", t: "剣は抜けた。刃こぼれはあるが、確かな重みがある。", rare: 1 },
+          fail: { c: "bad", t: "結晶の欠片が弾け、腕を裂いた。", fx: { hp: -6 } },
+          fumble: { c: "bad", t: "結晶が鳴いた。その音に、洞の主が目を覚ます。", battle: true } },
+        { label: "周りの結晶を砕く", check: { stat: "skl", dc: 11, tag: "採掘" },
+          great: { c: "good", t: "砕いた欠片の一つが、見事な宝石だった。", rare: 1 },
+          ok: { t: "欠片を拾い集めた。高く売れそうだ。", fx: { gold: 22 } },
+          fail: { c: "bad", t: "鋭い欠片が指を裂いた。", fx: { hp: -3 } } },
+        { label: "触れずに祈る", out: { c: "good", t: "剣は答えなかった。だが、青い光が、傷の痛みを静かに洗っていった。", fx: { hpPct: 0.3, sp: 4 } } },
+        { label: "立ち去る", alt: true, out: { t: "剣は、そこにあり続けた。" } }
+      ]
+    } }
+  },
+
+  /* ---- 囁く闇(A03) ---- */
+  {
+    id: "whisper", title: "囁く闇", min: 35,
+    steps: { start: {
+      img: "A03",
+      t: ["闇が、人の形を借りて囁いている。", "『知りたいか。持ちたいか。それとも――静かに通り過ぎたいか』"],
+      choices: [
+        { label: "問いかける", check: { stat: "wis", dc: 12, tag: "対話" },
+          ok: { c: "good", t: ["闇は、知っていることを一つだけ話した。"], fx: { xp: 16 } },
+          fail: { c: "bad", t: "答えの代わりに、頭の奥に冷たい指が差し込まれた。", fx: { sp: -3, hp: -3 } } },
+        { label: "ギルを捧げる", cost: { gold: 25 }, out: { c: "good", t: "闇は満足げに、深く息を吐いた。身体の奥に、力が流れ込んだ。", fx: { xp: 22 } } },
+        { label: "耳をふさいで進む", alt: true, out: { t: "囁きは、背中を長く追ってきた。", fx: { sp: -2 } } }
+      ]
+    } }
+  }
+);
+/* ==== EV2:END ==== */
 
 /* ==== EVIMG:BEGIN (自動生成。build_event_images.py で作り直す) ==== */
 const EVIMG = {
@@ -5795,11 +6284,11 @@ const EVIMG = {
       b.appendChild(kv("攻撃判定", "d20 " + sgn(mod(G[w.stat]) + w.atk + T("atk")) + "(" + STAT[w.stat] + "依存)"));
       b.appendChild(kv("ダメージ", NF(sc(1 + w.dmg + T("dmg") + Math.max(0, mod(G[w.stat])))) + "〜" + NF(sc(w.die + w.dmg + T("dmg") + Math.max(0, mod(G[w.stat]))))));
       b.appendChild(kv("防御", 10 + mod(G.dex) + armDef() + T("def")));
-      b.appendChild(kv("会心", "d20で " + critMin() + " 以上"));
+      b.appendChild(kv("クリティカルヒット", "d20で " + critMin() + " 以上"));
       b.appendChild(kv("武器種", (w.wt || "不明") + (isJobWpn(w, G.job) ? "(専用武器:性能アップ)" : "")));
       if (G.poison) b.appendChild(kv("状態", "毒 " + G.poison));
       b.appendChild(mkEl("h4", "", "リミットブレイク"));
-      b.appendChild(kv(G.job.lb.n, Math.floor(G.lb) + "%"));
+      b.appendChild(kv("LB(" + G.job.lb.n + ")", "Lv" + lbLevel() + " / " + Math.floor(G.lb) + "%")); /* LB3 */
       b.appendChild(mkEl("p", "idesc", G.job.lb.desc));
       const jd = JG[G.job.id];
       b.appendChild(mkEl("h4", "", "ジョブゲージ"));
